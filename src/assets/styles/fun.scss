@@ -1,0 +1,4 @@
+@import './global.scss';
+@function p2r($size){
+  @return $size / $font-size * 1rem;
+}
