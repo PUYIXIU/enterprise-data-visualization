@@ -1,0 +1,179 @@
+export const mock_liquidData = [
+    {
+        name:'企业员工工时管理平台',
+        type:2, // 类型
+        taskNum:34,  // 横坐标对应的值
+        peopleNum:21,  // 纵坐标对应的值
+        progress: 50,  // 水球对应的值
+        totalHour:3585, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:0,
+        taskNum:10,  // 横坐标对应的值
+        peopleNum:21,  // 纵坐标对应的值
+        progress: 30,  // 水球对应的值
+        totalHour:3000, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:4,
+        taskNum:17,  // 横坐标对应的值
+        peopleNum:30,  // 纵坐标对应的值
+        progress: 45,  // 水球对应的值
+        totalHour:1000, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:3,
+        taskNum:10,  // 横坐标对应的值
+        peopleNum:45,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:100, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:4,
+        taskNum:5,  // 横坐标对应的值
+        peopleNum:6,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:10, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:0,
+        taskNum:2,  // 横坐标对应的值
+        peopleNum:12,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:80, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:2,
+        taskNum:15,  // 横坐标对应的值
+        peopleNum:40,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:1000, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:3,
+        taskNum:21,  // 横坐标对应的值
+        peopleNum:23,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:20, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:4,
+        taskNum:15,  // 横坐标对应的值
+        peopleNum:16,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:200, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:1,
+        taskNum:12,  // 横坐标对应的值
+        peopleNum:51,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:1000, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:4,
+        taskNum:20,  // 横坐标对应的值
+        peopleNum:13,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:600, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:1,
+        taskNum:27,  // 横坐标对应的值
+        peopleNum:15,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:2000, // 节点对应的大小
+    },
+
+    {
+        name:'企业员工工时管理平台',
+        type:4,
+        taskNum:38,  // 横坐标对应的值
+        peopleNum:43,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:1000, // 节点对应的大小
+    },
+
+    {
+        name:'企业员工工时管理平台',
+        type:3,
+        taskNum:12,  // 横坐标对应的值
+        peopleNum:12,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:500, // 节点对应的大小
+    },
+
+    {
+        name:'企业员工工时管理平台',
+        type:2,
+        taskNum:21,  // 横坐标对应的值
+        peopleNum:4,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:40, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:1,
+        taskNum:2,  // 横坐标对应的值
+        peopleNum:37,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:100, // 节点对应的大小
+    },
+
+    {
+        name:'企业员工工时管理平台',
+        type:0,
+        taskNum:34,  // 横坐标对应的值
+        peopleNum:60,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:1000, // 节点对应的大小
+    },
+    {
+        name:'企业员工工时管理平台',
+        type:2,
+        taskNum:21,  // 横坐标对应的值
+        peopleNum:56,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:2300, // 节点对应的大小
+    },
+
+    {
+        name:'企业员工工时管理平台',
+        type:3,
+        taskNum:23,  // 横坐标对应的值
+        peopleNum:34,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:1000, // 节点对应的大小
+    },
+
+    {
+        name:'企业员工工时管理平台',
+        type:4,
+        taskNum:33,  // 横坐标对应的值
+        peopleNum:45,  // 纵坐标对应的值
+        progress: 40,  // 水球对应的值
+        totalHour:2000, // 节点对应的大小
+    },
+
+
+]
+
+// 模拟数据类型
+export const mock_dataTypeDict = [
+    {dict_value:0, dict_label:'进行中',},
+    {dict_value:1, dict_label:'已完成',},
+    {dict_value:2, dict_label:'迭代中',},
+    {dict_value:3, dict_label:'运维中',},
+    {dict_value:4, dict_label:'已逾期',},
+]

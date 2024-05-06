@@ -19,13 +19,13 @@ export default defineConfig(({mode, command})=>{
       },
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
     },
-    // css:{
-    //   preprocessorOptions:{
-    //     scss:{
-    //       additionalData:'@import "@/assets/styles/index.scss";'
-    //     }
-    //   }
-    // },
+    css:{
+      preprocessorOptions:{
+        scss:{
+          additionalData:'@import "@/assets/styles/font.scss";'
+        }
+      }
+    },
     server:{
       port:8088,
       host:true,

@@ -1,41 +1,34 @@
 <script setup>
+import {onMounted} from "vue";
+import screenfull from "screenfull";
+import MainKanban from '@/components/MainKanban'
+import HotSort from '@/components/HotSort'
+import ProjPercent from '@/components/ProjPercent'
+import DangerProj from '@/components/DangerProj'
 
-import {onMounted, onBeforeUnmount} from "vue";
-
-// 窗口大小变化
-function resize(){
-  let rootWidth = document.documentElement.clientWidth || document.body.clientWidth
-  let rootDom = document.querySelector('html')
-  // 根据窗口大小，调整字体大小  1920 16px    y=kx
-  // y = kx + b
-  // 16 = 1920k + b
-  // 12 = 1024k + b
-  // 4 = 896k
-  // k = 0.00446
-  // 16 =
-  let k = 4/896
-  let b = 16 - 1920*k
-  rootDom.style.fontSize = (k*rootWidth+b) + 'px'
-}
-
-onMounted(()=>{
-  window.addEventListener('resize',resize)
-})
-
-onBeforeUnmount(()=>{
-  window.removeEventListener('resize',resize)
-})
 </script>
 
 <template>
   <div class="wrapper">
-    <div class="head">111</div>
+    <div class="head"></div>
     <div class="content">
-      <div class="main-content br-box">主区域</div>
+      <div class="main-content br-box">
+<!--        主看板-->
+        <main-kanban/>
+      </div>
       <div class="sub-content">
-        <div class="sub-top br-box">项目热度</div>
-        <div class="sub-middle br-box">项目占比</div>
-        <div class="sub-bottom br-box">风险项目</div>
+<!--        项目热度-->
+        <div class="sub-top br-box">
+          <hot-sort/>
+        </div>
+<!--        项目占比 -->
+        <div class="sub-middle br-box">
+          <proj-percent/>
+        </div>
+<!--        风险项目-->
+        <div class="sub-bottom br-box">
+          <danger-proj/>
+        </div>
       </div>
     </div>
   </div>
@@ -46,15 +39,13 @@ onBeforeUnmount(()=>{
 .wrapper{
   background: #e9effa;
   width: 100%;
-  height:100vh;
+  height:67.5rem;
   min-width: 1024px;
   min-height:768px;
+  max-width: 3840px;
+  max-height:1838px;
   display: flex;
   flex-direction: column;
-  &::-webkit-scrollbar{
-    width:0px;
-    display: none;
-  }
 }
 .head{
   background: #fff;
@@ -70,6 +61,7 @@ onBeforeUnmount(()=>{
   .main-content{
     width:86.56rem;
     margin-right:0.75rem;
+    height:100%;
   }
   // 侧边
   .sub-content{
@@ -85,7 +77,8 @@ onBeforeUnmount(()=>{
       margin-bottom: 0.75rem;
     }
     .sub-bottom{
-      flex:1
+      //flex:1
+      height:23.13rem;
     }
   }
 }

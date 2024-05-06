@@ -1,4 +1,7 @@
+/* 全局函数定义 */
 @import './global.scss';
+
+// px转rem
 @function p2r($size){
   @return $size / $font-size * 1rem;
 }

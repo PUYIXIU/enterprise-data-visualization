@@ -1,30 +1,52 @@
+/* 字体样式引入 */
+
 @font-face {
-  font-family: 'AlimamaShuHeiTi';
-  src: url('@/assets/fonts/AlimamaShuHeiTi-Bold.ttf');
+  font-family: "D-DINExp";
+  src: url('@/assets/fonts/D-DINExp.otf');
   font-display: swap;
 }
 @font-face {
-  font-family: 'Open Sans-SemiBold';
-  src: url('@/assets/fonts/OpenSans-Semibold.ttf');
+  font-family: "D-DINExp-Bold";
+  src: url('@/assets/fonts/D-DINExp-Bold.otf');
   font-display: swap;
 }
 @font-face {
-  font-family: 'Source Han Sans CN-Regular';
+  font-family: "SourceHanSansCN-Bold";
+  src: url('@/assets/fonts/SourceHanSansCN-Bold.otf');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SourceHanSansCN-ExtraLight";
+  src: url('@/assets/fonts/SourceHanSansCN-ExtraLight.otf');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SourceHanSansCN-Heavy";
+  src: url('@/assets/fonts/SourceHanSansCN-Heavy.otf');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SourceHanSansCN-Light";
+  src: url('@/assets/fonts/SourceHanSansCN-Light.otf');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SourceHanSansCN-Medium";
+  src: url('@/assets/fonts/SourceHanSansCN-Medium.otf');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SourceHanSansCN-Normal";
+  src: url('@/assets/fonts/SourceHanSansCN-Normal.otf');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SourceHanSansCN-Regular";
   src: url('@/assets/fonts/SourceHanSansCN-Regular.otf');
   font-display: swap;
 }
 @font-face {
-  font-family: 'D-DIN-Regular';
-  src: url('@/assets/fonts/D-DIN.otf');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Exp-DINExp-Bold';
-  src: url('@/assets/fonts/D-DINExp-Bold.ttf');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Exp-DINExp-Italic';
-  src: url('@/assets/fonts/D-DINExp-Italic.otf');
+  font-family: '时尚中黑简体';
+  src: url('@/assets/fonts/时尚中黑简体.TTF');
   font-display: swap;
 }
