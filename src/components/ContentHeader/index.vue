@@ -1,6 +1,12 @@
 <script setup>
 const props = defineProps(['title','btnList'])
 
+function btnClick(btn){
+  // 有2种状态切换的按钮
+  if(!btn.deactiveName) btn.deactiveName = btn.name
+  btn.onclick()
+}
+
 </script>
 
 <template>
@@ -8,9 +14,9 @@ const props = defineProps(['title','btnList'])
   <div class="kanban-head">
     <div class="title">{{title}}</div>
     <div class="tool-box">
-      <p class="tool-btn" v-for="(btn,i) in btnList" :key="i" @click="btn.onclick">
-        <span>{{btn.name}}</span>
-        <i :class="btn.class"></i>
+      <p class="tool-btn" v-for="(btn,i) in btnList" :key="i" @click="btnClick(btn)" :id="btn.id || ''">
+        <span>{{btn.active?btn.deactiveName:btn.name}}</span>
+        <i :class="btn.class" :style="btn.active?btn.deactiveIconStyle:{}"></i>
       </p>
     </div>
   </div>
@@ -54,6 +60,7 @@ const props = defineProps(['title','btnList'])
         width:1rem;
         height:1rem;
         background-color: currentColor;
+        transition:all 0.1s ease-in-out;
         &.reload{mask-image: $reload-icon;}
         &.expand{mask-image: $bottom-arrow-icon;}
       }

@@ -5,7 +5,6 @@ import {getpx} from "@/utils/style.js";
 const props = defineProps(['domId','grid','axisRange'])
 let chart
 let option
-let loading = ref(true);
 function resize(){
   chart && chart.resize();
 }
@@ -75,7 +74,6 @@ function initChart(){
     }]
   }
   chart.setOption(option)
-  loading.value = false
   window.addEventListener('resize',resize)
 }
 
@@ -105,12 +103,12 @@ onBeforeUnmount(()=>{
 <!-- 坐标轴 -->
 <div class="axis-wrapper full" :id="domId"></div>
   <!-- x轴名称 -->
-<span v-show="!loading" class="axis-name x" :style="{
+<span class="axis-name x" :style="{
   '--bottom':grid.bottom + 'px',
   '--right':grid.right + 'px',
 }">项目任务数量</span>
 <!-- y轴名称 -->
-<span v-show="!loading" class="axis-name y" :style="{
+<span class="axis-name y" :style="{
   '--top':grid.top + 'px',
   '--left':grid.left + 'px',
 }">参与人数</span>

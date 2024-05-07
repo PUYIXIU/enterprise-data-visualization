@@ -4,11 +4,15 @@
 // 最大适配：3840
 // 最小适配：1024
 export function resize(){
-    let rootWidth = document.documentElement.clientWidth || document.body.clientWidth
-    let rootDom = document.querySelector('html')
-    let k = 16/1920
-    let b = 16 - 1920*k
-    rootDom.style.fontSize = (k*rootWidth+b) + 'px'
+    return new Promise((resolve,reject)=>{
+        let rootWidth = document.documentElement.clientWidth || document.body.clientWidth
+        let rootDom = document.querySelector('html')
+        let k = 16/1920
+        let b = 16 - 1920*k
+        rootDom.style.fontSize = (k*rootWidth+b) + 'px'
+        resolve()
+    })
+
 }
 
 /**
@@ -21,6 +25,13 @@ export function getpx(rem){
     let fontSize = parseFloat( rootDom.style.fontSize)
     return rem*fontSize
 }
+
+export function getrem(px){
+    let rootDom = document.querySelector('html')
+    let fontSize = parseFloat( rootDom.style.fontSize)
+    return px/fontSize
+}
+
 
 /**
  *

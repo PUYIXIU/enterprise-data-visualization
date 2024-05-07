@@ -64,13 +64,10 @@ function initAll(){
 
 onMounted(()=>{
   initAll()
-  // 延时处理rem单位转换
-  setTimeout(()=>{
     grid.value.top += getpx(2.4)
     proxy.$refs.AxisRef.initChart()
     chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value)
     proxy.$refs.LiquidRef.initChart()
-  },50)
 })
 </script>
 
@@ -111,7 +108,8 @@ $padding-top:1.94rem;
     display: flex;
     width:100%;
     justify-content: space-between;
-    font-family: SourceHanSansCN-Normal;
+    font-family: SourceHanSansCN-Medium;
+    color: rgba(0, 17, 51, 0.75);
     font-size: 1rem;
     .tooltip-box{
       display: flex;
@@ -129,17 +127,19 @@ $padding-top:1.94rem;
           border-radius: 50%;
         }
         span{
-          color: #001133;
           display: inline-block;
           width:3.88rem;
           text-align: right;
         }
       }
     }
+    .tip-mes{
+      font-family: SourceHanSansCN-Regular;
+    }
   }
-  .canvas{
-    height:calc(100% - $nav-header-height);
-    position:relative;
-  }
+}
+.canvas{
+  height:calc(100% - $nav-header-height);
+  position:relative;
 }
 </style>

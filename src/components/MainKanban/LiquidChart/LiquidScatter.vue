@@ -10,13 +10,14 @@ let chart
 let option = {
   tooltip:{
     show:false,
-    trigger:'item'
+    trigger:'axis'
   },
   series:[]
 }
 
 // 水球模版
 const SeriesOptionTemp = {
+  name:'top',
   type:'liquidFill',
   data: [0],
   center:['50%','50%'], // 中心
@@ -26,14 +27,11 @@ const SeriesOptionTemp = {
     color:'rgba(52,38,246,0.75)',
     opacity:0.2,
   },
-  emphasis:{
-    itemStyle:{
-      opacity:1,
-    },
-  },
-  select:{
-    disabled:true,
-  },
+  // emphasis:{
+  //   itemStyle:{
+  //     opacity:1,
+  //   },
+  // },
   amplitude:10, // 水波曲度
   direction:'right', // 水波方向
   phase:0,
@@ -92,13 +90,50 @@ function resize(){
   chart && chart.resize()
 }
 
+
 // 初始化
 function initChart(){
   const targetDom = document.getElementById(props.domId)
-  chart = echarts.init(targetDom,'shine')
+  chart = echarts.init(targetDom,'shine',{
+    renderer:'svg'
+  })
   getOption()
   chart.setOption(option)
   window.addEventListener('resize',resize)
+  const svg = document.querySelector(`#${props.domId} svg`)
+  svg.addEventListener('mousemove',liquidHover)
+  svg.addEventListener('click',liquidSelect)
+}
+
+let lastSeriesIndex = -1
+let currentSeriesIndex = -1
+function liquidSelect(e){
+  console.log(`选中第个${currentSeriesIndex}水球`)
+}
+
+// 水球悬浮
+function liquidHover(e){
+  const svg = document.querySelector(`#${props.domId} svg`)
+  const svg_g = document.querySelector(`#${props.domId} svg g`)
+  const svg_children = Array.from(svg_g.children)
+  const domNum = 16; // 一个svg包含16个标签
+  let index = svg_children.indexOf(e.target)
+  if(index<0 && ['path','g'].includes(e.target.tagName)){
+    let parent = e.target.parentNode
+    index = svg_children.indexOf(parent)
+    if(index<0 && ['path','g'].includes(e.target.tagName)){
+      let parent = e.target.parentNode.parentNode
+      index = svg_children.indexOf(parent)
+    }
+  }
+  if(index>=0){
+    svg.style.cursor = 'pointer'
+    let seriesIndex = Math.floor(index/domNum)
+    lastSeriesIndex = currentSeriesIndex<0?seriesIndex:currentSeriesIndex // 上一个水球
+    currentSeriesIndex = seriesIndex // 当前激活水球
+  }else{
+    svg.style.cursor = 'default'
+  }
 }
 
 function getOption(){
@@ -143,6 +178,7 @@ function getOption(){
 
     // 基底蒙版
     const baseOption = JSON.parse(JSON.stringify(seriesOption))
+    baseOption.name = 'base'
     baseOption.backgroundStyle.color = getHSL(color, 20,{h_add,s_add,l_add})
     baseOption.backgroundStyle.shadowColor =  getHSL(color, 100,{h_add,s_add,l_add})
     baseOption.backgroundStyle.shadowOffsetX = 0
@@ -179,5 +215,6 @@ onBeforeUnmount(()=>{
   left:0;
   z-index:3;
   filter:saturate(1.4) contrast(1.2);
+  cursor: pointer;
 }
 </style>
