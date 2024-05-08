@@ -37,3 +37,30 @@ export const liquidColorList = [
         l_add:-5
     },
 ]
+
+export const liquidPieColor = [
+    { // 紫色
+        liquid:{
+            color:[218, 97, 70, 50],
+            h_add:0,
+            s_add:0,
+            l_add:-20
+        },
+        pie:[
+            { // 深紫色紫色
+                color: [262.86,56.25,56.08],
+                h_add:0,
+                s_add:0,
+                l_add:0,
+                alpha:100,
+            },
+            { // 浅紫色
+                color: [244.5,100,76.47],
+                h_add:0,
+                s_add:0,
+                l_add:0,
+                alpha:100,
+            },
+        ]
+    }
+]

@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import '@/assets/styles/index.scss'
+import 'vis-timeline/dist/vis-timeline-graph2d.min.css'
 import App from './App.vue'
 import router from './router'
 import {createPinia} from "pinia";

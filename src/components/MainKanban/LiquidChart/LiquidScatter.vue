@@ -4,8 +4,11 @@ import * as echarts from 'echarts'
 import 'echarts-liquidfill'
 import {getHSL} from "@/utils/style.js";
 import {liquidColorList} from "@/components/MainKanban/LiquidChart/colorConfig.js";
-const props = defineProps(["data","domId"])
+import {useLocalDataStore} from "@/storage/index.js";
 
+const props = defineProps(["data","domId"])
+const store = useLocalDataStore()
+const emit = defineEmits(['renderPie'])
 let chart
 let option = {
   tooltip:{
@@ -99,16 +102,35 @@ function initChart(){
   })
   getOption()
   chart.setOption(option)
+
   window.addEventListener('resize',resize)
   const svg = document.querySelector(`#${props.domId} svg`)
   svg.addEventListener('mousemove',liquidHover)
   svg.addEventListener('click',liquidSelect)
+
+  svgEventHandle(svg)
 }
+
+// 对svg事件进行处理 波浪和光晕不可点击
+function svgEventHandle(svg){
+  const allG = svg.querySelector('g').querySelectorAll('g')
+  allG.forEach(g=>{
+    g.style.pointerEvents = 'none'
+  })
+}
+
 
 let lastSeriesIndex = -1
 let currentSeriesIndex = -1
 function liquidSelect(e){
-  console.log(`选中第个${currentSeriesIndex}水球`)
+  store.currentProjectId = currentSeriesIndex
+  if(currentSeriesIndex !== undefined){
+    let base_series = option.series[currentSeriesIndex*2] // 指定series
+    let series = option.series[currentSeriesIndex*2+1] // 指定series
+    // emit('renderPie', currentSeriesIndex,  series.center, series.radius, series.label)
+    emit('renderPie', currentSeriesIndex,  [base_series,series])
+    console.log(`选中第个${currentSeriesIndex}水球`)
+  }
 }
 
 // 水球悬浮
@@ -126,18 +148,31 @@ function liquidHover(e){
       index = svg_children.indexOf(parent)
     }
   }
-  if(index>=0){
-    svg.style.cursor = 'pointer'
+
+  currentSeriesIndex = undefined
+  svg.style.cursor = 'default'
+  if(index>=0){ // svg dom判断点击到了东西
     let seriesIndex = Math.floor(index/domNum)
-    lastSeriesIndex = currentSeriesIndex<0?seriesIndex:currentSeriesIndex // 上一个水球
-    currentSeriesIndex = seriesIndex // 当前激活水球
-  }else{
-    svg.style.cursor = 'default'
+    let path = svg_children[seriesIndex * domNum] // 目标series的范围圆
+    let rect = path.getBoundingClientRect() // 范围圆的包围盒子
+    let x = e.x , y = e.y;
+    if(x>=rect.left && x<=rect.right && y>=rect.top && y<=rect.bottom){ // 目标在包围盒子内
+      let radius = rect.width/2 // 包围圆半径
+      let cx = rect.right - radius, cy = rect.bottom - radius // 圆心绝对位置
+      let dx = Math.abs(x - cx) , dy = Math.abs(y - cy)
+      let diff = Math.sqrt(dx*dx + dy*dy)
+      if(diff <= radius){
+        svg.style.cursor = 'pointer'
+        currentSeriesIndex = seriesIndex // 当前激活水球
+      }
+    }
   }
+  // lastSeriesIndex = currentSeriesIndex<0?seriesIndex:currentSeriesIndex // 上一个水球
 }
 
 function getOption(){
   option.series = []
+  props.data.sort((a,b)=>b.totalHour - a.totalHour)
   props.data.forEach((node,index)=>{
     let seriesOption = JSON.parse(JSON.stringify(SeriesOptionTemp))
     seriesOption.label.formatter =

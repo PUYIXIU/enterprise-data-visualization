@@ -1,11 +1,12 @@
 export const mock_liquidData = [
     {
-        name:'企业员工工时管理平台',
-        type:2, // 类型
-        taskNum:34,  // 横坐标对应的值
-        peopleNum:21,  // 纵坐标对应的值
-        progress: 50,  // 水球对应的值
-        totalHour:3585, // 节点对应的大小
+        id:0, // 项目id
+        name:'企业员工工时管理平台', // 项目名称
+        type:2, // 项目类型
+        taskNum:34,  // 任务数
+        peopleNum:21,  // 参与人数
+        progress: 50,  // 进度
+        totalHour:3585, // 总工时
     },
     {
         name:'企业员工工时管理平台',
@@ -98,7 +99,7 @@ export const mock_liquidData = [
 
     {
         name:'企业员工工时管理平台',
-        type:4,
+        type:1,
         taskNum:38,  // 横坐标对应的值
         peopleNum:43,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值

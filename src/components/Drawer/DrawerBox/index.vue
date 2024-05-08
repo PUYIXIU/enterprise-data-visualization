@@ -1,0 +1,47 @@
+<script setup>
+const props = defineProps(['height','title'])
+</script>
+
+<template>
+  <div class="drawer-box-wrapper" :style="{'--height':height}">
+    <div class="box-header">
+        <span></span>
+        <h5>{{props.title}}</h5>
+    </div>
+    <slot></slot>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.drawer-box-wrapper{
+  width:100%;
+  background-color: rgba(255, 255, 255,0.8);
+  border-radius: 1.25rem;
+  margin-bottom:0.75rem;
+  box-shadow: 0px 0px 3px 0px rgba(149,172,231,0.25);
+  height:var(--height);
+
+  padding:1.5rem;
+  box-sizing: border-box;
+  &:last-child{
+    margin-bottom: 0;
+  }
+}
+.box-header{
+  display: flex;
+  height:1.13rem;
+  align-items: center;
+  span{
+    display: inline-block;
+    width:0.13rem;
+    height:0.88rem;
+    background-color: #6459F4;
+    margin-right:0.37rem;
+  }
+  h5{
+    font-family: SourceHanSansCN-Normal;
+    color:#001133cc;
+    font-size: 0.75rem;
+  }
+}
+</style>

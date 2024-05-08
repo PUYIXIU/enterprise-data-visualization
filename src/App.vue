@@ -5,7 +5,7 @@ import MainKanban from '@/components/MainKanban'
 import HotSort from '@/components/HotSort'
 import ProjPercent from '@/components/ProjPercent'
 import DangerProj from '@/components/DangerProj'
-
+import Drawer from '@/components/Drawer'
 </script>
 
 <template>
@@ -31,6 +31,8 @@ import DangerProj from '@/components/DangerProj'
         </div>
       </div>
     </div>
+<!--    右侧抽屉-->
+    <drawer dom-id="right-drawer-id" />
   </div>
 </template>
 
@@ -46,6 +48,8 @@ import DangerProj from '@/components/DangerProj'
   max-height:1838px;
   display: flex;
   flex-direction: column;
+  position:absolute;
+  overflow-x: hidden;
 }
 .head{
   background: #fff;
