@@ -121,14 +121,15 @@ function svgEventHandle(svg){
 
 
 let lastSeriesIndex = -1
-let currentSeriesIndex = -1
+let currentSeriesIndex = -1 // 当前系列索引
+let currentRect = undefined // 当前包围盒
 function liquidSelect(e){
   store.currentProjectId = currentSeriesIndex
   if(currentSeriesIndex !== undefined){
     let base_series = option.series[currentSeriesIndex*2] // 指定series
     let series = option.series[currentSeriesIndex*2+1] // 指定series
     // emit('renderPie', currentSeriesIndex,  series.center, series.radius, series.label)
-    emit('renderPie', currentSeriesIndex,  [base_series,series])
+    emit('renderPie', currentSeriesIndex,  [base_series,series], currentRect)
     console.log(`选中第个${currentSeriesIndex}水球`)
   }
 }
@@ -150,6 +151,7 @@ function liquidHover(e){
   }
 
   currentSeriesIndex = undefined
+  currentRect = undefined
   svg.style.cursor = 'default'
   if(index>=0){ // svg dom判断点击到了东西
     let seriesIndex = Math.floor(index/domNum)
@@ -164,6 +166,7 @@ function liquidHover(e){
       if(diff <= radius){
         svg.style.cursor = 'pointer'
         currentSeriesIndex = seriesIndex // 当前激活水球
+        currentRect = rect // 当前包围盒
       }
     }
   }

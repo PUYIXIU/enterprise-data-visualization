@@ -38,6 +38,7 @@ import Drawer from '@/components/Drawer'
 
 <style scoped lang="scss">
 @import '@/assets/styles/fun.scss';
+@import '@/assets/styles/global.scss';
 .wrapper{
   background: #e9effa;
   width: 100%;
@@ -66,6 +67,7 @@ import Drawer from '@/components/Drawer'
     width:86.56rem;
     margin-right:0.75rem;
     height:100%;
+    height:$main-kanban-h;
   }
   // 侧边
   .sub-content{

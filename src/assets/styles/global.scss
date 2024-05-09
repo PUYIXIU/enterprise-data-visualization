@@ -2,8 +2,13 @@
 // 尺寸适配
 $font-size: 16px;
 $content-header-h:1.81rem;
-
+$main-kanban-h:62.19rem;
 // 图标
 $split-icon:url('@/assets/icons/split.svg');
-$reload-icon:url('@/assets/icons/reload.svg');
-$bottom-arrow-icon:url('@/assets/icons/bottom-arrow.svg');
+$reload-icon:url('@/assets/icons/reload.svg'); // 重置
+$bottom-arrow-icon:url('@/assets/icons/bottom-arrow.svg'); // 下拉
+$no-sort-icon:url('@/assets/icons/no-sort.svg'); // 不筛选
+$down-sort-icon:url('@/assets/icons/down-sort.svg'); // 降序
+$top-sort-icon:url('@/assets/icons/top-sort.svg'); // 升序
+$top-arrow:url('@/assets/icons/rise-arrow.svg'); // 上升
+$down-arrow:url('@/assets/icons/down-arrow.svg'); // 上升

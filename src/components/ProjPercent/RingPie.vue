@@ -85,6 +85,12 @@ onBeforeUnmount(()=>{
 }
 .pie-chart{
   z-index:2;
+  animation: rotate 60s linear infinite;
+}
+@keyframes rotate{
+  to{
+    transform:rotateZ(360deg)
+  }
 }
 .pie-title{
   z-index:3;

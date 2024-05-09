@@ -106,7 +106,11 @@ const data = ref(mockData)
         :height="(1.13+0.5)*Math.ceil(departmentOptions.length/2) + 0.5*2"
         v-model:value="queryParams.department" />
     <div class="kanban-content">
-      <div class="kanban-item" v-for="(item, index) in data" :style="{'--color':colorList[index]||'#B3B5BB'}">
+      <div class="kanban-item" v-for="(item, index) in data"
+           :style="{
+              '--color':colorList[index]||'#B3B5BB',
+              '--index':index,
+          }">
         <div class="index num">{{index + 1}}</div>
         <div class="split-line"></div>
         <div class="info-box">
@@ -144,6 +148,26 @@ const data = ref(mockData)
     margin-bottom:0.9rem;
     align-items: center;
     height: 2.5rem;
+    position:relative;
+    &:before{
+      content:'123';
+      position:absolute;
+      right:0;
+      top:0;
+      width:100%;
+      height:100%;
+      color:transparent;
+      z-index:1;
+      background: #ffffff;
+      animation:slide-in 1s linear forwards;
+      animation-delay: calc(var(--index) * 0.1s);
+      @keyframes slide-in  {
+        to{
+          width:0%;
+        }
+      }
+    }
+
     &:last-child{margin-bottom: 0;}
     .index{
       height: 2.13rem;

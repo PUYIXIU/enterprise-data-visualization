@@ -70,6 +70,7 @@ watch(()=>queryParams.department,(nv,ov)=>{
               '--color':colorList[index]||'#B3B5BB',
               '--bg-color':colorList[index]?colorList[index]+'33':'#D9D9D933',
               '--inner-color':colorList[index]||'#D9D9D9',
+              '--index':index,
            }">
         <div class="index num">{{index+1}}</div>
         <div class="progress-box">
@@ -112,6 +113,25 @@ watch(()=>queryParams.department,(nv,ov)=>{
     display: flex;
     color:#001133;
     margin-bottom:1.13rem;
+    position:relative;
+    &:before{
+      content:'123';
+      position:absolute;
+      right:0;
+      top:0;
+      width:100%;
+      height:100%;
+      color:transparent;
+      z-index:1;
+      background: #ffffff;
+      animation:slide-in 1s linear forwards;
+      animation-delay: calc(var(--index) * 0.1s);
+      @keyframes slide-in  {
+        to{
+          width:0%;
+        }
+      }
+    }
     &:last-child{margin-bottom: 0;}
     .num{font-family: D-DINExp}
     .index{

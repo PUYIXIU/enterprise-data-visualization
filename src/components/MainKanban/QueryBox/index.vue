@@ -3,23 +3,39 @@ import DropDownBox from '@/components/DropDownBox'
 import {ref,reactive} from 'vue'
 const visible = ref(false)
 const props = defineProps(['btnId'])
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change','switchType'])
 function expand(){
   visible.value = !visible.value
   emit('change', visible.value)
 }
 
 defineExpose({
-  expand
+  expand,
+  reset
 })
 
-const queryParams = reactive({
+const initQueryParams = {
+  showType:'图表展示',
+  priority:'全部',
+  timeRange:'近7天',
+  status:'全部',
+  product:'全部',
+}
+
+const queryParams = ref({
   showType:'图表展示',
   priority:'全部',
   timeRange:'近7天',
   status:'全部',
   product:'全部',
 })
+
+// 重置
+function reset(){
+  let showType = queryParams.value.showType
+  queryParams.value = JSON.parse(JSON.stringify(initQueryParams))
+  queryParams.value.showType = showType // 保留展示类型
+}
 
 const queryOptions = [
   {
@@ -82,7 +98,10 @@ const queryOptions = [
 ]
 
 function queryChange(option,propName){
-  queryParams[propName] = option.value
+  queryParams.value[propName] = option.value
+  if(propName == 'showType'){
+    emit('switchType', option.value)
+  }
 }
 
 </script>

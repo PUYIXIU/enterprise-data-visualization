@@ -1,12 +1,14 @@
+// 项目数据统计 水球图表模拟数据
 export const mock_liquidData = [
     {
-        id:0, // 项目id
+        id:0, // 项目id-唯一标识
         name:'企业员工工时管理平台', // 项目名称
         type:2, // 项目类型
         taskNum:34,  // 任务数
         peopleNum:21,  // 参与人数
         progress: 50,  // 进度
         totalHour:3585, // 总工时
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -15,6 +17,7 @@ export const mock_liquidData = [
         peopleNum:21,  // 纵坐标对应的值
         progress: 30,  // 水球对应的值
         totalHour:3000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -23,6 +26,7 @@ export const mock_liquidData = [
         peopleNum:30,  // 纵坐标对应的值
         progress: 45,  // 水球对应的值
         totalHour:1000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -31,6 +35,7 @@ export const mock_liquidData = [
         peopleNum:45,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:100, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -39,6 +44,7 @@ export const mock_liquidData = [
         peopleNum:6,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:10, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -47,6 +53,7 @@ export const mock_liquidData = [
         peopleNum:12,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:80, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -55,6 +62,7 @@ export const mock_liquidData = [
         peopleNum:40,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:1000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -63,6 +71,7 @@ export const mock_liquidData = [
         peopleNum:23,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:20, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -71,6 +80,7 @@ export const mock_liquidData = [
         peopleNum:16,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:200, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -79,6 +89,7 @@ export const mock_liquidData = [
         peopleNum:51,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:1000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -87,6 +98,7 @@ export const mock_liquidData = [
         peopleNum:13,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:600, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -95,6 +107,7 @@ export const mock_liquidData = [
         peopleNum:15,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:2000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
 
     {
@@ -104,6 +117,7 @@ export const mock_liquidData = [
         peopleNum:43,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:1000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
 
     {
@@ -113,6 +127,7 @@ export const mock_liquidData = [
         peopleNum:12,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:500, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
 
     {
@@ -122,6 +137,7 @@ export const mock_liquidData = [
         peopleNum:4,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:40, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -130,6 +146,7 @@ export const mock_liquidData = [
         peopleNum:37,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:100, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
 
     {
@@ -139,6 +156,7 @@ export const mock_liquidData = [
         peopleNum:60,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:1000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
     {
         name:'企业员工工时管理平台',
@@ -147,6 +165,7 @@ export const mock_liquidData = [
         peopleNum:56,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:2300, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
 
     {
@@ -156,6 +175,7 @@ export const mock_liquidData = [
         peopleNum:34,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:1000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
 
     {
@@ -165,6 +185,7 @@ export const mock_liquidData = [
         peopleNum:45,  // 纵坐标对应的值
         progress: 40,  // 水球对应的值
         totalHour:2000, // 节点对应的大小
+        commander:['张杰','周杰伦'], // 项目负责人
     },
 
 

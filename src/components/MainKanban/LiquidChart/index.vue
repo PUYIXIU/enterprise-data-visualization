@@ -30,6 +30,7 @@ const pieRendering = ref(false)
  * 初始化
  * 1. 初始化tooltip数据navList
  * 2. 初始化水球图数据（颜色，百分比）
+ * 3. 初始化饼图数据，半径权重
  */
 function initAll(){
   const targetDom = document.querySelector('.canvas')
@@ -64,6 +65,19 @@ function initAll(){
 
     let y = Math.ceil((item.peopleNum * yUnit + item.radius/2/100*contentHeight)/yUnit)+2
     axisRange.value.maxY < y && (axisRange.value.maxY = y)
+
+    // 处理饼图半径占比
+    item.peopleList.sort((a,b)=>a.totalHour - b.totalHour) // 工时排序
+    let maxPersonHour = item.peopleList[item.peopleList.length-1].totalHour
+    let minPersonHour = item.peopleList[0].totalHour
+    let diff = maxPersonHour - minPersonHour
+    item.peopleList.forEach(person=>{
+      if(diff == 0){
+        person.radiusValue = 1
+        return
+      }
+      person.radiusValue = (person.totalHour-minPersonHour)/diff
+    })
   })
 
   // 计算出最上和最右的元素，以此给坐标轴定标
@@ -81,6 +95,9 @@ onMounted(()=>{
 watch(()=>store.currentProjectId,(nv,ov)=>{
   if(nv == undefined){
     pieRendering.value = false
+    setTimeout(()=>{
+      proxy.$refs.LiquidPieRef.moveOut() // 饼图移出
+    },300) // 0.3s后饼图清除
   }
   // 散点层透明度添加
 
@@ -95,12 +112,12 @@ watch(()=>store.currentProjectId,(nv,ov)=>{
 
 // 渲染水球图
 // function renderLiquidPie(taskId, center, radius){
-function renderLiquidPie(taskId, seriesList){
+function renderLiquidPie(taskId, seriesList, rect){
   liquidPieData.value = mock_liquidPieData[taskId]
-  liquidPieColorConfig.value = liquidPieColor[0]
+  liquidPieColorConfig.value = liquidPieColor[liquidPieData.value.type]
   pieRendering.value = true
   nextTick(()=>{
-    proxy.$refs.LiquidPieRef.initChart(seriesList)
+    proxy.$refs.LiquidPieRef.initChart(seriesList, rect)
   })
 }
 
@@ -123,7 +140,7 @@ function renderLiquidPie(taskId, seriesList){
 <!--      散点图-->
       <LiquidScatter class="liquid-scatter" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" :data="chartData" @render-pie="renderLiquidPie" />
 <!--      饼图-->
-      <LiquidPie ref="LiquidPieRef" :data="liquidPieData" :color="liquidPieColorConfig" dom-id="liquid-pie-id" />
+      <LiquidPie class="pie-chart" :class="{fade:!pieRendering}" ref="LiquidPieRef" :grid="grid" :data="liquidPieData" :color="liquidPieColorConfig" dom-id="liquid-pie-id" pie-dom-id="liquid-circle-pie-id" />
     </div>
   </div>
 </template>
@@ -134,7 +151,7 @@ $nav-header-height:1rem;
 $padding-top:1.94rem;
 .chart-wrapper{
   background: #0c0c18;
-  width: 100%;
+  width: calc(100% - 2.25rem * 2);
   height:calc(100% - $content-header-h - $padding-top);
   background: white;
   padding-top:$padding-top;
@@ -184,6 +201,16 @@ $padding-top:1.94rem;
   transition-timing-function: ease-in-out;
   &.fade{
     opacity: 0.1;
+    pointer-events: none;
+  }
+}
+.pie-chart{
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+  &.fade{
+    opacity: 0;
   }
 }
 </style>
