@@ -5,7 +5,9 @@ import LiquidChart from '@/components/MainKanban/LiquidChart'
 import ProjectTable from '@/components/MainKanban/ProjectTable'
 import QueryBox from '@/components/MainKanban/QueryBox'
 import gsap from 'gsap'
+import {useLocalDataStore} from "@/storage/index.js";
 const {proxy} = getCurrentInstance()
+const store = useLocalDataStore()
 const expandBtnId = 'expand-query-id'
 const btnList = ref([
   {
@@ -29,9 +31,7 @@ const btnList = ref([
     class:'expand',
     id:expandBtnId,
     deactiveName:'收起筛选',
-    deactiveIconStyle:{
-      transform:'rotateZ(-180deg)'
-    },
+    deactiveIconStyle:{transform:'rotateZ(-180deg)'},
     onclick:()=>{
       proxy.$refs.QueryBoxRef.expand()
     },
@@ -44,26 +44,15 @@ function getChangeFun(index){
   }
 }
 
-
-function switchType(type){
-    if(type == '图表展示'){
-      showIndex.value = 0
-    }else{
-      showIndex.value = 1
-    }
-}
-
-// showIndex = 0 展示水球图 showIndex = 1 展示表格
-const showIndex = ref(0)
 </script>
 
 <template>
 <!--  主看板  控制轮播切换-->
   <div class="kanban-wrapper full">
     <content-header title="项目数据统计" :btn-list="btnList" />
-    <query-box ref="QueryBoxRef" class="query-box" :btn-id="expandBtnId" @change="(()=>getChangeFun(1))()" @switch-type="switchType" />
-    <liquid-chart class="tab-content full" :class="{show:showIndex == 0}" />
-    <project-table  class="tab-content" :class="{show:showIndex == 1}" />
+    <query-box ref="QueryBoxRef" class="query-box" :btn-id="expandBtnId" @change="(()=>getChangeFun(1))()"/>
+    <liquid-chart class="tab-content full" :class="{show:store.showType == 0}" />
+    <project-table  class="tab-content" :class="{show:store.showType == 1}" />
   </div>
 </template>
 

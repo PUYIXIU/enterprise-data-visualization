@@ -4,21 +4,9 @@ import ContentHeader from '@/components/ContentHeader'
 import {mockData} from './mockData.js'
 import {getpx} from "@/utils/style.js";
 import QueryBox from "@/components/QueryBox/index.vue";
+import {useLocalDataStore} from "@/storage/index.js";
 const {proxy} = getCurrentInstance()
-const btnList = ref([
-  {
-    name:'所有部门',
-    class:'expand',
-    deactiveIconStyle:{
-      transform:'rotateZ(-180deg)'
-    },
-    active:false,
-    id:'danger-proj-select-btn',
-    onclick:()=>{
-      proxy.$refs.DangerProjQueryRef.expand()
-    }
-  },
-])
+const store = useLocalDataStore()
 const colorList = [
   '#FF505D',
   '#6459F4',
@@ -26,30 +14,47 @@ const colorList = [
 ]
 const data = ref(mockData)
 
-const departmentOptions = [
-  {value:'所有部门',label:'所有部门'},
-  {value:'综合部',label:'综合部'},
-  {value:'商务部',label:'商务部'},
-  {value:'财务部',label:'财务部'},
-  {value:'工业设计部',label:'工业设计部'},
-  {value:'多媒体事业部',label:'多媒体事业部'},
-  {value:'产品测试部',label:'产品测试部'},
-  {value:'软件开发部',label:'软件开发部'},
-  {value:'AI部',label:'AI部'},
-]
 const queryParams = reactive({
-  department:'所有部门'
+  department:undefined
 })
+const btnList = ref([
+  {
+    name:'所有部门',
+    class:'expand',
+    deactiveIconStyle:{transform:'rotateZ(-180deg)'},
+    active:false,
+    id:'danger-proj-select-btn',
+    onclick:()=>{
+      proxy.$refs.DangerProjQueryRef.expand()
+    }
+  },
+])
 function getChangeFun(index){
   return function(visible){
     btnList.value[index].active = visible
   }
 }
+
+// 获取风险项目数据
+function getDangerProjData(){
+  console.log('获取风险项目数据')
+}
 watch(()=>queryParams.department,(nv,ov)=>{
   if(nv!==ov){
-    btnList.value[0].name=nv
-    btnList.value[0].deactiveName=nv
+    getDangerProjData()
+    let label = store.deptList.find(o=>o.value == nv).label
+    btnList.value[0].name = btnList.value[0].deactiveName = label
   }
+})
+
+const loading = ref(true)
+function init(){
+  queryParams.department = store.deptList[0].value
+}
+function ready(){loading.value = false}
+
+defineExpose({
+  init,ready
 })
 </script>
 
@@ -60,12 +65,12 @@ watch(()=>queryParams.department,(nv,ov)=>{
         ref="DangerProjQueryRef"
         class="query-box"
         :btn-id="btnList[0].id" dom-id="danger-proj-dom-id"
-        :options="departmentOptions"
-        :height="(1.13+0.5)*Math.ceil(departmentOptions.length/2) + 0.5*2"
+        :options="store.deptList"
+        :height="(1.13+0.5)*Math.ceil(store.deptList.length/2) + 0.5*2"
         @change="(()=>getChangeFun(0))()"
         v-model:value="queryParams.department" />
     <div class="kanban-content">
-      <div class="kanban-item"  v-for="(item, index) in data"
+      <div class="kanban-item" :class="{'ready':!loading}" v-for="(item, index) in data"
            :style="{
               '--color':colorList[index]||'#B3B5BB',
               '--bg-color':colorList[index]?colorList[index]+'33':'#D9D9D933',
@@ -124,13 +129,15 @@ watch(()=>queryParams.department,(nv,ov)=>{
       color:transparent;
       z-index:1;
       background: #ffffff;
-      animation:slide-in 1s linear forwards;
-      animation-delay: calc(var(--index) * 0.1s);
-      @keyframes slide-in  {
-        to{
-          width:0%;
+    }
+    &.ready:before{
+        animation: slide-in 1s linear forwards;
+        animation-delay: calc(var(--index) * 0.1s);
+        @keyframes slide-in {
+          to {
+            width: 0%;
+          }
         }
-      }
     }
     &:last-child{margin-bottom: 0;}
     .num{font-family: D-DINExp}

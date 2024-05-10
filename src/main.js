@@ -9,7 +9,7 @@ import {resize} from "@/utils/style.js";
 
 resize().then(res=>{
     const app = createApp(App)
-    app.use(router)
+    // app.use(router)
     const pinia = createPinia()
     app.use(pinia)
     app.use(ElementPlus)

@@ -1,11 +1,14 @@
 <script setup>
 import DropDownBox from '@/components/DropDownBox'
 import {ref,reactive} from 'vue'
+import {useLocalDataStore} from "@/storage/index.js";
 const visible = ref(false)
 const props = defineProps(['btnId'])
-const emit = defineEmits(['change','switchType'])
+const emit = defineEmits(['change'])
+const store = useLocalDataStore()
 function expand(){
   visible.value = !visible.value
+  // 通知父元素修改按钮的状态
   emit('change', visible.value)
 }
 
@@ -17,33 +20,28 @@ defineExpose({
 const initQueryParams = {
   showType:'图表展示',
   priority:'全部',
-  timeRange:'近7天',
+  // filterDay:1,
   status:'全部',
   product:'全部',
 }
 
-const queryParams = ref({
-  showType:'图表展示',
-  priority:'全部',
-  timeRange:'近7天',
-  status:'全部',
-  product:'全部',
-})
+const queryParams = ref(initQueryParams)
 
-// 重置
+// 重置筛选项
 function reset(){
-  let showType = queryParams.value.showType
-  queryParams.value = JSON.parse(JSON.stringify(initQueryParams))
-  queryParams.value.showType = showType // 保留展示类型
+  queryParams.value = {
+    ...initQueryParams,
+    showType:queryParams.value.showType
+  }
 }
 
 const queryOptions = [
   {
     title:'展示方式', // 标题
-    propName:'showType',
+    propName:(value)=>store.showType=value,
     options:[
-        {value:'图表展示',label:'图表展示'},
-        {value:'列表展示',label:'列表展示'},
+        {value:0,label:'图表展示'},
+        {value:1,label:'列表展示'},
     ]
   },
   {
@@ -56,18 +54,19 @@ const queryOptions = [
       {value:'低',label:'低'},
     ]
   },
-  {
-    title:'数据时间',
-    propName:'timeRange',
-    options:[
-      {value:'近7天',label:'近7天'},
-      {value:'近15天',label:'近15天'},
-      {value:'近1个月',label:'近1个月'},
-      {value:'近3个月',label:'近3个月'},
-      {value:'近6个月',label:'近6个月'},
-      {value:'近1年',label:'近1年'},
-    ]
-  },
+  // {
+  //   title:'数据时间',
+  //   propName:'filterDay',
+  //   options:[
+  //     {value:1,label:'近七天'},
+  //     {value:2,label:'近15天'},
+  //     {value:3,label:'近1个月'},
+  //     {value:4,label:'近2个月'},
+  //     {value:5,label:'近3个月'},
+  //     {value:6,label:'近半年'},
+  //     {value:7,label:'近一年'},
+  //   ]
+  // },
   {
     title:'项目状态',
     propName:'status',
@@ -97,24 +96,31 @@ const queryOptions = [
   },
 ]
 
+/**
+ * 表单修改
+ * @param option 修改选项
+ * @param propName 被修改变量
+ */
 function queryChange(option,propName){
-  queryParams.value[propName] = option.value
-  if(propName == 'showType'){
-    emit('switchType', option.value)
+  if(typeof propName === 'string'){ // 修改的是筛选数据
+    queryParams.value[propName] = option.value
+  }else if(typeof propName === 'function'){ // 修改的是函数
+    propName(option.value)
   }
 }
 
 </script>
 
 <template>
-  <drop-down-box :visible-box="visible" :height="12.81" dom-id="main-query-box" @blur="expand" :btn-id="btnId">
+  <drop-down-box :visible-box="visible" :height="10.81" dom-id="main-query-box" @blur="expand" :btn-id="btnId">
     <div class="query-inner full">
       <div class="query-form-item" v-for="item in queryOptions">
         <span class="query-title">{{item.title}}</span>
         <p class="options-list">
           <span
               v-for="option in item.options"
-              :class="{'active':option.value===queryParams[item.propName]}"
+              :class="{
+                'active':typeof item.propName === 'function'?option.value ===  store.showType : option.value===queryParams[item.propName]}"
               @click="queryChange(option, item.propName)"
           >{{option.label}}</span>
         </p>

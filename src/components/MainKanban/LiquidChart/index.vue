@@ -57,8 +57,9 @@ function initAll(){
   // 处理半径
   const maxR = 50, minR = 10 // 半径范围百分比
   let hours = chartData.value.map(i=>i.totalHour) // 总工时
-  let minHour = Math.min(...hours)
-  let maxHour = Math.max(...hours)
+  let minHour = Math.min(...hours) // 最大工时
+  let maxHour = Math.max(...hours) // 最小工时
+  // 水球半径根据排名进行映射
   chartData.value.forEach(item=>{
     item.waveValue = item.progress/100 // 50->0.5
     item.sizeValue = (item.totalHour - minHour) / (maxHour - minHour)

@@ -25,16 +25,10 @@ const SeriesOptionTemp = {
   data: [0],
   center:['50%','50%'], // 中心
   radius:'17%', // 半径
-  // silent:true,
   itemStyle:{
     color:'rgba(52,38,246,0.75)',
     opacity:0.2,
   },
-  // emphasis:{
-  //   itemStyle:{
-  //     opacity:1,
-  //   },
-  // },
   amplitude:10, // 水波曲度
   direction:'right', // 水波方向
   phase:0,
@@ -87,7 +81,6 @@ const SeriesOptionTemp = {
   animationDurationUpdate: 1000,
   animationEasingUpdate: 'cubicOut',
 }
-
 
 function resize(){
   chart && chart.resize()

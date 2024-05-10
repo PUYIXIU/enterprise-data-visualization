@@ -79,10 +79,10 @@ const sortTableData = computed(()=>{
         </template>
       </el-table-column>
       <el-table-column prop="subCommander" label="分管负责人" show-overflow-tooltip header-align="center" class-name="medium"></el-table-column>
-      <el-table-column prop="status" label="状态" show-overflow-tooltip header-align="center" class-name="lighter"></el-table-column>
-      <el-table-column prop="startTime" label="开始时间" header-align="center" class-name="DIN" ></el-table-column>
-      <el-table-column prop="endTime" label="结束时间" header-align="center" class-name="DIN" ></el-table-column>
-      <el-table-column prop="duration" label="已开启天数" header-align="center" class-name="DIN">
+      <el-table-column prop="status" label="状态" show-overflow-tooltip header-align="center" class-name="lighter" :width="getpx(6)" ></el-table-column>
+      <el-table-column prop="startTime" label="开始时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
+      <el-table-column prop="endTime" label="结束时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
+      <el-table-column prop="duration" label="已开启天数" header-align="center" class-name="DIN" :width="getpx(6)" >
         <template #header>
           <p class="header-p" @click="changeSortProp('duration')">
             <span>已开启天数</span>
@@ -98,7 +98,7 @@ const sortTableData = computed(()=>{
           </p>
         </template>
       </el-table-column>
-      <el-table-column prop="progress" label="项目进度" header-align="center" class-name="DIN">
+      <el-table-column prop="progress" label="项目进度" header-align="center" class-name="DIN" >
         <template #header>
           <p class="header-p" @click="changeSortProp('progress')">
             <span>项目进度</span>
@@ -112,7 +112,7 @@ const sortTableData = computed(()=>{
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="hot" label="项目热度" header-align="center" class-name="DIN">
+      <el-table-column prop="hot" label="项目热度" header-align="center" class-name="DIN"  :width="getpx(6)" >
         <template #header>
           <p class="header-p" @click="changeSortProp('hot')">
             <span>项目热度</span>

@@ -1,33 +1,95 @@
 <script setup>
-import {onMounted} from "vue";
-import screenfull from "screenfull";
 import MainKanban from '@/components/MainKanban'
 import HotSort from '@/components/HotSort'
 import ProjPercent from '@/components/ProjPercent'
 import DangerProj from '@/components/DangerProj'
 import Drawer from '@/components/Drawer'
+import Loading from "@/components/Loading/Loading.vue";
+import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
+import {onMounted,getCurrentInstance,ref} from 'vue'
+import request from '@/utils/request.js'
+const store = useLocalDataStore()
+const {proxy} = getCurrentInstance()
+let app_init = true
+const selectProjectPopularity = params => request.get('/erp/visualize/selectProjectPopularity', {params}) // 请求项目热度
+
+// 获取主表格数据
+function getMainChartData(params=defaultHotParams){
+  !app_init && (store.loading = true)
+  console.log(store.loading)
+  return selectProjectPopularity(params).then(res=>{
+    !app_init && (store.loading = false)
+    console.log(store.loading)
+    console.log(res)
+  })
+}
+
+// 获取部门列表
+function getDeptData(){
+  return new Promise((resolve,reject)=>{
+    store.deptList = [
+      {value:0,label:'所有部门'},
+      {value:1,label:'综合部'},
+      {value:2,label:'商务部'},
+      {value:3,label:'财务部'},
+      {value:4,label:'工业设计部'},
+      {value:5,label:'多媒体事业部'},
+      {value:6,label:'产品测试部'},
+      {value:7,label:'软件开发部'},
+      {value:8,label:'AI部'},
+    ]
+    console.log('获取部门数据')
+    proxy.$refs.ProjPercentRef.init() // 初始化项目占比
+    proxy.$refs.DangerProjRef.init() // 初始化项目占比
+    resolve()
+  })
+}
+
+const loading_delay = ref(0)  // loading消失延迟
+const loading_duration = ref(0.5) // loading消失持续时间
+const total_time = loading_delay.value + loading_duration.value
+function init(){
+  Promise.all([
+      getMainChartData(), // 准备主屏数据
+      getDeptData(), // 准备部门数据
+  ]).then(res=>{
+    console.log('数据准备结束')
+    app_init = false // 初始化结束
+    store.loading = false // 数据准备结束
+    setTimeout(()=>{ // 执行入场动画的效果
+      proxy.$refs.DangerProjRef.ready() // 初始化项目占比
+    },(total_time-0.2)*1000)
+  })
+}
+
+onMounted(()=>{
+  init()
+})
+
+
 </script>
 
 <template>
+  <Loading :delay="loading_delay" :duration="loading_duration" />
   <div class="wrapper">
     <div class="head"></div>
     <div class="content">
       <div class="main-content br-box">
 <!--        主看板-->
-        <main-kanban/>
+<!--        <main-kanban/>-->
       </div>
       <div class="sub-content">
 <!--        项目热度-->
         <div class="sub-top br-box">
-          <hot-sort/>
+          <hot-sort @query-change="getMainChartData" />
         </div>
 <!--        项目占比 -->
         <div class="sub-middle br-box">
-          <proj-percent/>
+          <proj-percent ref="ProjPercentRef" />
         </div>
 <!--        风险项目-->
         <div class="sub-bottom br-box">
-          <danger-proj/>
+          <danger-proj ref="DangerProjRef" />
         </div>
       </div>
     </div>
