@@ -59,7 +59,7 @@ const sortTableData = computed(()=>{
     <el-table :data="sortTableData" :height="'100%'">
       <el-table-column prop="productName" label="产品名称" :width="getpx(9.19)" show-overflow-tooltip header-align="left"></el-table-column>
       <el-table-column prop="fakeName" label="代号" show-overflow-tooltip header-align="center" :width="getpx(5)"></el-table-column>
-      <el-table-column prop="predict" label="优先级" show-overflow-tooltip :width="getpx(4.69)" header-align="center">
+      <el-table-column prop="predict" label="优先级" header-align="center">
         <template #default="{row}">
         <span class="predict-item"
               :style="{
@@ -69,7 +69,7 @@ const sortTableData = computed(()=>{
         </template>
       </el-table-column>
       <el-table-column prop="commander" label="产品负责人" show-overflow-tooltip header-align="center" class-name="medium"></el-table-column>
-      <el-table-column prop="product" label="产品业务线" show-overflow-tooltip :width="getpx(7.5)" header-align="center">
+      <el-table-column prop="product" label="产品业务线" :width="getpx(8)" header-align="center">
         <template #default="{row}">
         <span class="predict-item"
               :style="{
@@ -80,9 +80,9 @@ const sortTableData = computed(()=>{
       </el-table-column>
       <el-table-column prop="subCommander" label="分管负责人" show-overflow-tooltip header-align="center" class-name="medium"></el-table-column>
       <el-table-column prop="status" label="状态" show-overflow-tooltip header-align="center" class-name="lighter"></el-table-column>
-      <el-table-column prop="startTime" label="开始时间" show-overflow-tooltip header-align="center" class-name="DIN" :width="getpx(6.5)"></el-table-column>
-      <el-table-column prop="endTime" label="结束时间" show-overflow-tooltip header-align="center" class-name="DIN" :width="getpx(6.5)"></el-table-column>
-      <el-table-column prop="duration" label="已开启天数" show-overflow-tooltip header-align="center" class-name="DIN" :width="getpx(7.5)">
+      <el-table-column prop="startTime" label="开始时间" header-align="center" class-name="DIN" ></el-table-column>
+      <el-table-column prop="endTime" label="结束时间" header-align="center" class-name="DIN" ></el-table-column>
+      <el-table-column prop="duration" label="已开启天数" header-align="center" class-name="DIN">
         <template #header>
           <p class="header-p" @click="changeSortProp('duration')">
             <span>已开启天数</span>
@@ -90,7 +90,7 @@ const sortTableData = computed(()=>{
           </p>
         </template>
       </el-table-column>
-      <el-table-column prop="rest" label="剩余天数" show-overflow-tooltip header-align="center" class-name="DIN">
+      <el-table-column prop="rest" label="剩余天数" header-align="center" class-name="DIN">
         <template #header>
           <p class="header-p" @click="changeSortProp('rest')">
             <span>剩余天数</span>
@@ -98,7 +98,7 @@ const sortTableData = computed(()=>{
           </p>
         </template>
       </el-table-column>
-      <el-table-column prop="progress" label="项目进度" show-overflow-tooltip header-align="center" class-name="DIN">
+      <el-table-column prop="progress" label="项目进度" header-align="center" class-name="DIN">
         <template #header>
           <p class="header-p" @click="changeSortProp('progress')">
             <span>项目进度</span>
@@ -112,7 +112,7 @@ const sortTableData = computed(()=>{
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="hot" label="项目热度" show-overflow-tooltip header-align="center" class-name="DIN">
+      <el-table-column prop="hot" label="项目热度" header-align="center" class-name="DIN">
         <template #header>
           <p class="header-p" @click="changeSortProp('hot')">
             <span>项目热度</span>
@@ -164,6 +164,7 @@ $padding-top:1.5rem;
   height: 1.44rem;
   padding:0.2rem 0.88rem;
   font-family: SourceHanSansCN-Medium;
+  white-space: nowrap;
 }
 .header-p{
   display: flex;

@@ -15,17 +15,21 @@ const navList = ref([]) // 图例列表
 const chartData = ref(mock_liquidPieData) // 水球数据
 const liquidPieData = ref(undefined) // 饼图数据
 const liquidPieColorConfig = ref(undefined) // 饼图配色
-const grid = ref({ // 坐标系栅格
-  top:10,
-  bottom:45,
-  left:30,
-  right:15,
-})
+const grid = ref(getGrid())
 const axisRange = ref({
   maxX:0,
   maxY:0,
 })
 const pieRendering = ref(false)
+
+function getGrid(){
+  return { // 坐标系栅格
+    top:getpx(0.625),
+    bottom:getpx(2.8125),
+    left:getpx(1.875),
+    right:getpx(0.9375),
+  }
+}
 /**
  * 初始化
  * 1. 初始化tooltip数据navList
@@ -85,11 +89,19 @@ function initAll(){
 
 onMounted(()=>{
   initAll()
-    grid.value.top += getpx(2.4)
-    proxy.$refs.AxisRef.initChart()
-    chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value)
-    proxy.$refs.LiquidRef.initChart()
+  grid.value.top += getpx(2.4)
+  proxy.$refs.AxisRef.initChart()
+  chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
+  proxy.$refs.LiquidRef.initChart()
 })
+
+// 窗口resize
+function resize(){
+  grid.value = getGrid()
+  // 重新注册坐标
+  chartData.value =  proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
+  proxy.$refs.LiquidRef.updateChart() // 更新散点图
+}
 
 // // 监听到有水球被点中了
 watch(()=>store.currentProjectId,(nv,ov)=>{
@@ -99,16 +111,12 @@ watch(()=>store.currentProjectId,(nv,ov)=>{
       proxy.$refs.LiquidPieRef.moveOut() // 饼图移出
     },300) // 0.3s后饼图清除
   }
-  // 散点层透明度添加
-
-  // 找到目标任务，获取目标任务数据（目标任务id）
-
-  // 将被点击的散点的center和radius传递给饼状水球图
-
-  // 在center位置创建饼状水球图
-
-  // 饼状水球图位置由center转到画布中心
 })
+
+// 更新饼图
+function updatePie(taskId, seriesList, rect){
+  proxy.$refs.LiquidPieRef.updateChart(seriesList, rect)
+}
 
 // 渲染水球图
 // function renderLiquidPie(taskId, center, radius){
@@ -136,9 +144,9 @@ function renderLiquidPie(taskId, seriesList, rect){
     </div>
     <div class="canvas">
 <!--      坐标系-->
-      <Axis ref="AxisRef" dom-id="axisId" :grid="grid" :axis-range="axisRange"/>
+      <Axis ref="AxisRef" dom-id="axisId" :grid="grid" :axis-range="axisRange" @resize="resize" />
 <!--      散点图-->
-      <LiquidScatter class="liquid-scatter" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" :data="chartData" @render-pie="renderLiquidPie" />
+      <LiquidScatter class="liquid-scatter" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" :data="chartData" @render-pie="renderLiquidPie" @update-pie="updatePie" />
 <!--      饼图-->
       <LiquidPie class="pie-chart" :class="{fade:!pieRendering}" ref="LiquidPieRef" :grid="grid" :data="liquidPieData" :color="liquidPieColorConfig" dom-id="liquid-pie-id" pie-dom-id="liquid-circle-pie-id" />
     </div>

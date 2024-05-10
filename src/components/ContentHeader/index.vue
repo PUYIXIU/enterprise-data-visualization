@@ -61,6 +61,7 @@ function btnClick(btn){
         height:1rem;
         background-color: currentColor;
         transition:all 0.1s ease-in-out;
+        mask-size:100% 100%;
         &.reload{mask-image: $reload-icon;}
         &.expand{mask-image: $bottom-arrow-icon;}
       }

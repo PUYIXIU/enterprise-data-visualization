@@ -194,8 +194,8 @@ export const mock_liquidData = [
 // 模拟数据类型
 export const mock_dataTypeDict = [
     {dict_value:0, dict_label:'进行中',},
-    {dict_value:1, dict_label:'已完成',},
     {dict_value:2, dict_label:'迭代中',},
     {dict_value:3, dict_label:'运维中',},
+    {dict_value:1, dict_label:'已完成',},
     {dict_value:4, dict_label:'已逾期',},
 ]

@@ -2,13 +2,13 @@
 import {onMounted, nextTick, onBeforeUnmount} from "vue";
 import * as echarts from 'echarts'
 import 'echarts-liquidfill'
-import {getHSL} from "@/utils/style.js";
+import {getHSL, getpx} from "@/utils/style.js";
 import {liquidColorList} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 import {useLocalDataStore} from "@/storage/index.js";
 
 const props = defineProps(["data","domId"])
 const store = useLocalDataStore()
-const emit = defineEmits(['renderPie'])
+const emit = defineEmits(['renderPie','updatePie'])
 let chart
 let option = {
   tooltip:{
@@ -93,6 +93,18 @@ function resize(){
   chart && chart.resize()
 }
 
+// 图表内尺寸自适应
+function updateChart(){
+  if(!chart) return
+  getOption()
+  chart.setOption(option,{notMerge:false})
+  // 检查当前是否绘制了饼图，如果绘制了，需要更新饼图的位置
+  if(currentSeriesIndex !== undefined && currentSeriesIndex >=0){
+    let base_series = option.series[currentSeriesIndex*2] // 指定series
+    let series = option.series[currentSeriesIndex*2+1] // 指定series
+    emit('updatePie', currentSeriesIndex,  [base_series,series], currentRect)
+  }
+}
 
 // 初始化
 function initChart(){
@@ -128,9 +140,7 @@ function liquidSelect(e){
   if(currentSeriesIndex !== undefined){
     let base_series = option.series[currentSeriesIndex*2] // 指定series
     let series = option.series[currentSeriesIndex*2+1] // 指定series
-    // emit('renderPie', currentSeriesIndex,  series.center, series.radius, series.label)
     emit('renderPie', currentSeriesIndex,  [base_series,series], currentRect)
-    console.log(`选中第个${currentSeriesIndex}水球`)
   }
 }
 
@@ -193,10 +203,10 @@ function getOption(){
     // 副标题字体范围：22-10
     // 百分号字体范围： 12-8
     // lineHeight范围 40-18
-    const maxT = 30, minT = 12
-    const maxS = 22, minS = 8
-    const maxP = 12, minP = 8
-    const maxL = 40, minL = 18
+    const maxT = getpx(1.875), minT = getpx(0.75)
+    const maxS = getpx(1.375), minS = getpx(0.5)
+    const maxP = getpx(0.75), minP = getpx(0.5)
+    const maxL = getpx(2.5), minL = getpx(1.125)
     seriesOption.label.rich.title.fontSize = (maxT - minT)*node.sizeValue + minT
     seriesOption.label.rich.subtitle.fontSize = (maxS - minS)*node.sizeValue + minS
     seriesOption.label.rich.percent.fontSize = (maxP - minP)*node.sizeValue + minP
@@ -221,7 +231,7 @@ function getOption(){
     baseOption.backgroundStyle.shadowColor =  getHSL(color, 100,{h_add,s_add,l_add})
     baseOption.backgroundStyle.shadowOffsetX = 0
     baseOption.backgroundStyle.shadowOffsetY = 0
-    baseOption.backgroundStyle.shadowBlur = 15
+    baseOption.backgroundStyle.shadowBlur = getpx(1)
     baseOption.label = {show:false}
     baseOption.data = [node.waveValue]
     baseOption.silent = true
@@ -234,7 +244,8 @@ function getOption(){
 }
 
 defineExpose({
-  initChart
+  initChart,
+  updateChart
 })
 onBeforeUnmount(()=>{
   window.removeEventListener('resize',resize)

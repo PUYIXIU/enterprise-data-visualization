@@ -1,5 +1,5 @@
 <script setup>
-import {computed} from "vue";
+import {computed, onMounted, onBeforeUnmount, ref} from "vue";
 
 const props = defineProps(['domId','data'])
 
@@ -17,6 +17,29 @@ const barHeightList = computed(()=>{
   })
   return result
 })
+
+// 鼠标位置
+const mouse_position = ref(['0%','0%'])
+
+function mouseMoveEvent(e){
+  if(!props.data.realProgress) return;
+  let totalWidth = this.clientWidth
+  let x = e.offsetX
+  let y = e.offsetY
+  let initX = totalWidth/100*props.data.realProgress
+  mouse_position.value = [
+      `${x-initX}px`,
+      `${y}px`,
+  ]
+
+}
+onMounted(()=>{
+  document.querySelector('.real-bar').addEventListener('mousemove',mouseMoveEvent)
+})
+onBeforeUnmount(()=>{
+  document.querySelector('.real-bar').removeEventListener('mousemove',mouseMoveEvent)
+})
+
 
 </script>
 
@@ -45,7 +68,10 @@ const barHeightList = computed(()=>{
           <span class="text">{{data.realStartTime}}</span>
         </div>
         <span class="text real-bar-end-time">{{data.realEndTime}}</span>
-        <div id="real-bar-split">
+        <div id="real-bar-split" :style="{
+          '--offsetX':mouse_position[0],
+          '--offsetY':mouse_position[1],
+        }">
           <div class="real-bar-tip">
             <p>截止到{{data.currentTime}}</p>
             <p>
@@ -130,6 +156,7 @@ const barHeightList = computed(()=>{
     transition-property: box-shadow;transition-timing-function: ease-in-out;transition-duration: 0.1s;
     &:hover{box-shadow:inset 0px 0px 14px rgba(174, 199, 255, 0.3);}
     #real-bar-fore{
+      pointer-events: none;
       display: flex;
       position:absolute;
       height:100%;
@@ -141,6 +168,7 @@ const barHeightList = computed(()=>{
       }
     }
     .real-bar-end-time{
+      pointer-events: none;
       position:absolute;
       right:0.13rem;
       color:#3870F2;
@@ -149,6 +177,8 @@ const barHeightList = computed(()=>{
       opacity: 1;
     }
     #real-bar-split{
+      z-index:999;
+      pointer-events: none;
       position:absolute;
       height: 1.5rem;
       width:0.13rem;
@@ -157,9 +187,11 @@ const barHeightList = computed(()=>{
       transform:translateY(20%);
       background: linear-gradient( 180deg, #BAB5FF 0%, #6459F4 100%);
       .real-bar-tip{
-        opacity: 0;transition-property: opacity;transition-timing-function: ease-in-out;
+        opacity: 0;transition-property: opacit;transition-timing-function: ease-in-out;
         transition-duration: 0.2s;
         position:absolute;
+        top:calc(-50% + var(--offsetY));
+        left:var(--offsetX);
         transform:translateY(-80%) translateX(0.5rem);
         width: 7.38rem;
         height: 3.44rem;

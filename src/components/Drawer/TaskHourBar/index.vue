@@ -17,11 +17,6 @@ let option = {
     show:true,
     trigger:'axis',
     axisPointer:{type:'shadow'},
-    // formatter:(params)=>{
-    //   let data = params[0].data
-    //   return`{b}`
-    // },
-    // formatter:'{b}<br/>{c}h',
     formatter:`
       <p style=";height:1.13rem;font-family: SourceHanSansCN-Regular;font-size:0.75rem;color: rgba(29,29,29,0.7);">{b}</p>
       <p style="margin-top:0px;height:1.13rem;color:#87ABFE;font-family: SourceHanSansCN-Regular;font-size:0.88rem;">
@@ -79,7 +74,11 @@ let option = {
 }
 
 function resize(){
+  option.xAxis[0].axisLabel.width = getpx(2.94)
+  option.xAxis[0].axisLabel.fontSize = getpx(0.75)
+  option.series[0].barWidth = getpx(1.13)
   chart && chart.resize();
+  chart && chart.setOption(option,{notMerge:true});
 }
 
 function initChart(){

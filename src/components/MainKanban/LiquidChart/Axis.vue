@@ -3,10 +3,14 @@ import * as echarts from 'echarts'
 import {onMounted,onBeforeUnmount,ref} from "vue";
 import {getpx} from "@/utils/style.js";
 const props = defineProps(['domId','grid','axisRange'])
+const emit = defineEmits(['resize'])
 let chart
 let option
 function resize(){
   chart && chart.resize();
+  setTimeout(()=>{
+    emit('resize') // 通知重定位
+  })
 }
 
 function initChart(){

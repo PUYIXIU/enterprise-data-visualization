@@ -82,6 +82,7 @@ const showIndex = ref(0)
   position:absolute;
   top:calc($content-header-h + 0.75rem);
   left:2.25rem;
+  width:calc(100% - 2.25rem * 2);
   opacity:0;
   transition-property: opacity;
   transition-duration: 0.3s;

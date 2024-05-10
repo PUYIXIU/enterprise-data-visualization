@@ -130,6 +130,22 @@ function initChart(seriesList, rect){
   },0)
 }
 
+// 更新饼图
+function updateChart(seriesList, rect){
+  if(!liquidChart) return // 更新中心水球图目的：自适应内部文字
+  let keepCenter = liquidFillSeriesOption[0].center
+  liquidFillSeriesOption = seriesList
+  liquidFillSeriesOption.forEach(option=>option.center = keepCenter)
+  getLiquidOption()
+  liquidChart.setOption(liquidOption,{notMerge:false})  // 中心水球图更新完毕
+  moveIn()
+  getPieOption()
+  pieChart.setOption(pieOption)
+  // 修改整个图表的中心位置
+
+
+}
+
 // 获取画布饼图展示的中心点 [30%, 50%]
 function getCanvasPieCenter(){
   const target = document.getElementById(props.domId)
@@ -147,14 +163,21 @@ onMounted(()=>{
   getCanvasPieCenter()
 })
 
-function moveIn(){
-  // 求取整个画布的中心点
+// 获取整个画布的中心点
+function getRectCenter(){
   rectCenter = [
-      boundRect.left + boundRect.width/2,
-      boundRect.top + boundRect.height/2
+    boundRect.left + boundRect.width/2,
+    boundRect.top + boundRect.height/2
   ] // 目标圆当前中心点
   const dX = center[0] - rectCenter[0]
   const dY = center[1] - rectCenter[1]
+  return [dX,dY]
+}
+
+
+function moveIn(){
+  // 求取整个画布的中心点 rectCenter
+  const [dX, dY] = getRectCenter()
 
   const currentRadius = parseFloat(liquidFillSeriesOption[0].radius)
   const scaleLevel = targetRadius / currentRadius
@@ -176,16 +199,7 @@ function moveIn(){
       const targetDom = document.querySelector(`#${props.pieDomId} svg > g`)
       targetDom.style.transformOrigin = [canvasSize[0]*0.3+props.grid.left+'px', canvasSize[1]*0.5 + 10 + 'px'].join(' ')
       targetDom.classList.add('rotate')
-      // gsap.set(`#${props.pieDomId} svg > g`,{
-      //   transformOrigin:[canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + 10].join(' ')
-      // })
-      // gsap.fromTo(`#${props.pieDomId} svg > g`,{
-      //   rotationZ:0,
-      // },{
-      //   rotationZ:360*5,
-      //   duration:1,
-      //   ease:'power2.inOut'
-      // })
+
     }
   })
 }
@@ -210,11 +224,10 @@ function getLiquidOption(){
 function getPieOption(){
   let {series} = pieOption
   let {peopleList:data}  = props.data
-  console.log(props.grid.top)
   series = []
   const innerRadius = parseFloat(liquidOption.series[1].radius) // 水球图的半径
   // const center = liquidOption.series[1].center //水球的中心点
-  pieOptionTemp.center = [canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + 10]
+  pieOptionTemp.center = [canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + getpx(0.625)]
   pieOptionTemp.radius[0] = `${innerRadius+3}%`
   pieOptionTemp.label.rich.num.fontSize=getpx(1.5)
   pieOptionTemp.label.rich.unit.fontSize=getpx(0.8)
@@ -272,6 +285,7 @@ function getPieOption(){
 
 defineExpose({
   initChart,
+  updateChart,
   moveOut
 })
 </script>
