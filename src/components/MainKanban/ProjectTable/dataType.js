@@ -24,6 +24,7 @@ export const productType = {
     '业务系列':colors.lightGreen,
     '链工宝':colors.berryRed,
     '实操业务':colors.waterBlue,
+    '实操系统':colors.waterBlue,
     '展馆业务':colors.orangeRed,
     '化工业务':colors.blueGreen,
     '课程内容':colors.orange,

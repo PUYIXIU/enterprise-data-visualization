@@ -49,6 +49,7 @@ function getOption(){
       }
     }
   })
+  console.log(totalNum.value)
   option.series[0].data = data
 
 }
@@ -104,6 +105,10 @@ onBeforeUnmount(()=>{
   justify-content: center;
   color:#001133;
   .num{
+    max-width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: 1.5rem;
     font-family: D-DINExp;
   }

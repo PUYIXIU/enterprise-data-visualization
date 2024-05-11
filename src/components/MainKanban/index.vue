@@ -6,7 +6,9 @@ import ProjectTable from '@/components/MainKanban/ProjectTable'
 import QueryBox from '@/components/MainKanban/QueryBox'
 import gsap from 'gsap'
 import {useLocalDataStore} from "@/storage/index.js";
+import {copy} from "@/components/MainKanban/ProjectTable/liquidChartData.js";
 const {proxy} = getCurrentInstance()
+const emit = defineEmits(['filterMainData'])
 const store = useLocalDataStore()
 const expandBtnId = 'expand-query-id'
 const btnList = ref([
@@ -38,6 +40,46 @@ const btnList = ref([
     active:false,
   },
 ])
+
+let chartData = []
+let tableData = []
+// 图表数据处理结束
+function chartDataReady(src){
+  chartData = src
+  proxy.$refs.LiquidChartRef.dataReady(copy(src))
+}
+
+// 表格数据处理结束
+function tableDataReady(src){
+  tableData = src
+  proxy.$refs.ProjTableRef.dataReady(copy(src))
+
+}
+
+// 数据过滤
+function filterData(params){
+  let filterChartData = []
+  let filterTableData = []
+  for(let i = 0; i<chartData.length; i++){
+    let row = tableData[i]
+    if(params.priority == '全部' || row.priority == params.priority){
+      if(params.status == '全部' || row.status == params.status){
+        if(params.productLine == '全部' || row.productLine == params.productLine){
+          filterChartData.push(chartData[i])
+          filterTableData.push(tableData[i])
+        }
+      }
+    }
+  }
+  proxy.$refs.LiquidChartRef.dataReady(copy(filterChartData))
+  proxy.$refs.ProjTableRef.dataReady(copy(filterTableData))
+}
+
+defineExpose({
+  chartDataReady,
+  tableDataReady
+})
+
 function getChangeFun(index){
   return function(visible){
     btnList.value[index].active = visible
@@ -50,9 +92,9 @@ function getChangeFun(index){
 <!--  主看板  控制轮播切换-->
   <div class="kanban-wrapper full">
     <content-header title="项目数据统计" :btn-list="btnList" />
-    <query-box ref="QueryBoxRef" class="query-box" :btn-id="expandBtnId" @change="(()=>getChangeFun(1))()"/>
-    <liquid-chart class="tab-content full" :class="{show:store.showType == 0}" />
-    <project-table  class="tab-content" :class="{show:store.showType == 1}" />
+    <query-box ref="QueryBoxRef" class="query-box" :btn-id="expandBtnId" @filter-data="filterData" @change="(()=>getChangeFun(1))()"/>
+    <liquid-chart ref="LiquidChartRef" class="tab-content full" :class="{show:store.showType == 0}" />
+    <project-table ref="ProjTableRef"  class="tab-content" :class="{show:store.showType == 1}" />
   </div>
 </template>
 

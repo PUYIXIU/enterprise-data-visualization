@@ -2,12 +2,25 @@
 import DropDownBox from '@/components/DropDownBox'
 import {ref,reactive} from 'vue'
 import {useLocalDataStore} from "@/storage/index.js";
+import {copy} from "@/components/MainKanban/ProjectTable/liquidChartData.js";
 const visible = ref(false)
 const props = defineProps(['btnId'])
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change','filterData'])
 const store = useLocalDataStore()
+const initQueryParams = {
+  priority:'全部', // 优先级
+  status:'全部', // 状态
+  productLine:'全部', // 产品线
+}
+let lastParams = copy(initQueryParams)
+
 function expand(){
   visible.value = !visible.value
+  // if(visible.value){ // 进入后记录参数状态
+  //   lastParams = copy(queryParams.value)
+  // }else if(lastParams != copy(queryParams)){ // 退出后对比参数状态
+  //    filterData()
+  // }
   // 通知父元素修改按钮的状态
   emit('change', visible.value)
 }
@@ -17,22 +30,22 @@ defineExpose({
   reset
 })
 
-const initQueryParams = {
-  showType:'图表展示',
-  priority:'全部',
-  // filterDay:1,
-  status:'全部',
-  product:'全部',
+// 过滤数据
+function filterData(){
+  emit('filterData',queryParams.value)
 }
 
 const queryParams = ref(initQueryParams)
 
 // 重置筛选项
 function reset(){
-  queryParams.value = {
-    ...initQueryParams,
-    showType:queryParams.value.showType
+  if(copy(queryParams) != copy(initQueryParams)){
+    queryParams.value = {
+      ...initQueryParams,
+    }
+    filterData()
   }
+
 }
 
 const queryOptions = [
@@ -54,19 +67,6 @@ const queryOptions = [
       {value:'低',label:'低'},
     ]
   },
-  // {
-  //   title:'数据时间',
-  //   propName:'filterDay',
-  //   options:[
-  //     {value:1,label:'近七天'},
-  //     {value:2,label:'近15天'},
-  //     {value:3,label:'近1个月'},
-  //     {value:4,label:'近2个月'},
-  //     {value:5,label:'近3个月'},
-  //     {value:6,label:'近半年'},
-  //     {value:7,label:'近一年'},
-  //   ]
-  // },
   {
     title:'项目状态',
     propName:'status',
@@ -81,7 +81,7 @@ const queryOptions = [
   },
   {
     title:'产品业务线',
-    propName:'product',
+    propName:'productLine',
     options:[
       {value:'全部',label:'全部'},
       {value:'消防业务',label:'消防业务'},
@@ -104,6 +104,8 @@ const queryOptions = [
 function queryChange(option,propName){
   if(typeof propName === 'string'){ // 修改的是筛选数据
     queryParams.value[propName] = option.value
+
+    filterData()
   }else if(typeof propName === 'function'){ // 修改的是函数
     propName(option.value)
   }

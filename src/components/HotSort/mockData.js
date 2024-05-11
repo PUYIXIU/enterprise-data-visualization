@@ -25,4 +25,24 @@ export const mockData = [
         commander:'李月', // 负责人
         grade:65, // 分数
     },
+    {
+        projectName:'美的高处特种作业证认证系统', // 项目名称
+        commander:'李月', // 负责人
+        grade:65, // 分数
+    },
+    {
+        projectName:'美的高处特种作业证认证系统', // 项目名称
+        commander:'李月', // 负责人
+        grade:65, // 分数
+    },
+    {
+        projectName:'美的高处特种作业证认证系统', // 项目名称
+        commander:'李月', // 负责人
+        grade:65, // 分数
+    },
+    {
+        projectName:'美的高处特种作业证认证系统', // 项目名称
+        commander:'李月', // 负责人
+        grade:65, // 分数
+    },
 ]

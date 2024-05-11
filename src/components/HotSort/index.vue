@@ -1,9 +1,10 @@
 <script setup>
-import {ref, reactive,getCurrentInstance,watch} from 'vue'
+import {ref, reactive,getCurrentInstance,watch,nextTick} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import QueryBox from '@/components/QueryBox'
 import {mockData} from './mockData.js'
 import {defaultHotParams} from "@/storage/index.js";
+import WindowLoading from "@/components/Loading/WindowLoading.vue";
 const {proxy} = getCurrentInstance()
 
 const colorList = [
@@ -69,7 +70,7 @@ watch(()=>queryParams.filterDay,(nv,ov)=>{
 })
 watch(()=>queryParams.filterType,(nv,ov)=>{
   if(nv!==ov){
-    let label = filterDayOptions.find(o=>o.value==nv).label
+    let label = filterTypeOptions.find(o=>o.value==nv).label
     btnList.value[1].name = btnList.value[1].deactiveName = label
   }
 })
@@ -77,11 +78,22 @@ watch(()=>queryParams.filterType,(nv,ov)=>{
 const emit = defineEmits(['queryChange'])
 // 请求页面数据
 watch(queryParams,(nv,ov)=>{
+  loading.value = true
   emit('queryChange',queryParams)
 })
 
-const data = ref(mockData)
+const data = ref([])
 
+const loading = ref(true)
+function dataReady(src){
+  // 数据变化
+  data.value = src
+  return nextTick(()=>loading.value = false)
+}
+
+defineExpose({
+  dataReady
+})
 </script>
 
 <template>
@@ -106,6 +118,7 @@ const data = ref(mockData)
         :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"
         v-model:value="queryParams.filterType" />
     <div class="kanban-content">
+      <window-loading :loading="loading"/>
       <div class="kanban-item" v-for="(item, index) in data"
            :style="{
               '--color':colorList[index]||'#B3B5BB',
@@ -135,7 +148,17 @@ const data = ref(mockData)
   max-height: calc(22rem - $content-header-h - 1.5rem * 2 - 0.6rem);
 }
 .kanban-content{
-  padding-top:1.19rem;
+  $item-h:2.5rem;
+  $item-mb:0.9rem;
+  $size:5;
+  margin-top:1.19rem;
+  height:calc( ($item-h + $item-mb) * 5 - $item-mb);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  position:relative;
+  &::-webkit-scrollbar{
+    width: 0;
+  }
   .num{ // 数字类型
     font-family: D-DINExp;
     font-size: 1.5rem;
@@ -144,9 +167,9 @@ const data = ref(mockData)
     --color:#B3B5BB;
     color: #001133;
     display: flex;
-    margin-bottom:0.9rem;
+    margin-bottom:$item-mb;
     align-items: center;
-    height: 2.5rem;
+    height: $item-h;
     position:relative;
     &:before{
       content:'123';

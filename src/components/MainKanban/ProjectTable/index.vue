@@ -4,23 +4,17 @@ import {mockData} from './mockData.js'
 import {getpx} from "@/utils/style.js";
 import {predictType, productType} from "@/components/MainKanban/ProjectTable/dataType.js";
 
-const data = ref(mockData)
-// 0 不筛选 1 降序 2 升序
-let delaySort = ref(0) // 已开启天数
-let restSort = ref(0) // 剩余天数
-let progressSort = ref(0) // 项目进度
-let hotSort = ref(0) // 项目热度
-let hourSort = ref(0) // 工时
+const data = ref([])
 
 let status = ['no-sort','top-sort','bottom-sort']
 
 // 排序
 const sort = ref({
-  duration:0,
-  rest:0,
-  progress:0,
-  hot:0,
-  hour:0,
+  daysOpen:0,
+  daysRemaining:0,
+  projectRate:0,
+  grade:0,
+  laborHours:0,
 })
 
 function changeSortProp(propName){
@@ -36,6 +30,14 @@ function changeSortProp(propName){
   }
 
 }
+
+// 更新表格数据
+function dataReady(src){
+  data.value = src
+}
+defineExpose({
+  dataReady
+})
 
 const sortTableData = computed(()=>{
   let prop = Object.entries(sort.value).find(([key,value])=>{
@@ -57,71 +59,71 @@ const sortTableData = computed(()=>{
   <div class="table-wrapper">
 
     <el-table :data="sortTableData" :height="'100%'">
-      <el-table-column prop="productName" label="产品名称" :width="getpx(9.19)" show-overflow-tooltip header-align="left"></el-table-column>
+      <el-table-column prop="projectName" label="产品名称" :width="getpx(9.19)" show-overflow-tooltip header-align="left"></el-table-column>
       <el-table-column prop="fakeName" label="代号" show-overflow-tooltip header-align="center" :width="getpx(5)"></el-table-column>
-      <el-table-column prop="predict" label="优先级" header-align="center">
+      <el-table-column prop="priority" label="优先级" header-align="center">
         <template #default="{row}">
         <span class="predict-item"
               :style="{
-                '--color1':predictType[row.predict][0],
-                '--color2':predictType[row.predict][1],
-        }">{{row.predict}}</span>
+                '--color1':predictType[row.priority][0],
+                '--color2':predictType[row.priority][1],
+        }">{{row.priority}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="commander" label="产品负责人" show-overflow-tooltip header-align="center" class-name="medium"></el-table-column>
-      <el-table-column prop="product" label="产品业务线" :width="getpx(8)" header-align="center">
+      <el-table-column prop="commander" label="产品负责人" show-overflow-tooltip :width="getpx(10)"  header-align="center" class-name="medium"></el-table-column>
+      <el-table-column prop="productLine" label="产品业务线" :width="getpx(8)" header-align="center">
         <template #default="{row}">
-        <span class="predict-item"
+        <span class="predict-item" v-if="productType[row.productLine]"
               :style="{
-                '--color1':productType[row.product][0],
-                '--color2':productType[row.product][1],
-        }">{{row.product}}</span>
+                '--color1':productType[row.productLine][0],
+                '--color2':productType[row.productLine][1],
+        }">{{row.productLine}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="subCommander" label="分管负责人" show-overflow-tooltip header-align="center" class-name="medium"></el-table-column>
+      <el-table-column prop="responsiblePersonName" label="分管负责人" show-overflow-tooltip header-align="center" class-name="medium"></el-table-column>
       <el-table-column prop="status" label="状态" show-overflow-tooltip header-align="center" class-name="lighter" :width="getpx(6)" ></el-table-column>
-      <el-table-column prop="startTime" label="开始时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
-      <el-table-column prop="endTime" label="结束时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
-      <el-table-column prop="duration" label="已开启天数" header-align="center" class-name="DIN" :width="getpx(6)" >
+      <el-table-column prop="erpProjectStartDate" label="开始时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
+      <el-table-column prop="erpProjectEndDate" label="结束时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
+      <el-table-column prop="daysOpen" label="已开启天数" header-align="center" class-name="DIN" :width="getpx(6)" >
         <template #header>
-          <p class="header-p" @click="changeSortProp('duration')">
+          <p class="header-p" @click="changeSortProp('daysOpen')">
             <span>已开启天数</span>
-            <i class="head-icon" :class="[status[sort.duration]]"></i>
+            <i class="head-icon" :class="[status[sort.daysOpen]]"></i>
           </p>
         </template>
       </el-table-column>
-      <el-table-column prop="rest" label="剩余天数" header-align="center" class-name="DIN">
+      <el-table-column prop="daysRemaining" label="剩余天数" header-align="center" class-name="DIN">
         <template #header>
-          <p class="header-p" @click="changeSortProp('rest')">
+          <p class="header-p" @click="changeSortProp('daysRemaining')">
             <span>剩余天数</span>
-            <i class="head-icon" :class="[status[sort.rest]]"></i>
+            <i class="head-icon" :class="[status[sort.daysRemaining]]"></i>
           </p>
         </template>
       </el-table-column>
-      <el-table-column prop="progress" label="项目进度" header-align="center" class-name="DIN" >
+      <el-table-column prop="projectRate" label="项目进度" header-align="center" class-name="DIN" >
         <template #header>
-          <p class="header-p" @click="changeSortProp('progress')">
+          <p class="header-p" @click="changeSortProp('projectRate')">
             <span>项目进度</span>
-            <i class="head-icon" :class="[status[sort.progress]]"></i>
+            <i class="head-icon" :class="[status[sort.projectRate]]"></i>
           </p>
         </template>
         <template #default="{row}">
-          <div class="progress-box" :style="{'--progress':row.progress+'%'}">
-            <p class="text">{{row.progress}}%</p>
+          <div class="progress-box" :style="{'--progress':row.projectRate+'%'}">
+            <p class="text">{{row.projectRate}}%</p>
             <p class="progress-bar"><span> 1</span></p>
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="hot" label="项目热度" header-align="center" class-name="DIN"  :width="getpx(6)" >
+      <el-table-column prop="grade" label="项目热度" header-align="center" class-name="DIN"  :width="getpx(7.5)" >
         <template #header>
-          <p class="header-p" @click="changeSortProp('hot')">
+          <p class="header-p" @click="changeSortProp('grade')">
             <span>项目热度</span>
-            <i class="head-icon" :class="[status[sort.hot]]"></i>
+            <i class="head-icon" :class="[status[sort.grade]]"></i>
           </p>
         </template>
         <template #default="{row}">
           <div class="hot-box">
-            <span class="text">{{row.hot}}</span>
+            <span class="text">{{row.grade}}</span>
             <div v-if="row.hotChange!==0" class="hot-div">
               <p v-if="row.hotChange>0" class="hot-p top">
                 <span class="hot-icon top"></span>
@@ -135,11 +137,11 @@ const sortTableData = computed(()=>{
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="hour" label="工时" show-overflow-tooltip header-align="center" class-name="DIN" :width="getpx(5.5)">
+      <el-table-column prop="laborHours" label="工时" show-overflow-tooltip header-align="center" class-name="DIN" :width="getpx(5.5)">
         <template #header>
-          <p class="header-p" @click="changeSortProp('hour')">
+          <p class="header-p" @click="changeSortProp('laborHours')">
             <span>工时</span>
-            <i class="head-icon" :class="[status[sort.hour]]"></i>
+            <i class="head-icon" :class="[status[sort.laborHours]]"></i>
           </p>
         </template>
       </el-table-column>
@@ -214,11 +216,13 @@ $padding-top:1.5rem;
 }
 .hot-box{
   display: flex;
+  flex-wrap: nowrap;
   .text{
     margin-right: 0.44rem;
   }
   .hot-div{
     .hot-p{
+      white-space: nowrap;
       .hot-icon{
         display: inline-block;
         width:0.58rem;

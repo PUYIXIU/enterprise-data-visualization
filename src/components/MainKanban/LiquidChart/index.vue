@@ -6,15 +6,16 @@ import LiquidPie from './LiquidPie.vue'
 
 import {mock_liquidData,mock_dataTypeDict} from "@/mock/liquidScatterData.js"; // 模拟数据
 import {mock_liquidPieData} from '@/mock/liquidPieData.js'
-import {liquidColorList,liquidPieColor} from './colorConfig.js'
+import {getToolTips} from './colorConfig.js'
 import {getHSL, getpx} from "@/utils/style.js";
 import {useLocalDataStore} from "@/storage/index.js";
+import {getLiquidData} from "@/components/MainKanban/ProjectTable/liquidChartData.js";
 const { proxy } = getCurrentInstance()
 const store = useLocalDataStore()
-const navList = ref([]) // 图例列表
-const chartData = ref(mock_liquidPieData) // 水球数据
+const chartData = ref([]) // 水球数据
 const liquidPieData = ref(undefined) // 饼图数据
 const liquidPieColorConfig = ref(undefined) // 饼图配色
+const navList = ref(getToolTips()) // 图例列表
 const grid = ref(getGrid())
 const axisRange = ref({
   maxX:0,
@@ -39,11 +40,12 @@ function getGrid(){
 function initAll(){
   const targetDom = document.querySelector('.canvas')
   let colorLen = liquidColorList.length;
-  navList.value = mock_dataTypeDict.map((item,index)=>{
-    let color = liquidColorList[index%colorLen]
-    item.color = getHSL(color.color)
-    return item
-  })
+  // 颜色
+  // navList.value = mock_dataTypeDict.map((item,index)=>{
+  //   let color =  getHSL(color.color)liquidColorList[index%colorLen]
+  //   item.color =
+  //   return item
+  // })
   // 对水球图进行处理
   let xList =  chartData.value.map(i=>i.taskNum) // x
   let yList =  chartData.value.map(i=>i.peopleNum) // y
@@ -88,8 +90,8 @@ function initAll(){
   // 计算出最上和最右的元素，以此给坐标轴定标
 }
 
+
 onMounted(()=>{
-  initAll()
   grid.value.top += getpx(2.4)
   proxy.$refs.AxisRef.initChart()
   chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
@@ -101,7 +103,7 @@ function resize(){
   grid.value = getGrid()
   // 重新注册坐标
   chartData.value =  proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
-  proxy.$refs.LiquidRef.updateChart() // 更新散点图
+  proxy.$refs.LiquidRef.updateChartSize() // 更新散点图尺寸
 }
 
 // // 监听到有水球被点中了
@@ -118,9 +120,6 @@ watch(()=>store.currentProjectId,(nv,ov)=>{
 function updatePie(taskId, seriesList, rect){
   proxy.$refs.LiquidPieRef.updateChart(seriesList, rect)
 }
-
-// 渲染水球图
-// function renderLiquidPie(taskId, center, radius){
 function renderLiquidPie(taskId, seriesList, rect){
   liquidPieData.value = mock_liquidPieData[taskId]
   liquidPieColorConfig.value = liquidPieColor[liquidPieData.value.type]
@@ -130,6 +129,20 @@ function renderLiquidPie(taskId, seriesList, rect){
   })
 }
 
+// 接收到数据
+function dataReady(src){
+  let canvasDom = document.querySelector('.canvas')
+  let data = getLiquidData(src,canvasDom,grid.value)
+  chartData.value = data.data
+  proxy.$refs.AxisRef.updateChart(data.axis_range)
+  chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
+  proxy.$refs.LiquidRef.updateChart(chartData.value)
+}
+
+defineExpose({
+  dataReady
+})
+
 </script>
 
 <template>
@@ -138,16 +151,16 @@ function renderLiquidPie(taskId, seriesList, rect){
       <div class="tooltip-box">
         <p v-for="item in navList">
           <i :style="{'--color':item.color}"></i>
-          <span>{{item.dict_label}}</span>
+          <span>{{item.label}}</span>
         </p>
       </div>
       <div class="tip-mes">【圆形面积大小代表工时数量】</div>
     </div>
     <div class="canvas">
 <!--      坐标系-->
-      <Axis ref="AxisRef" dom-id="axisId" :grid="grid" :axis-range="axisRange" @resize="resize" />
+      <Axis ref="AxisRef" dom-id="axisId" :grid="grid" @resize="resize" />
 <!--      散点图-->
-      <LiquidScatter class="liquid-scatter" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" :data="chartData" @render-pie="renderLiquidPie" @update-pie="updatePie" />
+      <LiquidScatter class="liquid-scatter" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" @render-pie="renderLiquidPie" @update-pie="updatePie" />
 <!--      饼图-->
       <LiquidPie class="pie-chart" :class="{fade:!pieRendering}" ref="LiquidPieRef" :grid="grid" :data="liquidPieData" :color="liquidPieColorConfig" dom-id="liquid-pie-id" pie-dom-id="liquid-circle-pie-id" />
     </div>

@@ -2,83 +2,110 @@
 import * as echarts from 'echarts'
 import {onMounted,onBeforeUnmount,ref} from "vue";
 import {getpx} from "@/utils/style.js";
-const props = defineProps(['domId','grid','axisRange'])
+const props = defineProps(['domId','grid'])
 const emit = defineEmits(['resize'])
 let chart
-let option
-function resize(){
-  chart && chart.resize();
+let option = {
+      grid:{
+        ...props.grid
+      },
+      xAxis:[{
+        type:'value',
+        min:0,
+        max:44,
+        splitNumber:13,
+        boundaryGap:[getpx(0.625),getpx(0.625)], // 两侧留白
+        axisTick:{show:false},
+        axisLine:{
+          lineStyle:{
+            color:'rgba(0,0,0,0.3)',
+            width: getpx(0.12)
+          }
+        },
+        splitLine:{
+          lineStyle:{
+            color:'rgba(0,0,0,0.05)',
+            width: getpx(0.12)
+          }
+        },
+        axisLabel:{
+          margin:getpx(0.5),
+          fontSize:getpx(0.84),
+
+          showMaxLabel:false,
+          color:'#001133',
+          fontFamily:'SourceHanSansCN-Medium'
+        }
+      }],
+      yAxis:[{
+        type:'value',
+        min:0,
+        max:28,
+        splitNumber:20,
+        axisTick:{show:false},
+        axisLine:{
+          onZero:false,
+          lineStyle:{
+            color:'rgba(0,0,0,0.3)',
+            width: getpx(0.12)
+          }
+        },
+        splitLine:{
+          lineStyle:{
+            color:'rgba(0,0,0,0.05)',
+            width: getpx(0.12)
+          }
+        },
+        axisLabel:{
+          margin:getpx(0.75),
+          fontSize:getpx(0.84),
+
+          showMinLabel:false,
+          showMaxLabel:false,
+          color:'#001133',
+          fontFamily:'SourceHanSansCN-Medium'
+        }
+      }]
+    }
+function resize(){ // 重置大小
+  if(!chart) return
+  chart.resize();
+
+  let xAxis = option.xAxis[0]
+  let yAxis = option.yAxis[0]
+  option.grid = {...props.grid}
+  xAxis.boundaryGap = [getpx(0.625),getpx(0.625)]
+  xAxis.axisLine.lineStyle.width = getpx(0.12)
+  xAxis.splitLine.lineStyle.width = getpx(0.12)
+  xAxis.axisLabel.margin = getpx(0.5)
+  xAxis.axisLabel.fontSize = getpx(0.84)
+
+  yAxis.boundaryGap = [getpx(0.625),getpx(0.625)]
+  yAxis.axisLine.lineStyle.width = getpx(0.12)
+  yAxis.splitLine.lineStyle.width = getpx(0.12)
+  yAxis.axisLabel.margin = getpx(0.75)
+  yAxis.axisLabel.fontSize = getpx(0.84)
+
+  chart.setOption(option,{notMerge:false})
+
   setTimeout(()=>{
     emit('resize') // 通知重定位
   })
 }
 
+// 初始化
 function initChart(){
   chart = echarts.init(document.getElementById(props.domId))
-  option = {
-    grid:{
-      ...props.grid
-    },
-    xAxis:[{
-      type:'value',
-      min:0,
-      max:props.axisRange.maxX,
-      splitNumber:13,
-      boundaryGap:[10,10], // 两侧留白
-      axisTick:{show:false},
-      axisLine:{
-        lineStyle:{
-          color:'rgba(0,0,0,0.3)',
-          width: getpx(0.12)
-        }
-      },
-      splitLine:{
-        lineStyle:{
-          color:'rgba(0,0,0,0.05)',
-          width: getpx(0.12)
-        }
-      },
-      axisLabel:{
-        margin:getpx(0.5),
-        fontSize:getpx(0.84),
-
-        showMaxLabel:false,
-        color:'#001133',
-        fontFamily:'SourceHanSansCN-Medium'
-      }
-    }],
-    yAxis:[{
-      type:'value',
-      min:0,
-      max:props.axisRange.maxY,
-      splitNumber:20,
-      axisTick:{show:false},
-      axisLine:{
-        onZero:false,
-        lineStyle:{
-          color:'rgba(0,0,0,0.3)',
-          width: getpx(0.12)
-        }
-      },
-      splitLine:{
-        lineStyle:{
-          color:'rgba(0,0,0,0.05)',
-          width: getpx(0.12)
-        }
-      },
-      axisLabel:{
-        margin:getpx(0.75),
-        fontSize:getpx(0.84),
-
-        showMinLabel:false,
-        showMaxLabel:false,
-        color:'#001133',
-        fontFamily:'SourceHanSansCN-Medium'
-      }
-    }]
-  }
   chart.setOption(option)
   window.addEventListener('resize',resize)
+}
+
+// 更新图表
+function updateChart(axisRange){
+  if(!chart) return
+  option.xAxis[0].max = axisRange[0]
+  option.yAxis[0].max = axisRange[1]
+  chart.setOption(option,{notMerge:false})
 }
 
 // 将气泡在坐标系中对应的坐标转换为dom容器下的坐标
@@ -86,7 +113,7 @@ function convertAxisToPixel(data){
   return data.map(node=>{
     node.center = chart.convertToPixel(
         {xAxisIndex:0, yAxisIndex:0},
-        [node.taskNum, node.peopleNum]
+        [node.x, node.y]
     )
     return node
   })
@@ -94,11 +121,13 @@ function convertAxisToPixel(data){
 
 defineExpose({
   convertAxisToPixel,
-  initChart
+  initChart,
+  updateChart
 })
 
 onBeforeUnmount(()=>{
   window.removeEventListener('resize',resize)
+  chart.dispose()
   chart = null
 })
 </script>

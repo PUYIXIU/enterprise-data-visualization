@@ -1,11 +1,13 @@
 <script setup>
-import {ref, getCurrentInstance, onMounted, reactive, watch, computed} from 'vue'
+import {ref, getCurrentInstance, onMounted, reactive, watch, computed,nextTick} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import QueryBox from '@/components/QueryBox'
 import RingPie from './RingPie.vue'
 import {mockData} from "@/components/ProjPercent/mockData.js";
 import {ringPieColorList} from "@/components/ProjPercent/colorConfig.js";
 import {useLocalDataStore} from "@/storage/index.js";
+import request from "@/utils/request.js";
+import {filterProgressData} from "@/utils/dataFilter.js";
 
 const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
@@ -36,17 +38,25 @@ function getChangeFun(index){
     btnList.value[index].active = visible
   }
 }
-
+const selectProjectProportion = params => request.get('/erp/visualize/selectProjectProportion', {params}) // 请求项目占比数据
 // 获取项目占比数据
 function getProjPercentData(){
-    console.log('请求项目占比数据')
+  return selectProjectProportion({deptId:queryParams.department}).then(res=>{
+    console.group('项目占比数据')
+    console.log(res.data)
+    data.value = filterProgressData(res.data)
+    console.log(data.value)
+    console.groupEnd()
+    nextTick(()=>{
+      proxy.$refs.RingPieRef.updateChart()
+    })
+  })
 }
 
 // 项目部门变化 请求数据
 watch(()=>queryParams.department,(nv,ov)=>{
   if(nv!==ov){
     getProjPercentData()
-    proxy.$refs.RingPieRef.updateChart()
     let label = store.deptList.find(o=>o.value == nv).label
     btnList.value[0].name = btnList.value[0].deactiveName = label
   }
@@ -107,7 +117,8 @@ $padding-bottom:0.88rem;
 
 .query-box{
   top:calc($content-header-h + $padding-top + 0.6rem);
-  width:10.5rem;
+  width:13rem;
+  right:0;
   max-height: calc(22rem - $content-header-h - $padding-top - $padding-bottom - 0.6rem);
 }
 .kanban-content{
@@ -121,7 +132,7 @@ $padding-bottom:0.88rem;
 }
 
 
-$item-width:6.5rem;
+$item-width:6.7rem;
 $item-mr:2.75rem;
 .tooltip-box{
   margin-left: 2.25rem;
@@ -136,7 +147,7 @@ $item-mr:2.75rem;
     display: flex;
     //margin-right:$item-mr;
     color: #001133;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     height:2.19rem;
     align-items: center;
     margin-bottom:0.75rem;
@@ -157,7 +168,7 @@ $item-mr:2.75rem;
       text-align: right;
       .num{
         font-family: D-DINExp-Bold;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
       }
       .sign{
         font-family: D-DINExp;}

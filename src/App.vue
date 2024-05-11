@@ -8,40 +8,56 @@ import Loading from "@/components/Loading/Loading.vue";
 import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
 import {onMounted,getCurrentInstance,ref} from 'vue'
 import request from '@/utils/request.js'
+import {filterMainData, filterTableData} from "@/utils/dataFilter.js";
 const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
 let app_init = true
 const selectProjectPopularity = params => request.get('/erp/visualize/selectProjectPopularity', {params}) // 请求项目热度
+const selectDeptList = params => request.get('/erp/visualize/selectDeptList') // 请求部门信息
 
 // 获取主表格数据
 function getMainChartData(params=defaultHotParams){
   !app_init && (store.loading = true)
-  console.log(store.loading)
   return selectProjectPopularity(params).then(res=>{
     !app_init && (store.loading = false)
-    console.log(store.loading)
-    console.log(res)
+    res.data = res.data.map(item=>item.map)
+    // 数据分发到表格
+    const {chartData, tableData, hotData} = filterMainData(res.data)
+
+    console.group('热度、图表数据请求结束')
+    console.log(res.data)
+    console.group('图表数据')
+    console.log(chartData)
+    console.groupEnd()
+    console.group('表格数据')
+    console.log(tableData)
+    console.groupEnd()
+    console.group('热度数据')
+    console.log(hotData)
+    console.groupEnd()
+    console.groupEnd()
+
+    // 数据分发到项目热度
+    proxy.$refs.HotSortRef.dataReady(hotData)
+    proxy.$refs.MainChartRef.chartDataReady(chartData)
+    proxy.$refs.MainChartRef.tableDataReady(tableData)
   })
 }
 
 // 获取部门列表
 function getDeptData(){
-  return new Promise((resolve,reject)=>{
-    store.deptList = [
-      {value:0,label:'所有部门'},
-      {value:1,label:'综合部'},
-      {value:2,label:'商务部'},
-      {value:3,label:'财务部'},
-      {value:4,label:'工业设计部'},
-      {value:5,label:'多媒体事业部'},
-      {value:6,label:'产品测试部'},
-      {value:7,label:'软件开发部'},
-      {value:8,label:'AI部'},
-    ]
-    console.log('获取部门数据')
+  return selectDeptList().then(res=>{
+    store.deptList = res.data.map(i=>{
+      return {
+        value:i.map.deptId,
+        label:i.map.deptName,
+      }
+    })
+    store.deptList.unshift({label:'所有部门', value:''})
+    console.log(store.deptList)
+    console.group('部门数据请求结束')
     proxy.$refs.ProjPercentRef.init() // 初始化项目占比
     proxy.$refs.DangerProjRef.init() // 初始化项目占比
-    resolve()
   })
 }
 
@@ -53,7 +69,7 @@ function init(){
       getMainChartData(), // 准备主屏数据
       getDeptData(), // 准备部门数据
   ]).then(res=>{
-    console.log('数据准备结束')
+    console.group('数据准备结束')
     app_init = false // 初始化结束
     store.loading = false // 数据准备结束
     setTimeout(()=>{ // 执行入场动画的效果
@@ -70,18 +86,18 @@ onMounted(()=>{
 </script>
 
 <template>
-  <Loading :delay="loading_delay" :duration="loading_duration" />
   <div class="wrapper">
+    <Loading :delay="loading_delay" :duration="loading_duration" />
     <div class="head"></div>
     <div class="content">
       <div class="main-content br-box">
 <!--        主看板-->
-<!--        <main-kanban/>-->
+        <main-kanban ref="MainChartRef"/>
       </div>
       <div class="sub-content">
 <!--        项目热度-->
         <div class="sub-top br-box">
-          <hot-sort @query-change="getMainChartData" />
+          <hot-sort ref="HotSortRef" @query-change="getMainChartData" />
         </div>
 <!--        项目占比 -->
         <div class="sub-middle br-box">

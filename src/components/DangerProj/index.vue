@@ -5,6 +5,9 @@ import {mockData} from './mockData.js'
 import {getpx} from "@/utils/style.js";
 import QueryBox from "@/components/QueryBox/index.vue";
 import {useLocalDataStore} from "@/storage/index.js";
+import request from "@/utils/request.js";
+import {filterDangerProjData} from "@/utils/dataFilter.js";
+import WindowLoading from "@/components/Loading/WindowLoading.vue";
 const {proxy} = getCurrentInstance()
 const store = useLocalDataStore()
 const colorList = [
@@ -34,20 +37,28 @@ function getChangeFun(index){
     btnList.value[index].active = visible
   }
 }
-
+const loading = ref(true)
+const selectRiskyProject = params => request.get('/erp/visualize/selectRiskyProject', {params}) // 请求项目占比数据
 // 获取风险项目数据
 function getDangerProjData(){
-  console.log('获取风险项目数据')
+  return selectRiskyProject({deptId:queryParams.department}).then(res=>{
+    console.group('获取风险项目数据')
+    console.log(res.data)
+    data.value = filterDangerProjData(res.data)
+    console.log(data.value)
+    console.groupEnd()
+    loading.value = false
+  })
 }
 watch(()=>queryParams.department,(nv,ov)=>{
   if(nv!==ov){
+    loading.value = true
     getDangerProjData()
     let label = store.deptList.find(o=>o.value == nv).label
     btnList.value[0].name = btnList.value[0].deactiveName = label
   }
 })
 
-const loading = ref(true)
 function init(){
   queryParams.department = store.deptList[0].value
 }
@@ -70,6 +81,7 @@ defineExpose({
         @change="(()=>getChangeFun(0))()"
         v-model:value="queryParams.department" />
     <div class="kanban-content">
+      <window-loading :loading="loading"/>
       <div class="kanban-item" :class="{'ready':!loading}" v-for="(item, index) in data"
            :style="{
               '--color':colorList[index]||'#B3B5BB',
@@ -108,11 +120,19 @@ defineExpose({
 
 .query-box{
   top:calc($content-header-h + 1.5rem + 0.6rem);
-  width:10.5rem;
+  width:13rem;
   max-height: calc(22rem - $content-header-h - 1.5rem - 2.94rem - 0.6rem);
 }
 .kanban-content{
   padding-top:1.75rem;
+  $item-h:2.13rem;
+  $item-mb:1.13rem;
+  $size:5;
+  height:calc( $item-h * $size + $item-mb * ($size - 1) );
+  overflow-x: hidden;
+  overflow-y: scroll;
+  position:relative;
+  &::-webkit-scrollbar{width:0px;}
   .kanban-item{
     height:2.13rem;
     display: flex;

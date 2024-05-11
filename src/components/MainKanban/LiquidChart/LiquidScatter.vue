@@ -2,13 +2,13 @@
 import {onMounted, nextTick, onBeforeUnmount} from "vue";
 import * as echarts from 'echarts'
 import 'echarts-liquidfill'
-import {getHSL, getpx} from "@/utils/style.js";
-import {liquidColorList} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 import {useLocalDataStore} from "@/storage/index.js";
+import {getLiquidOptions} from "@/components/MainKanban/ProjectTable/liquidChartData.js";
 
-const props = defineProps(["data","domId"])
+const props = defineProps(["domId"])
 const store = useLocalDataStore()
 const emit = defineEmits(['renderPie','updatePie'])
+let data = []
 let chart
 let option = {
   tooltip:{
@@ -77,6 +77,7 @@ const SeriesOptionTemp = {
       }
     }
   },
+  silent:true,
   animationDuration: 0,
   animationDurationUpdate: 1000,
   animationEasingUpdate: 'cubicOut',
@@ -87,7 +88,7 @@ function resize(){
 }
 
 // 图表内尺寸自适应
-function updateChart(){
+function updateChartSize(){
   if(!chart) return
   getOption()
   chart.setOption(option,{notMerge:false})
@@ -102,26 +103,29 @@ function updateChart(){
 // 初始化
 function initChart(){
   const targetDom = document.getElementById(props.domId)
-  chart = echarts.init(targetDom,'shine',{
-    renderer:'svg'
-  })
-  getOption()
-  chart.setOption(option)
-
+  chart = echarts.init(targetDom,'shine',{renderer:'svg'})
   window.addEventListener('resize',resize)
   const svg = document.querySelector(`#${props.domId} svg`)
   svg.addEventListener('mousemove',liquidHover)
   svg.addEventListener('click',liquidSelect)
 
+}
+
+// 更新
+function updateChart(src){
+  data = src
+  if(!chart) return
+  chart.clear()
+  const svg = document.querySelector(`#${props.domId} svg`)
+  getOption()
+  chart.setOption(option,{notMerge:false})
   svgEventHandle(svg)
 }
 
 // 对svg事件进行处理 波浪和光晕不可点击
 function svgEventHandle(svg){
   const allG = svg.querySelector('g').querySelectorAll('g')
-  allG.forEach(g=>{
-    g.style.pointerEvents = 'none'
-  })
+  allG.forEach(g=>g.style.pointerEvents = 'none')
 }
 
 
@@ -177,67 +181,12 @@ function liquidHover(e){
 }
 
 function getOption(){
-  option.series = []
-  props.data.sort((a,b)=>b.totalHour - a.totalHour)
-  props.data.forEach((node,index)=>{
-    let seriesOption = JSON.parse(JSON.stringify(SeriesOptionTemp))
-    seriesOption.label.formatter =
-        `{title|${node.totalHour}h}\n{subtitle|${node.name}}\n{subtitle|${node.progress}}{percent|%}`
-    /** 计算坐标位置 */
-    seriesOption.center = node.center
-
-    /** 计算半径 */
-   // 半径范围 15%-45% 为0不展示
-    const maxR = 50, minR = 10
-    seriesOption.radius = `${(maxR - minR)*node.sizeValue + minR}%`
-
-    /** 计算字体 */
-    // 标题字体范围：30-12
-    // 副标题字体范围：22-10
-    // 百分号字体范围： 12-8
-    // lineHeight范围 40-18
-    const maxT = getpx(1.875), minT = getpx(0.75)
-    const maxS = getpx(1.375), minS = getpx(0.5)
-    const maxP = getpx(0.75), minP = getpx(0.5)
-    const maxL = getpx(2.5), minL = getpx(1.125)
-    seriesOption.label.rich.title.fontSize = (maxT - minT)*node.sizeValue + minT
-    seriesOption.label.rich.subtitle.fontSize = (maxS - minS)*node.sizeValue + minS
-    seriesOption.label.rich.percent.fontSize = (maxP - minP)*node.sizeValue + minP
-
-    seriesOption.label.rich.title.lineHeight = (maxL - minL)*node.sizeValue + minL
-    seriesOption.label.rich.subtitle.lineHeight = (maxL - minL)*node.sizeValue + minL
-
-    /** 水波进度 */
-    seriesOption.data = [node.waveValue]
-    seriesOption.silent = true
-
-    /** 波浪颜色 */
-    const {color,h_add,s_add,l_add} = liquidColorList[node.type]
-    seriesOption.itemStyle.color = getHSL(color, 100,{h_add,s_add,l_add})
-    seriesOption.backgroundStyle.shadowColor = getHSL(color, 100)
-    seriesOption.backgroundStyle.color = getHSL(color, 20)
-
-    // 基底蒙版
-    const baseOption = JSON.parse(JSON.stringify(seriesOption))
-    baseOption.name = 'base'
-    baseOption.backgroundStyle.color = getHSL(color, 20,{h_add,s_add,l_add})
-    baseOption.backgroundStyle.shadowColor =  getHSL(color, 100,{h_add,s_add,l_add})
-    baseOption.backgroundStyle.shadowOffsetX = 0
-    baseOption.backgroundStyle.shadowOffsetY = 0
-    baseOption.backgroundStyle.shadowBlur = getpx(1)
-    baseOption.label = {show:false}
-    baseOption.data = [node.waveValue]
-    baseOption.silent = true
-    // 根据排列顺序渲染层级
-    seriesOption.z = index
-    baseOption.z = index
-    option.series.push(baseOption)
-    option.series.push(seriesOption)
-  })
+  option.series = getLiquidOptions(data,SeriesOptionTemp)
 }
 
 defineExpose({
   initChart,
+  updateChartSize,
   updateChart
 })
 onBeforeUnmount(()=>{
