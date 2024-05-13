@@ -122,7 +122,6 @@ $wrap_h:20rem;
     .t-blur{
       z-index:6;
       position:absolute;
-      background-color: #000;
       font-size: 25px;
       color:white;
       filter:blur(1px) ;
@@ -210,7 +209,7 @@ $wrap_h:20rem;
     opacity: 1;
   }
   100%{
-    opacity: 0;
+    opacity: 1;
     width: 0px;
     height: 0px;
     transform:translate(0px, 0px) rotateZ(360deg);
