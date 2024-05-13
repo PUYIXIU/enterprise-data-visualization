@@ -1,6 +1,5 @@
 <script setup>
 import {onMounted} from "vue";
-import screenfull from "screenfull";
 import MainKanban from '@/components/MainKanban'
 import HotSort from '@/components/HotSort'
 import ProjPercent from '@/components/ProjPercent'
