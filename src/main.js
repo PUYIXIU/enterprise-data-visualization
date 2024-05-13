@@ -16,3 +16,4 @@ resize().then(res=>{
     app.mount('#app')
 })
 window.addEventListener('resize',resize)
+window.mockMode = false; // 开启测试模式

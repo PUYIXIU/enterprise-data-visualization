@@ -8,7 +8,7 @@ import Loading from "@/components/Loading/Loading.vue";
 import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
 import {onMounted,getCurrentInstance,ref} from 'vue'
 import request from '@/utils/request.js'
-import {filterMainData, filterTableData} from "@/utils/dataFilter.js";
+import {filterMainData} from "@/utils/dataFilter.js";
 const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
 let app_init = true
@@ -92,7 +92,7 @@ onMounted(()=>{
     <div class="content">
       <div class="main-content br-box">
 <!--        主看板-->
-        <main-kanban ref="MainChartRef"/>
+        <main-kanban ref="MainChartRef" />
       </div>
       <div class="sub-content">
 <!--        项目热度-->

@@ -3,7 +3,7 @@ import {onMounted, nextTick, onBeforeUnmount} from "vue";
 import * as echarts from 'echarts'
 import 'echarts-liquidfill'
 import {useLocalDataStore} from "@/storage/index.js";
-import {getLiquidOptions} from "@/components/MainKanban/ProjectTable/liquidChartData.js";
+import {getLiquidOptions} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 
 const props = defineProps(["domId"])
 const store = useLocalDataStore()
@@ -128,12 +128,10 @@ function svgEventHandle(svg){
   allG.forEach(g=>g.style.pointerEvents = 'none')
 }
 
-
-let lastSeriesIndex = -1
 let currentSeriesIndex = -1 // 当前系列索引
 let currentRect = undefined // 当前包围盒
 function liquidSelect(e){
-  store.currentProjectId = currentSeriesIndex
+  store.currentProjectIndex = currentSeriesIndex
   if(currentSeriesIndex !== undefined){
     let base_series = option.series[currentSeriesIndex*2] // 指定series
     let series = option.series[currentSeriesIndex*2+1] // 指定series
@@ -177,7 +175,6 @@ function liquidHover(e){
       }
     }
   }
-  // lastSeriesIndex = currentSeriesIndex<0?seriesIndex:currentSeriesIndex // 上一个水球
 }
 
 function getOption(){
@@ -196,14 +193,16 @@ onBeforeUnmount(()=>{
 </script>
 
 <template>
-  <div :id="props.domId" class="liquid-chart full"></div>
+  <div :id="props.domId" class="liquid-chart "></div>
 </template>
 
 <style scoped lang="scss">
 .liquid-chart{
   position:absolute;
-  top:0;
-  left:0;
+  top:1rem;
+  left:1.875rem;
+  right:0.9375rem;
+  bottom:2.8125rem;
   z-index:3;
   filter:saturate(1.4) contrast(1.2);
   cursor: pointer;

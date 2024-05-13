@@ -216,7 +216,7 @@ function getLiquidOption(){
   let option = liquidFillSeriesOption[1]
   let {data} = props
   option.label.formatter =
-      `{title|${data.totalHour}h}\n{subtitle|${data.name}}\n{subtitle|${data.progress}}{percent|%}\n{subtitle|${data.commander.join(' ')}}`
+      `{title|${data.radius}h}\n{subtitle|${data.name}}\n{subtitle|${data.wave}}{percent|%}\n{subtitle|${data.commander}}`
   liquidOption.series = liquidFillSeriesOption
 }
 
@@ -226,19 +226,15 @@ function getPieOption(){
   let {peopleList:data}  = props.data
   series = []
   const innerRadius = parseFloat(liquidOption.series[1].radius) // 水球图的半径
-  // const center = liquidOption.series[1].center //水球的中心点
   pieOptionTemp.center = [canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + getpx(0.625)]
   pieOptionTemp.radius[0] = `${innerRadius+3}%`
-  pieOptionTemp.label.rich.num.fontSize=getpx(1.5)
+  pieOptionTemp.label.rich.num.fontSize=getpx(1.2)
   pieOptionTemp.label.rich.unit.fontSize=getpx(0.8)
-  pieOptionTemp.label.rich.name.fontSize=getpx(1.5)
+  pieOptionTemp.label.rich.name.fontSize=getpx(1.2)
   const gap = 3 // 角度间隔
-  const r_gap = 2 // 边缘间隔
-  const r_width = 4 // 边沿宽度
   const pieNum = data.length // 弧形个数
-  const start = 80  // 开始角度
   const angle = 360 / pieNum - gap // 一个弧形的弧度
-  const minR = innerRadius+30, maxR = 90 // 半径范围 50+20
+  const minR = innerRadius+30, maxR = 90 // 半径范围 50+30
   const PieColor = props.color.pie
   data.forEach((node,index)=>{
     let temp = [0,1].includes(index)?(index+1):index
@@ -251,7 +247,7 @@ function getPieOption(){
     pieOption.label.formatter = (param)=>`{num|120}{unit|h} {name|${node.name}}`
 
     /** 计算外半径 */
-    const outerRadius = node.radiusValue*(maxR - minR) + minR
+    const outerRadius = node.valueEffect*(maxR - minR) + minR
     pieOption.radius[1] = `${outerRadius}%`
 
     /** 计算起始角度 */
@@ -300,11 +296,15 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-
+.pie-wrapper{
+  pointer-events: none;
+}
 .liquid-pie-chart{
   position:absolute;
-  top:0;
-  left:0;
+  top:1rem;
+  left:1.875rem;
+  right:0.9375rem;
+  bottom:2.8125rem;
   z-index:4;
   filter:saturate(1.4) contrast(1.2);
   pointer-events: none;

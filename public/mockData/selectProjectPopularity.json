@@ -1,0 +1,407 @@
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "map": {
+        "projectRate": "73",
+        "daysRemaining": "-133",
+        "erpProjectEndDate": "2023-12-31",
+        "daysOpen": "182",
+        "priority": "高",
+        "productLine": "化工业务",
+        "taskCount": "123",
+        "commander": "董锦，耿梦超",
+        "participantCount": "27",
+        "grade": "96.00",
+        "laborHours": "1545.56",
+        "projectName": "消防设施操作员实训和鉴定设备",
+        "projectId": "1724230232186626049",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-11-14"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "88",
+        "daysRemaining": "-9",
+        "erpProjectEndDate": "2024-05-03",
+        "daysOpen": "210",
+        "priority": "高",
+        "productLine": "展馆业务",
+        "taskCount": "163",
+        "commander": "张磊，马孟轩",
+        "participantCount": "30",
+        "grade": "86.40",
+        "laborHours": "1294.30",
+        "projectName": "登高平台消防车实战训练装置V1.0",
+        "projectId": "1678208081268023298",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-10-17"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "353",
+        "erpProjectEndDate": "2025-04-30",
+        "daysOpen": "210",
+        "priority": "高",
+        "productLine": "链工宝",
+        "taskCount": "157",
+        "commander": "董锦，李梦梦",
+        "participantCount": "23",
+        "grade": "71.60",
+        "laborHours": "1092.69",
+        "projectName": "AI焊接作业智能预警监管机器人（安心焊）",
+        "projectId": "1730169144360902657",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-10-17"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "-133",
+        "erpProjectEndDate": "2023-12-31",
+        "daysOpen": "499",
+        "priority": "高",
+        "productLine": "消防业务",
+        "taskCount": "24",
+        "commander": "王明月",
+        "participantCount": "14",
+        "grade": "56.40",
+        "laborHours": "921.96",
+        "projectName": "南京安全生产培训考核管理平台(安培超市)",
+        "projectId": "1629028447579066370",
+        "responsiblePersonName": "无",
+        "status": "迭代中",
+        "erpProjectStartDate": "2023-01-01"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "233",
+        "erpProjectEndDate": "2024-12-31",
+        "daysOpen": "43",
+        "priority": "高",
+        "productLine": "实操系统",
+        "taskCount": "9",
+        "commander": "王猛",
+        "participantCount": "19",
+        "grade": "55.80",
+        "laborHours": "846.54",
+        "projectName": "单项研发项",
+        "projectId": "1774646387517620225",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2024-04-01"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "82",
+        "daysRemaining": "-194",
+        "erpProjectEndDate": "2023-10-31",
+        "daysOpen": "246",
+        "priority": "高",
+        "productLine": "业务系统",
+        "taskCount": "154",
+        "commander": "王颂，王天成",
+        "participantCount": "19",
+        "grade": "54.80",
+        "laborHours": "782.04",
+        "projectName": "实物焊接智能化考试系统",
+        "projectId": "1701881685470650369",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-09-11"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "87",
+        "daysRemaining": "81",
+        "erpProjectEndDate": "2024-08-01",
+        "daysOpen": "379",
+        "priority": "高",
+        "productLine": "消防业务",
+        "taskCount": "56",
+        "commander": "田楷文，王颂",
+        "participantCount": "21",
+        "grade": "41.20",
+        "laborHours": "316.81",
+        "projectName": "山西煤矿及洗选煤报名与管理后台项目",
+        "projectId": "1630838449184702466",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-05-01"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "65",
+        "daysRemaining": "20",
+        "erpProjectEndDate": "2024-06-01",
+        "daysOpen": "591",
+        "priority": "高",
+        "productLine": "消防业务",
+        "taskCount": "32",
+        "commander": "田楷文，王颂",
+        "participantCount": "20",
+        "grade": "40.80",
+        "laborHours": "333.39",
+        "projectName": "企业员工工时管理平台",
+        "projectId": "1629017299639128066",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2022-10-01"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "89",
+        "daysRemaining": "-239",
+        "erpProjectEndDate": "2023-09-16",
+        "daysOpen": "411",
+        "priority": "高",
+        "productLine": "消防业务",
+        "taskCount": "240",
+        "commander": "耿梦超",
+        "participantCount": "25",
+        "grade": "40.80",
+        "laborHours": "178.98",
+        "projectName": "登高架设作业安全技术实际操作考试系统V1.0",
+        "projectId": "1644155581460975618",
+        "responsiblePersonName": "无",
+        "status": "运维中",
+        "erpProjectStartDate": "2023-03-30"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "233",
+        "erpProjectEndDate": "2024-12-31",
+        "daysOpen": "134",
+        "priority": "高",
+        "productLine": "实操系统",
+        "taskCount": "5",
+        "commander": "燕飞",
+        "participantCount": "8",
+        "grade": "40.40",
+        "laborHours": "732.89",
+        "projectName": "2024日常工作",
+        "projectId": "1742358537258561537",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2024-01-01"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "76",
+        "daysRemaining": "19",
+        "erpProjectEndDate": "2024-05-31",
+        "daysOpen": "86",
+        "priority": "高",
+        "productLine": "课程内容",
+        "taskCount": "15",
+        "commander": "王颂",
+        "participantCount": "11",
+        "grade": "39.20",
+        "laborHours": "618.77",
+        "projectName": "实训设备数智运维系统",
+        "projectId": "1759761655696969729",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2024-02-18"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "-133",
+        "erpProjectEndDate": "2023-12-31",
+        "daysOpen": "375",
+        "priority": "高",
+        "productLine": "实操系统",
+        "taskCount": "2",
+        "commander": "贾小硕",
+        "participantCount": "23",
+        "grade": "39.20",
+        "laborHours": "187.93",
+        "projectName": "线上问题",
+        "projectId": "1654295772603371521",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-05-05"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "78",
+        "daysRemaining": "-351",
+        "erpProjectEndDate": "2023-05-27",
+        "daysOpen": "386",
+        "priority": "高",
+        "productLine": "实操系统",
+        "taskCount": "140",
+        "commander": "邱世强，耿梦超，李玉琳",
+        "participantCount": "24",
+        "grade": "37.20",
+        "laborHours": "123.08",
+        "projectName": "危化特定单元开发",
+        "projectId": "1651393931272011778",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-04-24"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "95",
+        "daysRemaining": "-227",
+        "erpProjectEndDate": "2023-09-28",
+        "daysOpen": "320",
+        "priority": "高",
+        "productLine": "单品系列",
+        "taskCount": "407",
+        "commander": "耿梦超，马孟轩，吴世鹤",
+        "participantCount": "23",
+        "grade": "35.20",
+        "laborHours": "105.83",
+        "projectName": "3D隐患排查系统",
+        "projectId": "1670958551892815873",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-06-29"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "85",
+        "daysRemaining": "-132",
+        "erpProjectEndDate": "2024-01-01",
+        "daysOpen": "499",
+        "priority": "高",
+        "productLine": "消防业务",
+        "taskCount": "28",
+        "commander": "陈颖，韩蜜",
+        "participantCount": "26",
+        "grade": "35.00",
+        "laborHours": "1.48",
+        "projectName": "产品演示（展厅、展会）",
+        "projectId": "1646706285174083585",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-01-01"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "233",
+        "erpProjectEndDate": "2024-12-31",
+        "daysOpen": "56",
+        "priority": "高",
+        "productLine": "课程内容",
+        "taskCount": "1",
+        "commander": "李贺贺",
+        "participantCount": "8",
+        "grade": "34.20",
+        "laborHours": "537.61",
+        "projectName": "其他",
+        "projectId": "1770282521463545857",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2024-03-19"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "98",
+        "erpProjectEndDate": "2024-08-18",
+        "daysOpen": "270",
+        "priority": "高",
+        "productLine": "业务系统",
+        "taskCount": "32",
+        "commander": "董锦",
+        "participantCount": "17",
+        "grade": "33.00",
+        "laborHours": "217.34",
+        "projectName": "武安实训基地运营管理平台",
+        "projectId": "1694227026606088194",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-08-18"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "-133",
+        "erpProjectEndDate": "2023-12-31",
+        "daysOpen": "375",
+        "priority": "高",
+        "productLine": "实操系统",
+        "taskCount": "11",
+        "commander": "贾小硕",
+        "participantCount": "23",
+        "grade": "33.00",
+        "laborHours": "65.56",
+        "projectName": "日常工作",
+        "projectId": "1654294356266602498",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2023-05-05"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "0",
+        "daysRemaining": "-15",
+        "erpProjectEndDate": "2024-04-27",
+        "daysOpen": "63",
+        "priority": "高",
+        "productLine": "展馆业务",
+        "taskCount": "28",
+        "commander": "邱世强，李玉琳",
+        "participantCount": "12",
+        "grade": "32.80",
+        "laborHours": "408.77",
+        "projectName": "濮阳技师学院项目",
+        "projectId": "1677122953595662337",
+        "responsiblePersonName": "无",
+        "status": "进行中",
+        "erpProjectStartDate": "2024-03-12"
+      }
+    },
+    {
+      "map": {
+        "projectRate": "71",
+        "daysRemaining": "-667",
+        "erpProjectEndDate": "2022-07-15",
+        "daysOpen": "743",
+        "priority": "高",
+        "productLine": "实操系统",
+        "taskCount": "103",
+        "commander": "邱世强，耿梦超，李玉琳",
+        "participantCount": "22",
+        "grade": "32.20",
+        "laborHours": "79.41",
+        "projectName": "危化通用单元V1",
+        "projectId": "1655383281253011457",
+        "responsiblePersonName": "无",
+        "status": "已逾期",
+        "erpProjectStartDate": "2022-05-02"
+      }
+    }
+  ],
+  "rows": null
+}

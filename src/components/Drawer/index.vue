@@ -25,7 +25,7 @@ onMounted(()=>{
   proxy.$refs.TaskProgressRef.init()
 })
 
-watch(()=>store.currentProjectId,(nv,ov)=>{
+watch(()=>store.currentProjectIndex,(nv,ov)=>{
   if(nv == undefined) return
   setTimeout(()=>{
     !visible.value && expand()
@@ -44,7 +44,7 @@ function expand(){
 function collapse(){
   console.log('收回')
   visible.value = false
-  store.currentProjectId = undefined
+  store.currentProjectIndex = undefined
   window.removeEventListener('click',clickCheck)
 }
 

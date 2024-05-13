@@ -1,0 +1,147 @@
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "map": {
+        "predict": "134.73",
+        "progress": "100",
+        "projectName": ".net登陆器项目"
+      }
+    },
+    {
+      "map": {
+        "predict": "16.24",
+        "progress": "100",
+        "projectName": "特种作业实操管理系统"
+      }
+    },
+    {
+      "map": {
+        "predict": "1566.95",
+        "progress": "100",
+        "projectName": "熔化焊接与热切割4.0迭代"
+      }
+    },
+    {
+      "map": {
+        "predict": "418.95",
+        "progress": "100",
+        "projectName": "VR煤·隐患"
+      }
+    },
+    {
+      "map": {
+        "predict": "89.25",
+        "progress": "100",
+        "projectName": "3D效果图"
+      }
+    },
+    {
+      "map": {
+        "predict": "48.58",
+        "progress": "100",
+        "projectName": "视频制作"
+      }
+    },
+    {
+      "map": {
+        "predict": "14650.00",
+        "progress": "100",
+        "projectName": "文档补充"
+      }
+    },
+    {
+      "map": {
+        "predict": "27100.00",
+        "progress": "100",
+        "projectName": "煤矿电瓶车司机实操考核系统"
+      }
+    },
+    {
+      "map": {
+        "predict": "209.10",
+        "progress": "100",
+        "projectName": "注安课程开发"
+      }
+    },
+    {
+      "map": {
+        "predict": "3045.24",
+        "progress": "100",
+        "projectName": "金属非金属矿山主要负责人（露天矿山）"
+      }
+    },
+    {
+      "map": {
+        "predict": "20000.00",
+        "progress": "100",
+        "projectName": "徐州应急展"
+      }
+    },
+    {
+      "map": {
+        "predict": "1006.36",
+        "progress": "100",
+        "projectName": "叫号系统"
+      }
+    },
+    {
+      "map": {
+        "predict": "256.88",
+        "progress": "100",
+        "projectName": "常考题实操题"
+      }
+    },
+    {
+      "map": {
+        "predict": "4432.89",
+        "progress": "100",
+        "projectName": "有限空间监护作业"
+      }
+    },
+    {
+      "map": {
+        "predict": "976.63",
+        "progress": "100",
+        "projectName": "心肺复苏公共科目迭代"
+      }
+    },
+    {
+      "map": {
+        "predict": "369.63",
+        "progress": "100",
+        "projectName": "军工企业厂区模型场景搭建"
+      }
+    },
+    {
+      "map": {
+        "predict": "608.09",
+        "progress": "100",
+        "projectName": "山东化工自动化控制仪表作业安全技术实际操作考试系统"
+      }
+    },
+    {
+      "map": {
+        "predict": "477.73",
+        "progress": "100",
+        "projectName": "徐矿大学校区智慧平台"
+      }
+    },
+    {
+      "map": {
+        "predict": "94.52",
+        "progress": "100",
+        "projectName": "AI心肺复苏仿真考试装置"
+      }
+    },
+    {
+      "map": {
+        "predict": "121.12",
+        "progress": "99",
+        "projectName": "徐矿大学智慧校园项目一体化主平台"
+      }
+    }
+  ],
+  "rows": null
+}

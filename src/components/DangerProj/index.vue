@@ -96,7 +96,7 @@ defineExpose({
             <p class="predict">预计{{item.predict}}%</p>
           </div>
           <el-progress
-              :percentage="item.progress/item.predict*100"
+              :percentage="item.progress"
               :show-text=false
               stroke-linecap="butt"
               :stroke-width="getpx(0.5)"

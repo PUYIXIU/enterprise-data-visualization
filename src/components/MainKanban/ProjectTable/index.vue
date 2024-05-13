@@ -114,7 +114,7 @@ const sortTableData = computed(()=>{
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="grade" label="项目热度" header-align="center" class-name="DIN"  :width="getpx(7.5)" >
+      <el-table-column prop="grade" label="项目热度" header-align="center" class-name="DIN"  :width="getpx(5.5)" >
         <template #header>
           <p class="header-p" @click="changeSortProp('grade')">
             <span>项目热度</span>
@@ -124,7 +124,7 @@ const sortTableData = computed(()=>{
         <template #default="{row}">
           <div class="hot-box">
             <span class="text">{{row.grade}}</span>
-            <div v-if="row.hotChange!==0" class="hot-div">
+            <div v-if="row.hotChange!==0 && false" class="hot-div" >
               <p v-if="row.hotChange>0" class="hot-p top">
                 <span class="hot-icon top"></span>
                 <span class="number top">+{{Math.abs(row.hotChange)}}</span>
@@ -217,8 +217,9 @@ $padding-top:1.5rem;
 .hot-box{
   display: flex;
   flex-wrap: nowrap;
+  justify-content: center;
   .text{
-    margin-right: 0.44rem;
+    //margin-right: 0.44rem;
   }
   .hot-div{
     .hot-p{

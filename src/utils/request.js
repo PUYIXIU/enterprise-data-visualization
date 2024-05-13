@@ -14,6 +14,14 @@ service.interceptors.request.use(
         // get方法
         if (config.method === 'get' && config.params) {
             let url = config.url + '?' + tansParams(config.params)
+
+            if(window.mockMode){ // 测试模式开启
+                let target = config.url.split('/').slice(-1)
+                let fileName = target+'.json'
+                config.url = `http://10.5.6.88:8088/mockData/${fileName}`
+                return config
+            }
+
             url = url.slice(0, -1)
             config.params = {}
             config.url = url
@@ -49,7 +57,6 @@ service.interceptors.response.use(
                 case 504: errorMessage = '网络超时';break;
                 default: errorMessage = `错误码：${code}`;break;
             }
-            console.log(errorMessage)
             return {
                 code:0,
                 data:[],

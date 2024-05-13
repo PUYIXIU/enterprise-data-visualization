@@ -2,7 +2,7 @@
 import DropDownBox from '@/components/DropDownBox'
 import {ref,reactive} from 'vue'
 import {useLocalDataStore} from "@/storage/index.js";
-import {copy} from "@/components/MainKanban/ProjectTable/liquidChartData.js";
+import {copy} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 const visible = ref(false)
 const props = defineProps(['btnId'])
 const emit = defineEmits(['change','filterData'])
@@ -27,7 +27,8 @@ function expand(){
 
 defineExpose({
   expand,
-  reset
+  reset,
+  filterData
 })
 
 // 过滤数据
@@ -104,7 +105,6 @@ const queryOptions = [
 function queryChange(option,propName){
   if(typeof propName === 'string'){ // 修改的是筛选数据
     queryParams.value[propName] = option.value
-
     filterData()
   }else if(typeof propName === 'function'){ // 修改的是函数
     propName(option.value)

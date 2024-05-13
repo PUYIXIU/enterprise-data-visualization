@@ -2,6 +2,8 @@
 import * as echarts from 'echarts'
 import {onMounted,onBeforeUnmount,ref} from "vue";
 import {getpx} from "@/utils/style.js";
+import {useLocalDataStore} from "@/storage/index.js";
+const store = useLocalDataStore()
 const props = defineProps(['domId','grid'])
 const emit = defineEmits(['resize'])
 let chart
@@ -10,12 +12,13 @@ let option = {
         ...props.grid
       },
       xAxis:[{
-        type:'value',
+        type:['category','value'][store.mapMode],
         min:0,
         max:44,
         splitNumber:13,
         boundaryGap:[getpx(0.625),getpx(0.625)], // 两侧留白
         axisTick:{show:false},
+        data:[],
         axisLine:{
           lineStyle:{
             color:'rgba(0,0,0,0.3)',
@@ -23,6 +26,7 @@ let option = {
           }
         },
         splitLine:{
+          show:true,
           lineStyle:{
             color:'rgba(0,0,0,0.05)',
             width: getpx(0.12)
@@ -38,11 +42,12 @@ let option = {
         }
       }],
       yAxis:[{
-        type:'value',
+        type:['category','value'][store.mapMode],
         min:0,
         max:28,
         splitNumber:20,
         axisTick:{show:false},
+        data:[],
         axisLine:{
           onZero:false,
           lineStyle:{
@@ -51,6 +56,7 @@ let option = {
           }
         },
         splitLine:{
+          show:true,
           lineStyle:{
             color:'rgba(0,0,0,0.05)',
             width: getpx(0.12)
@@ -96,24 +102,65 @@ function resize(){ // 重置大小
 // 初始化
 function initChart(){
   chart = echarts.init(document.getElementById(props.domId))
+
   chart.setOption(option)
   window.addEventListener('resize',resize)
 }
 
+
+
+function getOption(axisRange,x_category,y_category){
+  let xAxis = option.xAxis[0]
+  let yAxis = option.yAxis[0]
+
+  if(store.mapMode == 0){ // 均匀模式
+    xAxis.type = yAxis.type = 'category'
+    xAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = true
+    xAxis.data = x_category
+    yAxis.data = y_category
+    xAxis.max = yAxis.max = xAxis.min = yAxis.min = undefined
+    xAxis.data.length == 0 && (xAxis.data = new Array(20).fill(' '))
+    yAxis.data.length == 0 && (yAxis.data = new Array(20).fill(' '))
+  }else{ // 全局模式
+    xAxis.type = yAxis.type = 'value'
+    xAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = false
+    xAxis.data = []
+    yAxis.data = []
+    xAxis.min = axisRange.x[0]
+    xAxis.max = axisRange.x[1]
+    yAxis.min = axisRange.y[0]
+    yAxis.max = axisRange.y[1]
+
+    xAxis.max == 0 && (xAxis.max = 20)
+    yAxis.max == 0 && (yAxis.max = 20)
+
+  }
+}
+
 // 更新图表
-function updateChart(axisRange){
-  if(!chart) return
-  option.xAxis[0].max = axisRange[0]
-  option.yAxis[0].max = axisRange[1]
-  chart.setOption(option,{notMerge:false})
+function updateChart(axisRange,x_category,y_category){
+  return new Promise((resolve,reject)=>{
+    if(!chart) return
+    getOption(axisRange,x_category,y_category)
+    chart.setOption(option,{notMerge:false})
+    resolve()
+  })
+
 }
 
 // 将气泡在坐标系中对应的坐标转换为dom容器下的坐标
 function convertAxisToPixel(data){
   return data.map(node=>{
+    let {x,y} = node
+    if(store.mapMode == 0){ // 均匀模式
+      let xValues =  option.xAxis[0].data
+      let yValues =  option.yAxis[0].data
+      x = xValues.findIndex(i=>i==x)
+      y = yValues.findIndex(i=>i==y)
+    }
     node.center = chart.convertToPixel(
         {xAxisIndex:0, yAxisIndex:0},
-        [node.x, node.y]
+        [x, y]
     )
     return node
   })

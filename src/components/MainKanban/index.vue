@@ -1,17 +1,35 @@
 <script setup>
-import {ref,getCurrentInstance} from 'vue'
+import {ref,getCurrentInstance,watch} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import LiquidChart from '@/components/MainKanban/LiquidChart'
 import ProjectTable from '@/components/MainKanban/ProjectTable'
 import QueryBox from '@/components/MainKanban/QueryBox'
 import gsap from 'gsap'
 import {useLocalDataStore} from "@/storage/index.js";
-import {copy} from "@/components/MainKanban/ProjectTable/liquidChartData.js";
+import {copy} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 const {proxy} = getCurrentInstance()
 const emit = defineEmits(['filterMainData'])
 const store = useLocalDataStore()
 const expandBtnId = 'expand-query-id'
 const btnList = ref([
+  {
+    name:'切换全局模式',
+    deactiveName:'切换均匀模式',
+    class:'reload',
+    id:'change-mode-btn',
+    active:false,
+    onclick:()=>{
+      btnList.value[0].active = !btnList.value[0].active
+      store.mapMode = btnList.value[0].active?1:0;
+      gsap.fromTo(`#change-mode-btn i`,{
+        rotateZ:0
+      },{
+        rotateZ:`${360*5}deg`,
+        duration:1,
+        ease:'power2.inOut'
+      })
+    },
+  },
   {
     name:'重置',
     class:'reload',
@@ -75,6 +93,10 @@ function filterData(params){
   proxy.$refs.ProjTableRef.dataReady(copy(filterTableData))
 }
 
+watch(()=>store.mapMode,(nv,ov)=>{
+  proxy.$refs.QueryBoxRef.filterData()
+})
+
 defineExpose({
   chartDataReady,
   tableDataReady
@@ -92,7 +114,7 @@ function getChangeFun(index){
 <!--  主看板  控制轮播切换-->
   <div class="kanban-wrapper full">
     <content-header title="项目数据统计" :btn-list="btnList" />
-    <query-box ref="QueryBoxRef" class="query-box" :btn-id="expandBtnId" @filter-data="filterData" @change="(()=>getChangeFun(1))()"/>
+    <query-box ref="QueryBoxRef" class="query-box" :btn-id="expandBtnId" @filter-data="filterData" @change="(()=>getChangeFun(2))()"/>
     <liquid-chart ref="LiquidChartRef" class="tab-content full" :class="{show:store.showType == 0}" />
     <project-table ref="ProjTableRef"  class="tab-content" :class="{show:store.showType == 1}" />
   </div>
