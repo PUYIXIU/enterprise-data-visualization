@@ -22,6 +22,7 @@ export const productType = {
     '消防业务':colors.violet,
     '单品系列':colors.purple,
     '业务系列':colors.lightGreen,
+    '业务系统':colors.lightGreen,
     '链工宝':colors.berryRed,
     '实操业务':colors.waterBlue,
     '实操系统':colors.waterBlue,

@@ -60,8 +60,8 @@ const sortTableData = computed(()=>{
 
     <el-table :data="sortTableData" :height="'100%'">
       <el-table-column prop="projectName" label="产品名称" :width="getpx(9.19)" show-overflow-tooltip header-align="left"></el-table-column>
-      <el-table-column prop="fakeName" label="代号" show-overflow-tooltip header-align="center" :width="getpx(5)"></el-table-column>
-      <el-table-column prop="priority" label="优先级" header-align="center">
+      <el-table-column prop="erpProjectCode" label="代号" show-overflow-tooltip header-align="center" :width="getpx(7)"></el-table-column>
+      <el-table-column prop="priority" label="优先级" header-align="center" :width="getpx(7)" >
         <template #default="{row}">
         <span class="predict-item"
               :style="{

@@ -17,7 +17,7 @@ export function filterTableData(src){
     return pick(src,[
         'projectId', // 项目id
         'projectName', // 产品名称
-        ['fakeName','无'], // 代号
+        ['erpProjectCode','无'], // 代号
         'priority', // 优先级
         'commander', // 产品负责人
         'productLine', // 产品业务线

@@ -69,7 +69,7 @@ function clickCheck(e){
     <drawer-box title="任务工时" height="15.69rem">
       <task-hour-bar ref="TaskHourBarRef" :data="taskHourBarData" dom-id="task-hour-bar-id" />
     </drawer-box>
-    <drawer-box title="任务甘特图" height="11.19rem">
+    <drawer-box title="项目甘特图" height="11.19rem">
       <task-gant ref="TaskGantRef" :data="taskGantData" dom-id="task-gant-id" />
     </drawer-box>
     <drawer-box title="任务进度" height="24.5rem" style="background-color:rgba(255, 255, 255)">
