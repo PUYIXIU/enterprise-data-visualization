@@ -4,90 +4,11 @@ import 'echarts-liquidfill'
 import gsap from 'gsap'
 import {getHSL, getpx} from "@/utils/style.js";
 import {pieOptionTemp} from "@/components/MainKanban/LiquidChart/colorConfig.js";
-import {onBeforeUnmount, onMounted} from 'vue'
+import {onBeforeUnmount, onMounted, ref} from 'vue'
+import {getPieOptions} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 const props = defineProps(['domId',"color",'data','grid','pieDomId'])
 // 水球模版
-let liquidFillSeriesOption = [
-  {
-    type:'liquidFill',
-    data:[0.3],
-    center:['50%','50%'],
-    radius:'42%',
-    outline:{show:false},
-    itemStyle:{
-      color:'#fff',
-      opacity:0.2,
-    },
-    amplitude:10, // 水波曲度
-    direction:'right', // 水波方向
-    phase:0,
-    waveLength:'50%',
-    period:1500,
-    /** 背景颜色相关 */
-    backgroundStyle:{
-      shadowColor:'#fff',
-      shadowBlur:40,
-      shadowOffsetX:-20,
-      shadowOffsetY:40,
-      color:'#fff',
-    },
-    label:{
-      position:['50%','50%'],
-      formatter:null,
-      rich:{
-        title:{
-          color:'#fff',
-          fontSize:30,
-          fontWeight:'bold',
-          textShadowColor:'rgba(0,0,0,0.75)',
-          textShadowBlur:3,
-          textShadowOffsetY:1,
-          lineHeight:40
-        },
-        subtitle:{
-          color:'#fff',
-          fontSize:20,
-          textShadowColor:'rgba(0,0,0,0.5)',
-          textShadowBlur:5,
-          textShadowOffsetY:2,
-          lineHeight:40
-        },
-        percent:{
-          color:'#fff',
-          fontSize:12,
-          textShadowColor:'rgba(0,0,0,0.5)',
-          textShadowBlur:5,
-          textShadowOffsetY:2,
-        }
-      }
-    },
-  },
-  {
-    type:'liquidFill',
-    data:[0.3],
-    center:['50%','50%'],
-    radius:'42%',
-    outline:{show:false},
-    itemStyle:{
-      shadowColor:'#fff',
-      opacity:0.2,
-    },
-    amplitude:10, // 水波曲度
-    direction:'right', // 水波方向
-    phase:0,
-    waveLength:'50%',
-    period:1500,
-    /** 背景颜色相关 */
-    backgroundStyle:{
-      shadowColor:'#fff',
-      shadowBlur:10,
-      shadowOffsetX:0,
-      shadowOffsetY:0,
-      color:'#fff',
-    },
-    label:{show:false}
-  }
-]
+let liquidFillSeriesOption = []
 let liquidChart, pieChart
 let initCenter, initRadius
 let boundRect
@@ -104,7 +25,6 @@ let targetRadius = 50 // 目标半径 缩放用
 function resize(){
   liquidChart && liquidChart.resize()
   pieChart && pieChart.resize()
-  getCanvasPieCenter() // 重新获取绘制中心点
 }
 
 onBeforeUnmount(()=>{
@@ -113,8 +33,8 @@ onBeforeUnmount(()=>{
   pieChart = null
 })
 function initChart(seriesList, rect){
-  liquidFillSeriesOption = seriesList
-  boundRect = rect
+  liquidFillSeriesOption = seriesList // 水球的option = 被点击水球的option
+  boundRect = rect // 被点击水球的包围盒，用来平移位置
   initCenter = seriesList[0].center; initRadius = seriesList[0].radius;
   // 初始化水球图
   const chartDom = document.getElementById(props.domId)
@@ -133,12 +53,13 @@ function initChart(seriesList, rect){
 // 更新饼图
 function updateChart(seriesList, rect){
   if(!liquidChart) return // 更新中心水球图目的：自适应内部文字
+  boundRect = rect // 被点击水球的包围盒，用来平移位置
   let keepCenter = liquidFillSeriesOption[0].center
   liquidFillSeriesOption = seriesList
-  liquidFillSeriesOption.forEach(option=>option.center = keepCenter)
   getLiquidOption()
   liquidChart.setOption(liquidOption,{notMerge:false})  // 中心水球图更新完毕
-  moveIn()
+  getCanvasPieCenter() // 重新获取绘制中心点
+  moveIn() // 更新水球中点
   getPieOption()
   pieChart.setOption(pieOption)
   // 修改整个图表的中心位置
@@ -150,7 +71,7 @@ function updateChart(seriesList, rect){
 function getCanvasPieCenter(){
   const target = document.getElementById(props.domId)
   const boundBox = target.getBoundingClientRect()
-  const {grid} = props
+  const grid = props.grid
   let canvasWidth = boundBox.width - grid.left - grid.right // 画布宽度
   let canvasHeight = boundBox.height - grid.top - grid.bottom //  画布高度
   canvasSize = [canvasWidth,canvasHeight]
@@ -159,13 +80,13 @@ function getCanvasPieCenter(){
   center[1] = halfHeight + boundBox.top + grid.top
 }
 
-onMounted(()=>{
+onMounted(()=>{ // 初始化时就获取画布中心点
   getCanvasPieCenter()
 })
 
-// 获取整个画布的中心点
+// 获取偏移量
 function getRectCenter(){
-  rectCenter = [
+  rectCenter = [ // 包围盒的中心点
     boundRect.left + boundRect.width/2,
     boundRect.top + boundRect.height/2
   ] // 目标圆当前中心点
@@ -179,9 +100,8 @@ function moveIn(){
   // 求取整个画布的中心点 rectCenter
   const [dX, dY] = getRectCenter()
 
-  const currentRadius = parseFloat(liquidFillSeriesOption[0].radius)
-  const scaleLevel = targetRadius / currentRadius
-
+  // const currentRadius = parseFloat(liquidFillSeriesOption[0].radius)
+  // const scaleLevel = targetRadius / currentRadius
   gsap.set(`#${props.domId} svg`,{
     transformOrigin:'50% 30%',
   })
@@ -222,61 +142,14 @@ function getLiquidOption(){
 
 // 设置饼图的option
 function getPieOption(){
-  let {series} = pieOption
-  let {peopleList:data}  = props.data
-  series = []
-  const innerRadius = parseFloat(liquidOption.series[1].radius) // 水球图的半径
   pieOptionTemp.center = [canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + getpx(0.625)]
-  pieOptionTemp.radius[0] = `${innerRadius+3}%`
-  pieOptionTemp.label.rich.num.fontSize=getpx(1.2)
-  pieOptionTemp.label.rich.unit.fontSize=getpx(0.8)
-  pieOptionTemp.label.rich.name.fontSize=getpx(1.2)
-  const gap = 3 // 角度间隔
-  const pieNum = data.length // 弧形个数
-  const angle = 360 / pieNum - gap // 一个弧形的弧度
-  const minR = innerRadius+30, maxR = 90 // 半径范围 50+30
-  const PieColor = props.color.pie
-  data.forEach((node,index)=>{
-    let temp = [0,1].includes(index)?(index+1):index
-    const i = (temp+1)%PieColor.length
-    const color = PieColor[i]
-
-    const pieOption = JSON.parse(JSON.stringify(pieOptionTemp))
-
-    /** 计算label */
-    pieOption.label.formatter = (param)=>`{num|120}{unit|h} {name|${node.name}}`
-
-    /** 计算外半径 */
-    const outerRadius = node.valueEffect*(maxR - minR) + minR
-    pieOption.radius[1] = `${outerRadius}%`
-
-    /** 计算起始角度 */
-    pieOption.startAngle = -index * (angle + gap)
-    pieOption.endAngle = -index * (angle + gap) - angle
-    let middle = (pieOption.endAngle + pieOption.startAngle)/2
-
-    /** 计算渐变 */
-    let x = Math.cos(-middle/180*Math.PI)
-    let y = Math.sin(-middle/180*Math.PI)
-    pieOption.itemStyle.color.x = x/2+0.5
-    pieOption.itemStyle.color.y = y/2+0.5
-    pieOption.itemStyle.color.x2 = -x/2+0.5
-    pieOption.itemStyle.color.y2 = -y/2+0.5
-    // 外圈颜色
-    pieOption.itemStyle.color.colorStops[0].color = getHSL(color.color, color.alpha)
-    // 内圈颜色
-    pieOption.itemStyle.color.colorStops[1].color = getHSL(color.color, 30)
-
-    // pieOption.endAngle = -index * (angle + gap) - angle*0.5
-    if(angle>20){
-      pieOption.endAngle = -index * (angle + gap) - 20
-    }
-
-    series.push(pieOption)
-
-
-  })
-  pieOption.series = series
+  pieOption.series = getPieOptions(
+      props.data.peopleList,
+      props.color.pie,
+      pieOptionTemp,
+      liquidOption.series[1],
+      canvasSize
+  )
 }
 
 defineExpose({
@@ -298,6 +171,7 @@ defineExpose({
 <style scoped lang="scss">
 .pie-wrapper{
   pointer-events: none;
+  position:relative;
 }
 .liquid-pie-chart{
   position:absolute;

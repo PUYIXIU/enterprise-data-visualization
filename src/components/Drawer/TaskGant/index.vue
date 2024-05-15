@@ -1,45 +1,74 @@
 <script setup>
-import {computed, onMounted, onBeforeUnmount, ref} from "vue";
+import {computed, onMounted, onBeforeUnmount, ref, nextTick} from "vue";
 
-const props = defineProps(['domId','data'])
+const props = defineProps(['domId'])
+
+const data = ref({})
 
 const barHeightList = computed(()=>{
+  if(!data.value.hourList) return []
   let maxH = 0 , minH = 0
-  props.data.hourList.forEach(item=>{
+  data.value.hourList.forEach(item=>{
     let h = item[1]
     if(maxH<h) maxH = h
     if(minH>h) minH = h
   })
   let diff = maxH - minH
-  let result = props.data.hourList.map(item=>{
+  let result = data.value.hourList.map(item=>{
     let value = Math.ceil((item[1]-minH)/diff* 100)
     return value+'%'
   })
   return result
 })
 
-// 鼠标位置
-const mouse_position = ref(['0%','0%'])
+let transformX = ref(0)
 
-function mouseMoveEvent(e){
-  if(!props.data.realProgress) return;
-  let totalWidth = this.clientWidth
-  let x = e.offsetX
-  let y = e.offsetY
-  let initX = totalWidth/100*props.data.realProgress
-  mouse_position.value = [
-      `${x-initX}px`,
-      `${y}px`,
-  ]
+// 获取浮窗的位置  让浮窗在预计开始和节数之间浮动
+function getTipPosition(){
+  // 获取到第一个预计时间的右边界
+  // 第二个预计时间的左边界
+  // 需要计算的内容就在这两个边界之间
+  let startDomDom = document.getElementById('predict-start')
+  let endDomDom = document.getElementById('predict-end')
+  let realDom = document.getElementById('real-bar-fore')
+  let tipDom = document.querySelector('.real-bar-tip')
+  let left = startDomDom.offsetLeft + startDomDom.offsetWidth
+  let right = endDomDom.offsetLeft
+  let splitLeft = realDom.offsetLeft + realDom.offsetWidth
+  let halfWidth = tipDom.clientWidth / 2
+  transformX.value = 0 - halfWidth
+  console.log('计算浮窗',transformX.value, splitLeft,left, right)
+  if(splitLeft - halfWidth < left){
+    transformX.value += (left - splitLeft + halfWidth)
+    console.log('左侧超过',transformX.value)
+  }else if (splitLeft + halfWidth > right){
+    transformX.value -= ( splitLeft + halfWidth - right)
+    console.log('右侧超过',transformX.value)
+  }
 
 }
-onMounted(()=>{
-  document.querySelector('.real-bar').addEventListener('mousemove',mouseMoveEvent)
-})
-onBeforeUnmount(()=>{
-  document.querySelector('.real-bar').removeEventListener('mousemove',mouseMoveEvent)
-})
 
+function resize(){
+  getTipPosition()
+}
+
+// 销毁
+function dispose(){
+  window.removeEventListener('resize',resize)
+}
+
+function dataReady(src){
+  window.addEventListener('resize',resize)
+  data.value = src
+  nextTick(()=>{
+    getTipPosition()
+  })
+}
+
+defineExpose({
+  dataReady,
+  dispose
+})
 
 </script>
 
@@ -55,12 +84,12 @@ onBeforeUnmount(()=>{
     <div class="gant-box" :style="{
       '--predict':data.predictProgress + '%',
       '--delay':data.delayProgress + '%',
-      '--real':data.realProgress + '%',
+      '--real': data.realProgress/100 * (100 - data.delayProgress) + '%',
     }">
 <!--      预计行-->
       <div class="predict-tip gant-box-bar">
-        <span class="text">{{data.predictStartTime}}</span>
-        <span class="text">{{data.predictEndTime}}</span>
+        <span id="predict-start" class="text">{{data.predictStartTime}}</span>
+        <span id="predict-end" class="text">{{data.predictEndTime}}</span>
       </div>
 <!--      实际行-->
       <div class="real-bar gant-box-bar">
@@ -69,20 +98,17 @@ onBeforeUnmount(()=>{
         </div>
         <span class="text real-bar-end-time">{{data.realEndTime}}</span>
         <div id="real-bar-split" :style="{
-          '--offsetX':mouse_position[0],
-          '--offsetY':mouse_position[1],
+          '--dx':transformX+'px',
         }">
           <div class="real-bar-tip">
             <p>截止到{{data.currentTime}}</p>
             <p>
-              <span class="tip-icon"></span>
-              <span>进度 {{data.realProgress}}%</span>
+              <span class="tip-icon red"></span>
+              <span class="tip-text red">预计进度 {{data.predictProgress}}%</span>
+              <span class="tip-icon blue"></span>
+              <span class="tip-text blue">实际进度 {{data.realProgress}}%</span>
             </p>
           </div>
-        </div>
-        <div id="predict-bar-split">
-          <p class="tip-text">预计：{{data.predictProgress}}%</p>
-          <p class="split-line"></p>
         </div>
       </div>
 <!--      工时行-->
@@ -146,6 +172,7 @@ onBeforeUnmount(()=>{
     margin-bottom: 0.44rem;
     color:#FF505D;
     justify-content: space-between;
+    position:relative;
   }
   .real-bar{
     display: flex;
@@ -160,7 +187,8 @@ onBeforeUnmount(()=>{
       display: flex;
       position:absolute;
       height:100%;
-      width:calc(var(--real) - var(--delay));
+      //width:calc(var(--real) - var(--delay));
+      width:var(--real);
       background: linear-gradient( 180deg, #DDE7FF 0%, #487DFE 100%);
       left:var(--delay);
       span{
@@ -182,18 +210,19 @@ onBeforeUnmount(()=>{
       position:absolute;
       height: 1.5rem;
       width:0.13rem;
-      left:var(--real);
+      left:calc(var(--real) + var(--delay));
       top:-50%;
       transform:translateY(20%);
       background: linear-gradient( 180deg, #BAB5FF 0%, #6459F4 100%);
       .real-bar-tip{
-        opacity: 0;transition-property: opacit;transition-timing-function: ease-in-out;
+        opacity: 1;transition-property: opacit;transition-timing-function: ease-in-out;
         transition-duration: 0.2s;
         position:absolute;
-        top:calc(-50% + var(--offsetY));
-        left:var(--offsetX);
-        transform:translateY(-80%) translateX(0.5rem);
+        top:calc(-50% - (1.5rem - 1.13rem) / 2 );
+        left:0%;
+        transform:translateY(-80%) translateX( var(--dx) );
         width: 7.38rem;
+        width: fit-content;
         height: 3.44rem;
         padding:0.5rem;
         box-sizing: border-box;
@@ -201,14 +230,7 @@ onBeforeUnmount(()=>{
         box-shadow: 0rem 0.25rem 1.25rem 0rem rgba(149,172,231,0.25);
         border-radius: 0.63rem 0.63rem 0.63rem 0.63rem;
         p{
-          .tip-icon{
-            display: inline-block;
-            width: 0.69rem;
-            height: 0.69rem;
-            margin-right: 0.25rem;
-            background: linear-gradient( 180deg, #DDE7FF 0%, #487DFE 100%);
-            border-radius: 50%;
-          }
+          white-space: nowrap;
           &:nth-child(1){
             color: rgba(28, 28, 28, 0.7);
             font-size: 0.75rem;
@@ -218,10 +240,31 @@ onBeforeUnmount(()=>{
             font-family: SourceHanSansCN-Medium;
             display: flex;
             align-items: center;
-            font-size: 0.88rem;
-            background:linear-gradient(90deg,#7AA1FEcc 0%, #487DFEcc 50%, #6E64F6 100%);
-            background-clip: text;
-            color:transparent;
+            span{
+              margin-right: 0.25rem;
+              &:last-child{margin-right: 0rem}
+            }
+            .tip-icon{
+              display: inline-block;
+              width: 0.69rem;
+              height: 0.69rem;
+              background: linear-gradient( 180deg, #DDE7FF 0%, #487DFE 100%);
+              border-radius: 50%;
+              &.red{
+                background: linear-gradient( 180deg, #FFD4D8 0%, #FF505D 100%);
+              }
+            }
+            .tip-text{
+              font-size: 0.88rem;
+              background:linear-gradient(90deg,#7AA1FEcc 0%, #487DFEcc 50%, #6E64F6 100%);
+              background-clip: text;
+              color:transparent;
+              &.red{
+                background:linear-gradient(90deg, rgba(254, 122, 133, 0.8) 0%, rgba(254, 72, 72, 0.8) 50%, #f66464 100%);
+                background-clip: text;
+                color:transparent;
+              }
+            }
           }
         }
       }
@@ -246,10 +289,11 @@ onBeforeUnmount(()=>{
   }
   .hour-bar{
     display: flex;
+    width:var(--real);
     .hour-bar-inner{
       margin:auto 0;
       background-color: #FFB800;
-      width:var(--real);
+      width:100%;
       height: 0.38rem;
       position:relative;
       span{
@@ -257,7 +301,8 @@ onBeforeUnmount(()=>{
         position:absolute;
         top:-100%;
         right:0;
-        transform:translateX(115%);
+        mix-blend-mode: difference;
+        filter:invert(1);
       }
     }
   }
@@ -268,7 +313,8 @@ onBeforeUnmount(()=>{
     align-items: flex-end;
     span{
       $bar-width:0.13;
-      $bar-gap:0.25;
+      //$bar-gap:0.25;
+      $bar-gap:0;
 
       display: inline-block;
       width:calc(100% / ($bar-width + $bar-gap) * $bar-width / var(--bar-size));

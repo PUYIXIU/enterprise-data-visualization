@@ -87,6 +87,54 @@ export function filterDangerProjData(src){
     return result
 }
 
+// 获取参与人工时详情数据
+export function filterPieData(src){
+    let result = []
+    src.forEach(({map})=>{
+        result.push(pick(map,[
+            {propName:'employeeName', rename:'name'}, // 参与人名
+            {propName:'totalHour', type:Number, rename:'value'}, // 工时
+        ]))
+    })
+    return result
+}
+
+// 对任务工时柱状图进行处理
+export function filterBarData(src){
+    let result = []
+    src.forEach(({map})=>{
+        result.push(pick(map,[
+            {propName:'erpTaskName', rename:'name'}, // 参与人名
+            {propName:'erpTaskHours', type:Number, rename:'value'}, // 工时
+        ]))
+    })
+    return result
+}
+
+// 对项目甘特图进行处理
+export function filterGantData(src){
+    let result = pick(src[0].map,[
+        'predictStartTime', // 预计开始时间
+        'predictEndTime', // 预计结束时间
+        {propName:'predictProgress', type:Number,}, // 预计进度
+
+        {propName:'delayProgress', type:Number,}, // 推迟比率
+
+        'realStartTime', // 实际开始时间
+        'realEndTime', // 实际结束时间时间
+        {propName:'realProgress', type:Number,}, // 实际进度
+
+        'currentTime', // 当前时间
+        {propName:'totalHour', type:Number,}, // 总工时
+    ])
+    result.hourList = src[0].map.hourList.split(', ').map(str=>{
+        let value = str.split('=')
+        value[1] *= 1 // 转换为Number类型
+        return value
+    })
+    return result
+}
+
 // 摘取对象指定元素
 export function pick(obj, option){
     let copy = {}

@@ -10,6 +10,8 @@ import {getToolTips, liquidColorMap} from './colorConfig.js'
 import {getHSL, getpx} from "@/utils/style.js";
 import {useLocalDataStore} from "@/storage/index.js";
 import {getLiquidData, handlePieData} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import request from "@/utils/request.js";
+import {filterPieData} from "@/utils/dataFilter.js";
 const { proxy } = getCurrentInstance()
 const store = useLocalDataStore()
 const chartData = ref([]) // 水球数据
@@ -50,7 +52,6 @@ function resize(){
 
 // // 监听到有水球被点中了
 watch(()=>store.currentProjectIndex,(nv,ov)=>{
-  console.log(nv)
   if(nv == undefined){
     pieRendering.value = false
     setTimeout(()=>{
@@ -64,11 +65,17 @@ function updatePie(taskId, seriesList, rect){
   proxy.$refs.LiquidPieRef.updateChart(seriesList, rect)
 }
 
+const selectProjectDetails = params=>request.get('/erp/visualize/selectProjectDetails',{params})
+
 // 获取饼图数据
 function getPieData(projData){
-  return new Promise((res,rej)=>{
-    projData.peopleList = handlePieData(mockPeopleList)
-    res(projData)
+  return selectProjectDetails({erpProjectId:projData.id}).then(res=>{
+    console.group('请求到环饼图数据')
+    console.log(res)
+    console.groupEnd()
+    res.data = filterPieData(res.data) // 过滤接口数据
+    projData.peopleList = handlePieData(res.data) // 处理数据
+    return projData
   })
 }
 

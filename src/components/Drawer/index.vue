@@ -5,46 +5,98 @@ import TaskGant from './TaskGant'
 import TaskProgress from './TaskProgress'
 import gsap from 'gsap'
 import {ref, onMounted, getCurrentInstance, watch, onBeforeUnmount,nextTick} from "vue";
-
+import request from '@/utils/request.js'
 import {mockData as taskHourBarMockData} from './TaskHourBar/mockData.js'
 import {mockData as taskGantMockData} from './TaskGant/mockData.js'
 import {MockProgressTimelineData as TaskProgressMockData} from './TaskProgress/mockData.js'
 import {MockProgressTimelineData} from "@/components/Drawer/TaskProgress/mockData.js";
 import {useLocalDataStore} from "@/storage/index.js";
+import {filterBarData, filterGantData} from "@/utils/dataFilter.js";
 const props = defineProps(['domId'])
 
 const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
-const taskHourBarData = ref(taskHourBarMockData)
 const taskGantData = ref(taskGantMockData)
 const taskProgressData = ref(TaskProgressMockData)
 
 const visible = ref(false)
-onMounted(()=>{
-  proxy.$refs.TaskHourBarRef.initChart()
-  proxy.$refs.TaskProgressRef.init()
-})
 
-watch(()=>store.currentProjectIndex,(nv,ov)=>{
+// 监听当前选中的项目id
+watch(()=>store.selectProjId,(nv,ov)=>{
   if(nv == undefined) return
   setTimeout(()=>{
-    !visible.value && expand()
+    !visible.value && expand(nv)
   })
 })
 
+// 获取柱状图数据
+const selectProjectBarChartDetails = params => request.get('/erp/visualize/selectProjectBarChartDetails',{params})
+function getTaskHourBarData(projId){
+  console.time('柱状图')
+  return selectProjectBarChartDetails({erpProjectId:projId}).then(res=>{
+    console.group('请求任务详情柱状图数据:',projId)
+    console.log(res)
+    console.groupEnd()
+    res.data = filterBarData(res.data)
+    proxy.$refs.TaskHourBarRef.initChart(res.data)
+    console.timeEnd('柱状图')
+  })
+}
 
-function expand(){
-  console.log('展开')
+// 获取项目甘特图数据
+const selectProjectGanttChartDetails = params => request.get('/erp/visualize/selectProjectGanttChartDetails',{params})
+function getTaskGantData(projId){
+  console.time('甘特图')
+  return selectProjectGanttChartDetails({erpProjectId:projId}).then(res=>{
+    console.group('请求项目甘特图数据:',projId)
+    console.log(res)
+    console.groupEnd()
+    res.data = filterGantData(res.data)
+    proxy.$refs.TaskGantRef.dataReady(res.data)
+    console.timeEnd('甘特图')
+  })
+}
+
+// 获取任务进度数据
+function getTaskProgressData(projId){
+  console.time('任务进度')
+  return new Promise((resolve,reject)=>{
+    // proxy.$refs.TaskProgressRef.init()
+    console.timeEnd('任务进度')
+    resolve()
+  })
+}
+
+// 初始化所有数据
+function initAll(projId){
+  store.loading = true
+  console.log('开始请求详情数据')
+  console.time('详情数据')
+  Promise.all([
+    getTaskHourBarData(projId),
+    getTaskGantData(projId),
+    getTaskProgressData(projId),
+  ]).then(res=>{
+    console.timeLog('详情数据请求完毕')
+    console.timeEnd('详情数据')
+    store.loading = false
+  })
+}
+
+function expand(projId){
   visible.value = true
+  initAll(projId)
   setTimeout(()=>{
     window.addEventListener('click',clickCheck)
   },300)
 }
 
 function collapse(){
-  console.log('收回')
   visible.value = false
   store.currentProjectIndex = undefined
+  store.selectProjId = undefined
+  proxy.$refs.TaskHourBarRef.dispose()
+  proxy.$refs.TaskGantRef.dispose()
   window.removeEventListener('click',clickCheck)
 }
 
@@ -67,10 +119,10 @@ function clickCheck(e){
   <div class="drawer-wrapper" :class="{'expand':visible}" :id="domId">
     <h3>项目详情</h3>
     <drawer-box title="任务工时" height="15.69rem">
-      <task-hour-bar ref="TaskHourBarRef" :data="taskHourBarData" dom-id="task-hour-bar-id" />
+      <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
     </drawer-box>
     <drawer-box title="项目甘特图" height="11.19rem">
-      <task-gant ref="TaskGantRef" :data="taskGantData" dom-id="task-gant-id" />
+      <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
     </drawer-box>
     <drawer-box title="任务进度" height="24.5rem" style="background-color:rgba(255, 255, 255)">
       <task-progress ref="TaskProgressRef" :data="taskProgressData" dom-id="task-progress-id" />
@@ -88,7 +140,7 @@ function clickCheck(e){
   transition-timing-function: ease-in-out;
   transform: translateX(100%);
   position:absolute;
-  z-index:4;
+  z-index:999;
   right:0.38rem;
   top:4.22rem;
   width: 60rem;

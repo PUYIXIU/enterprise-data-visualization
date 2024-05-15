@@ -11,12 +11,14 @@ const colors = {
     orangeRed:['#FFDCDE','#F57C84'],
     blueGreen:['#DEFFF9','#15E7C1'],
     orange:['#FFDBCF','#F08A6A'],
+    grey:['#eeeeee','#989898'],
 }
 
 export const predictType = {
     '高':colors.lightRed,
     '中':colors.lightBlue,
     '低':colors.lightYellow,
+    '无':colors.grey,
 }
 export const productType = {
     '消防业务':colors.violet,
@@ -29,4 +31,5 @@ export const productType = {
     '展馆业务':colors.orangeRed,
     '化工业务':colors.blueGreen,
     '课程内容':colors.orange,
+    '无':colors.grey,
 }

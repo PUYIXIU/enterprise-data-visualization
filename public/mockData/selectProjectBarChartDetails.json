@@ -1,0 +1,151 @@
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "map": {
+        "erpTaskHours": "1815.24",
+        "erpTaskName": "迭代需求开发"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "658.66",
+        "erpTaskName": "安全资格证模块开发"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "581.18",
+        "erpTaskName": "安全资格证模块"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "215.69",
+        "erpTaskName": "迭代需求测试"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "183.98",
+        "erpTaskName": "迭代需求沟通"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "163.31",
+        "erpTaskName": "需求原型"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "153.61",
+        "erpTaskName": "文档输出"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "117.30",
+        "erpTaskName": "系统重构"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "111.46",
+        "erpTaskName": "新省系统对接开发"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "67.23",
+        "erpTaskName": "安全资格证需求分析"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "63.68",
+        "erpTaskName": "飞书数据"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "61.51",
+        "erpTaskName": "安全资格证模块UI设计"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "22.93",
+        "erpTaskName": "新版pc效果图设计"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "22.56",
+        "erpTaskName": "线上问题沟通"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "19.42",
+        "erpTaskName": "文档输出"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "17.70",
+        "erpTaskName": "迭代需求上线"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "4.11",
+        "erpTaskName": "培训模块效果图设计"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "2.88",
+        "erpTaskName": "考试预约H5页面补充"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "2.61",
+        "erpTaskName": "UI设计"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "2.46",
+        "erpTaskName": "后台登录页设计"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "2.01",
+        "erpTaskName": "前端页面设计"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "1.08",
+        "erpTaskName": "前端展示页面设计"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "0.00",
+        "erpTaskName": "线上bug处理"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "0.00",
+        "erpTaskName": "安全资格证模块测试"
+      }
+    }
+  ],
+  "rows": null
+}

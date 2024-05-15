@@ -55,7 +55,6 @@ const btnList = ref([
   },
 ])
 
-
 function getChangeFun(index){
   return function(visible){
     btnList.value[index].active = visible

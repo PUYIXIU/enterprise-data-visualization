@@ -1,4 +1,4 @@
-import {getpx} from "@/utils/style.js";
+import {getHSL, getpx} from "@/utils/style.js";
 import {liquidColorMap} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 
 /**
@@ -180,6 +180,12 @@ export function getLiquidData(
     }
 }
 
+/**
+ * 获取水球散点图需要的options
+ * @param data 元数据
+ * @param optionTemp 水球图series的模板
+ * @returns {*[]}
+ */
 export function getLiquidOptions(data, optionTemp){
     let options = []
     data.forEach((node,index)=>{
@@ -220,11 +226,16 @@ export function getLiquidOptions(data, optionTemp){
     return options
 }
 
+/**
+ * 获取饼状图需要的数据
+ * @param data 原数据
+ * @returns {*}
+ */
 export function handlePieData(data){ // 对饼图进行处理
     let minValue = 0, maxValue = 0; // 最大值和最小值
     data.forEach(o=>{
-        if(minValue>o) minValue = o;
-        if(maxValue<o) maxValue = o;
+        if(minValue>o.value) minValue = o.value;
+        if(maxValue<o.value) maxValue = o.value;
     })
     let valueDiff = maxValue - minValue
     data.forEach(node=>{
@@ -236,6 +247,61 @@ export function handlePieData(data){ // 对饼图进行处理
     })
     data.sort((a,b)=>a.value - b.value) // 排序
     return data
+}
+
+export function getPieOptions(data, pieColor, pieOptionTemp, liquidOptionTemp,canvasSize){
+    let options = []
+    let pieNum = data.length // 弧形的个数
+    let innerOuterGap = 3 // 水球和环的间隔百分比
+    let innerRadius = parseFloat(liquidOptionTemp.radius)+innerOuterGap // 内部水球图的半径
+    let pxRadius = innerRadius * canvasSize[1] / 100 // px半径
+    let circleLength = 2 * Math.PI * pxRadius // 计算圆周 注意这里的innerRadius是百分比，因此无法计算出精确值
+    pieOptionTemp.radius[0] = `${innerRadius+3}%`
+    let fontEffect = circleLength / pieNum * 0.7 // 一个字体对应的最小值
+    pieOptionTemp.label.rich.num.fontSize = Math.min( getpx(1.2), fontEffect)
+    pieOptionTemp.label.rich.unit.fontSize = Math.min( getpx(0.8), fontEffect*0.8/1.2)
+    pieOptionTemp.label.rich.name.fontSize = Math.min( getpx(1.2), fontEffect)
+
+    let gap = 3 // 饼图间隔
+    let angle = 360 / pieNum - gap // 单个弧形所占的弧度
+    let minRadius = innerRadius + 30 // 最小外半径（40 - 80）
+    let maxRadius = 95 // 最大外半径
+
+    data.forEach((node,index)=>{
+        let temp = [0,1].includes(index)?(index+1):index
+        const i = (temp+1)%pieColor.length
+        const color = pieColor[i]
+        let pieOption = copy(pieOptionTemp)
+        pieOption.label.formatter = `{num|${node.value}}{unit|h} {name|${node.name}}`
+
+        /** 计算外半径 */
+        const outerRadius = useEffectMap(node.valueEffect, minRadius, maxRadius)
+        pieOption.radius[1] = `${outerRadius}%`
+
+        /** 计算起始角度 */
+        pieOption.startAngle = - index * (angle + gap)
+        let realAngle = angle>20? 20:angle // 真正的跨越角度
+        pieOption.endAngle = pieOption.startAngle - realAngle
+
+
+        let middle = (pieOption.endAngle + pieOption.startAngle)/2
+
+        /** 计算渐变 */
+        let x = Math.cos(-middle/180*Math.PI)
+        let y = Math.sin(-middle/180*Math.PI)
+        pieOption.itemStyle.color.x = x/2+0.5
+        pieOption.itemStyle.color.y = y/2+0.5
+        pieOption.itemStyle.color.x2 = -x/2+0.5
+        pieOption.itemStyle.color.y2 = -y/2+0.5
+
+        // 外圈颜色
+        pieOption.itemStyle.color.colorStops[0].color = getHSL(color.color, color.alpha)
+        // 内圈颜色
+        pieOption.itemStyle.color.colorStops[1].color = getHSL(color.color, 30)
+
+        options.push(pieOption)
+    })
+    return options
 }
 
 export function copy(obj){

@@ -96,6 +96,7 @@ function updateChartSize(){
   if(currentSeriesIndex !== undefined && currentSeriesIndex >=0){
     let base_series = option.series[currentSeriesIndex*2] // 指定series
     let series = option.series[currentSeriesIndex*2+1] // 指定series
+    getCurrentPathRect() // 重新计算包围盒
     emit('updatePie', currentSeriesIndex,  [base_series,series], currentRect)
   }
 }
@@ -130,6 +131,7 @@ function svgEventHandle(svg){
 
 let currentSeriesIndex = -1 // 当前系列索引
 let currentRect = undefined // 当前包围盒
+let currentPathIndex = undefined // 当前计算包围盒的path，用于在resize时更新包围盒的尺寸
 function liquidSelect(e){
   store.currentProjectIndex = currentSeriesIndex
   if(currentSeriesIndex !== undefined){
@@ -137,6 +139,14 @@ function liquidSelect(e){
     let series = option.series[currentSeriesIndex*2+1] // 指定series
     emit('renderPie', currentSeriesIndex,  [base_series,series], currentRect)
   }
+}
+
+// 刷新当前目标的包围盒
+function getCurrentPathRect(){
+  const svg_g = document.querySelector(`#${props.domId} svg g`)
+  const svg_children = Array.from(svg_g.children)
+  let path = svg_children[currentPathIndex] // 目标series的范围圆
+  currentRect = path.getBoundingClientRect() // 范围圆的包围盒子
 }
 
 // 水球悬浮
@@ -157,11 +167,13 @@ function liquidHover(e){
 
   currentSeriesIndex = undefined
   currentRect = undefined
+  currentPathIndex = undefined
   svg.style.cursor = 'default'
   if(index>=0){ // svg dom判断点击到了东西
     let seriesIndex = Math.floor(index/domNum)
     let path = svg_children[seriesIndex * domNum] // 目标series的范围圆
     let rect = path.getBoundingClientRect() // 范围圆的包围盒子
+
     let x = e.x , y = e.y;
     if(x>=rect.left && x<=rect.right && y>=rect.top && y<=rect.bottom){ // 目标在包围盒子内
       let radius = rect.width/2 // 包围圆半径
@@ -172,6 +184,7 @@ function liquidHover(e){
         svg.style.cursor = 'pointer'
         currentSeriesIndex = seriesIndex // 当前激活水球
         currentRect = rect // 当前包围盒
+        currentPathIndex = seriesIndex * domNum // 当前包围盒依赖的path在children中的index
       }
     }
   }

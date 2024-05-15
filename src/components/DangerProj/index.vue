@@ -124,7 +124,7 @@ defineExpose({
   max-height: calc(22rem - $content-header-h - 1.5rem - 2.94rem - 0.6rem);
 }
 .kanban-content{
-  padding-top:1.75rem;
+  margin-top:1.75rem;
   $item-h:2.13rem;
   $item-mb:1.13rem;
   $size:5;
