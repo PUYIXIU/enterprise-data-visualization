@@ -62,7 +62,10 @@ watch(()=>queryParams.department,(nv,ov)=>{
 function init(){
   queryParams.department = store.deptList[0].value
 }
-function ready(){loading.value = false}
+function ready(){
+  loading.value = false;
+  console.log('风险项目动画开始')
+}
 
 defineExpose({
   init,ready
@@ -80,9 +83,9 @@ defineExpose({
         :height="(1.13+0.5)*Math.ceil(store.deptList.length/2) + 0.5*2"
         @change="(()=>getChangeFun(0))()"
         v-model:value="queryParams.department" />
+    <window-loading :loading="loading && store.loading"/>
     <div class="kanban-content">
-      <window-loading :loading="loading"/>
-      <div class="kanban-item" :class="{'ready':!loading}" v-for="(item, index) in data"
+      <div class="kanban-item" :class="{'ready':!loading && !store.loading}" v-for="(item, index) in data"
            :style="{
               '--color':colorList[index]||'#B3B5BB',
               '--bg-color':colorList[index]?colorList[index]+'33':'#D9D9D933',
@@ -146,18 +149,15 @@ defineExpose({
       top:0;
       width:100%;
       height:100%;
+      transition-property: width;
+      transition-delay: calc(var(--index) * 0.1s);
+      transition-duration: 1s;
       color:transparent;
       z-index:1;
       background: #ffffff;
     }
     &.ready:before{
-        animation: slide-in 1s linear forwards;
-        animation-delay: calc(var(--index) * 0.1s);
-        @keyframes slide-in {
-          to {
-            width: 0%;
-          }
-        }
+        width:0%;
     }
     &:last-child{margin-bottom: 0;}
     .num{font-family: D-DINExp}

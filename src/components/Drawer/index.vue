@@ -58,12 +58,17 @@ function getTaskGantData(projId){
 }
 
 // 获取任务进度数据
+const selectTaskProgress = params => request.get('/erp/visualize/selectTaskProgress',{params})
+
 function getTaskProgressData(projId){
   console.time('任务进度')
-  return new Promise((resolve,reject)=>{
-    // proxy.$refs.TaskProgressRef.init()
+  return selectTaskProgress({erpProjectId:projId}).then(res=>{
+    console.group('请求任务进度数据:',projId)
+    console.log(res)
+    console.groupEnd()
+
+
     console.timeEnd('任务进度')
-    resolve()
   })
 }
 
@@ -75,7 +80,7 @@ function initAll(projId){
   Promise.all([
     getTaskHourBarData(projId),
     getTaskGantData(projId),
-    getTaskProgressData(projId),
+    // getTaskProgressData(projId),
   ]).then(res=>{
     console.timeLog('详情数据请求完毕')
     console.timeEnd('详情数据')

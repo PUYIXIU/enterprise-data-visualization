@@ -3,10 +3,11 @@ import {ref, reactive,getCurrentInstance,watch,nextTick} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import QueryBox from '@/components/QueryBox'
 import {mockData} from './mockData.js'
-import {defaultHotParams} from "@/storage/index.js";
+import gsap from 'gsap'
+import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
 const {proxy} = getCurrentInstance()
-
+const store = useLocalDataStore()
 const colorList = [
   '#FF505D',
   '#A26CE6',
@@ -85,10 +86,51 @@ const data = ref([])
 
 const loading = ref(true)
 function dataReady(src){
+  debugger
   // 数据变化
-  data.value = src
+  let patch = src.slice(0,5)
+  data.value = src.concat(patch)
   return nextTick(()=>loading.value = false)
 }
+
+let tween
+// loading = false代表数据加载结束
+watch(loading,(nv,ov)=>{
+  let dom = document.querySelector('#hot-kanban')
+  if(nv == false){
+    dom.scrollTop = 0
+    let scroll_h = dom.scrollHeight
+    let dom_h = dom.clientHeight
+    let offset = scroll_h - dom_h
+    let delay = 3
+    let duration = 30
+    if(offset>0){
+      tween = gsap.to(dom,{
+        scrollTop:offset,
+        duration:30,
+        delay:delay,
+        ease:'none',
+      })
+      dom.onmouseenter = e =>{
+        tween.pause()
+        dom.onscroll = e =>dom.scrollTop == offset && (dom.scrollTop = 0)
+      }
+      dom.onmouseleave = e => {
+        let current_offset =  offset - dom.scrollTop
+        let radio = current_offset / offset * duration
+        tween = gsap.to(dom,{
+          scrollTop:offset,
+          duration:radio,
+          ease:'none',
+        })
+        tween.play()
+      }
+      tween.repeat(-1)
+    }
+  }else{
+    tween.kill()
+  }
+})
 
 defineExpose({
   dataReady
@@ -116,14 +158,14 @@ defineExpose({
         @change="(()=>getChangeFun(1))()"
         :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"
         v-model:value="queryParams.filterType" />
-    <div class="kanban-content">
-      <window-loading :loading="loading"/>
-      <div class="kanban-item" v-for="(item, index) in data"
+    <window-loading :loading="loading"/>
+    <div class="kanban-content" id="hot-kanban">
+      <div class="kanban-item" :class="{'ready':!store.loading}" v-for="(item, index) in data"
            :style="{
-              '--color':colorList[index]||'#B3B5BB',
+              '--color':colorList[item.index-1]||'#B3B5BB',
               '--index':index,
           }">
-        <div class="index num">{{index + 1}}</div>
+        <div class="index num">{{item.index}}</div>
         <div class="split-line"></div>
         <div class="info-box">
           <div class="proj-name">{{item.projectName}}</div>
@@ -147,6 +189,7 @@ defineExpose({
   max-height: calc(22rem - $content-header-h - 1.5rem * 2 - 0.6rem);
 }
 .kanban-content{
+  cursor: pointer;
   $item-h:2.5rem;
   $item-mb:0.9rem;
   $size:5;
@@ -177,16 +220,15 @@ defineExpose({
       top:0;
       width:100%;
       height:100%;
+      transition-property: width;
+      transition-delay: calc(var(--index) * 0.1s);
+      transition-duration: 1s;
       color:transparent;
       z-index:1;
       background: #ffffff;
-      animation:slide-in 1s linear forwards;
-      animation-delay: calc(var(--index) * 0.1s);
-      @keyframes slide-in  {
-        to{
-          width:0%;
-        }
-      }
+    }
+    &.ready:before{
+      width:0%;
     }
     &:last-child{margin-bottom: 0;}
     .index{

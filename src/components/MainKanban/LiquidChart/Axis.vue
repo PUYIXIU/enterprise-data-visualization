@@ -201,7 +201,7 @@ onBeforeUnmount(()=>{
   top:0;
   left:0;
 }
-$gap:0.31rem;
+$gap:0rem;
 .axis-name{
   position:absolute;
   z-index:2;
@@ -213,7 +213,7 @@ $gap:0.31rem;
     right:var(--right);
   }
   &.y{
-    top:calc(var(--top) - $gap);
+    top:calc(var(--top) + $gap);
     left:calc(var(--left) + $gap);
   }
 }

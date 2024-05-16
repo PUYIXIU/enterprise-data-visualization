@@ -37,19 +37,36 @@ function getTipPosition(){
   let splitLeft = realDom.offsetLeft + realDom.offsetWidth
   let halfWidth = tipDom.clientWidth / 2
   transformX.value = 0 - halfWidth
-  console.log('计算浮窗',transformX.value, splitLeft,left, right)
   if(splitLeft - halfWidth < left){
     transformX.value += (left - splitLeft + halfWidth)
-    console.log('左侧超过',transformX.value)
   }else if (splitLeft + halfWidth > right){
     transformX.value -= ( splitLeft + halfWidth - right)
-    console.log('右侧超过',transformX.value)
   }
+}
 
+let label_dx = ref(0)
+// 计算工时label的偏移量
+function getLabelPosition(){
+  let wrapDom = document.querySelector('.hour-bar')
+  let hourBarDom = document.querySelector('.hour-bar-inner')
+  let spanDom = hourBarDom.querySelector('span')
+
+  let wrapW = wrapDom.clientWidth
+  let barW = hourBarDom.clientWidth
+  let spanW = spanDom.clientWidth
+
+  let rightW = wrapW - barW - hourBarDom.offsetLeft
+  let diff = rightW -  spanW
+  if(diff>=0){
+    label_dx.value = spanW
+  }else{
+    label_dx.value = rightW
+  }
 }
 
 function resize(){
   getTipPosition()
+  getLabelPosition()
 }
 
 // 销毁
@@ -62,6 +79,7 @@ function dataReady(src){
   data.value = src
   nextTick(()=>{
     getTipPosition()
+    getLabelPosition()
   })
 }
 
@@ -83,8 +101,8 @@ defineExpose({
 
     <div class="gant-box" :style="{
       '--predict':data.predictProgress + '%',
-      '--delay':data.delayProgress + '%',
-      '--real': data.realProgress/100 * (100 - data.delayProgress) + '%',
+      '--delay':Math.max(data.delayProgress,0) + '%',
+      '--real': Math.max(Math.min(data.realProgress/100 * (100 - data.delayProgress) ,100),0)+ '%',
     }">
 <!--      预计行-->
       <div class="predict-tip gant-box-bar">
@@ -112,7 +130,7 @@ defineExpose({
         </div>
       </div>
 <!--      工时行-->
-      <div class="hour-bar gant-box-bar">
+      <div class="hour-bar gant-box-bar" :style="{'--span-dx':label_dx+'px'}">
         <div class="hour-bar-inner">
           <span class="text">{{data.totalHour}}h</span>
         </div>
@@ -120,7 +138,9 @@ defineExpose({
       </div>
 <!--      工时详情行-->
       <div class="detail-bar gant-box-bar" :style="{'--bar-size':barHeightList.length}">
-        <span v-for="item in barHeightList" :style="{'--height':item}"></span>
+        <p>
+          <span v-for="item in barHeightList" :style="{'--height':item}"></span>
+        </p>
       </div>
     </div>
   </div>
@@ -200,9 +220,6 @@ defineExpose({
       position:absolute;
       right:0.13rem;
       color:#3870F2;
-    }
-    &:hover > #real-bar-split > .real-bar-tip{
-      opacity: 1;
     }
     #real-bar-split{
       z-index:999;
@@ -289,18 +306,21 @@ defineExpose({
   }
   .hour-bar{
     display: flex;
-    width:var(--real);
+    position:relative;
+    align-items: center;
     .hour-bar-inner{
       margin:auto 0;
       background-color: #FFB800;
-      width:100%;
+      width:var(--real);
       height: 0.38rem;
-      position:relative;
+      position:absolute;
+      left:var(--delay);
       span{
         color:#E7AB12;
         position:absolute;
         top:-100%;
         right:0;
+        transform:translateX(var(--span-dx));
         mix-blend-mode: difference;
         filter:invert(1);
       }
@@ -308,9 +328,15 @@ defineExpose({
   }
   .detail-bar{
     display: flex;
-    width:var(--real);
     justify-content: space-between;
     align-items: flex-end;
+    position:relative;
+    p{
+      left:var(--delay);
+      position:absolute;
+      width:var(--real);
+      height:100%;
+    }
     span{
       $bar-width:0.13;
       //$bar-gap:0.25;

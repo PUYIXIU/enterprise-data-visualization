@@ -175,10 +175,6 @@ defineExpose({
 }
 .liquid-pie-chart{
   position:absolute;
-  top:1rem;
-  left:1.875rem;
-  right:0.9375rem;
-  bottom:2.8125rem;
   z-index:4;
   filter:saturate(1.4) contrast(1.2);
   pointer-events: none;

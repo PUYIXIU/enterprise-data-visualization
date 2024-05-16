@@ -27,7 +27,6 @@ const pieRendering = ref(false)
 
 function getGrid(){
   return { // 坐标系栅格
-    // top:getpx(0.625),
     top:getpx(1),
     bottom:getpx(2.8125),
     left:getpx(1.875),
@@ -103,11 +102,13 @@ function dataReady(src){
       data.x_category,
       data.y_category
   ).then(res=>{
+    grid.value = getGrid()
     chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
     proxy.$refs.LiquidRef.updateChart(chartData.value)
   })
 
 }
+
 
 defineExpose({
   dataReady
@@ -130,7 +131,7 @@ defineExpose({
 <!--      坐标系-->
       <Axis ref="AxisRef" dom-id="axisId" :grid="grid" @resize="resize" />
 <!--      散点图-->
-      <LiquidScatter class="liquid-scatter" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" @render-pie="renderLiquidPie" @update-pie="updatePie"/>
+      <LiquidScatter class="liquid-scatter" :grid="grid" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" @render-pie="renderLiquidPie" @update-pie="updatePie"/>
 <!--      饼图-->
       <LiquidPie class="pie-chart" :class="{fade:!pieRendering}" ref="LiquidPieRef" :grid="grid" :data="liquidPieData" :color="liquidPieColorConfig" dom-id="liquid-pie-id" pie-dom-id="liquid-circle-pie-id" />
     </div>

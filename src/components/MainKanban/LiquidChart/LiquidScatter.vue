@@ -4,8 +4,9 @@ import * as echarts from 'echarts'
 import 'echarts-liquidfill'
 import {useLocalDataStore} from "@/storage/index.js";
 import {getLiquidOptions} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {getpx} from "@/utils/style.js";
 
-const props = defineProps(["domId"])
+const props = defineProps(["domId",'grid'])
 const store = useLocalDataStore()
 const emit = defineEmits(['renderPie','updatePie'])
 let data = []
@@ -191,7 +192,8 @@ function liquidHover(e){
 }
 
 function getOption(){
-  option.series = getLiquidOptions(data,SeriesOptionTemp)
+  const targetDom = document.getElementById(props.domId)
+  option.series = getLiquidOptions(data,SeriesOptionTemp,targetDom,props.grid)
 }
 
 defineExpose({
@@ -206,16 +208,16 @@ onBeforeUnmount(()=>{
 </script>
 
 <template>
-  <div :id="props.domId" class="liquid-chart "></div>
+  <div :id="props.domId" class="liquid-chart full"></div>
 </template>
 
 <style scoped lang="scss">
 .liquid-chart{
   position:absolute;
-  top:1rem;
-  left:1.875rem;
-  right:0.9375rem;
-  bottom:2.8125rem;
+  //top:1rem;
+  //left:1.875rem;
+  //right:0.9375rem;
+  //bottom:2.8125rem;
   z-index:3;
   filter:saturate(1.4) contrast(1.2);
   cursor: pointer;

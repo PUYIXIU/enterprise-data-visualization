@@ -3,7 +3,7 @@ const props = defineProps(['loading'])
 </script>
 
 <template>
-  <div class="window-loading-wrapper" :class="{'loading':loading}">
+  <div class="window-loading-wrapper" :class="{'loading':loading}" v-if="loading">
     <div class="wrap">
       <ul class="loading-box">
         <li></li>
@@ -28,7 +28,7 @@ const props = defineProps(['loading'])
   align-items: center;
   justify-content: center;
   font-family: 时尚中黑简体;
-  opacity: 0;
+  opacity: 1;
   transition-property: opacity;transition-duration: 0.2s;
   &.loading{
     opacity: 1;

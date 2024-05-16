@@ -37,6 +37,7 @@ export function filterTableData(src){
 // 过滤出项目热度数据
 export function filterHotData(src){
     return pick(src,[
+        'index', // 索引
         'projectName', // 产品名称
         'commander', // 产品负责人
         'grade', //项目热度
@@ -48,7 +49,8 @@ export function filterMainData(src){
     let chartData = [] // 图表数据
     let tableData = [] // 表格数据
     let hotData = [] // 热度数据
-    src.forEach(row=>{
+    src.forEach((row,index)=>{
+        row.index = index + 1
         chartData.push(filterChartData(row))
         tableData.push(filterTableData(row))
         hotData.push(filterHotData(row))
@@ -134,6 +136,9 @@ export function filterGantData(src){
     })
     return result
 }
+
+// 对任务进度数据进行处理
+
 
 // 摘取对象指定元素
 export function pick(obj, option){

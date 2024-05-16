@@ -13,7 +13,7 @@ const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
 let app_init = true
 const selectProjectPopularity = params => request.get('/erp/visualize/selectProjectPopularity', {params}) // 请求项目热度
-const selectDeptList = params => request.get('/erp/visualize/selectDeptList') // 请求部门信息
+const selectDeptList = params => request.get('/erp/visualize/selectDeptList',{params}) // 请求部门信息
 
 // 获取主表格数据
 function getMainChartData(params=defaultHotParams){

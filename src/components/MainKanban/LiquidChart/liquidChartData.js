@@ -1,6 +1,11 @@
 import {getHSL, getpx} from "@/utils/style.js";
 import {liquidColorMap} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 
+
+function countUnit(total, splitNumber){
+    if(splitNumber == 0) return total;
+    return total / splitNumber
+}
 /**
  * 获取水球图处理的结果
  * x：x轴坐标
@@ -26,19 +31,20 @@ export function getLiquidData(
         max_r, // 最大半径值
         min_r, // 最小半径值
     } = getAxisRange(data)
-    let content_w = dom.clientWidth - grid.left - grid.right // 容器宽度
+    let content_w = dom.clientWidth - grid.left - grid.right  // 容器宽度
     let content_h = dom.clientHeight - grid.top - grid.bottom // 容器高度
-
+    // let content_w = dom.clientWidth  // 容器宽度
+    // let content_h = dom.clientHeight // 容器高度
     // type=value时坐标系的单位长度
     let x_unit = content_w/max_x // x轴单位长度（px）
     let y_unit = content_h/max_y // y轴单位长度（px）
 
     let max_mapR = 50, min_mapR = 10 // 最终半径映射范围（%）
     let axis_range = {
-        x:[0,0],
-        y:[0,0]
+        x:[0,max_x],
+        y:[0,max_y]
     } // 坐标轴范围
-    let gap_x = 2 , gap_y = 2 // 坐标轴留白
+    let gap_left = 0 ,gap_right = 0, gap_top = 0, gap_bottom = 0 // 坐标轴留白
     let x_category = [], y_category = []
 
     data.forEach(node=>{
@@ -49,28 +55,48 @@ export function getLiquidData(
         node.mapEffect = mapResult.mapEffect
         node.mapRadius = mapResult.mapValue
         // 计算x轴，y轴范围
-        let r2px =node.mapRadius/2/100*content_h  // 半径
-        let x = node.x * x_unit
-        let y = node.y * y_unit
-        let left =  Math.floor((node.x * x_unit - r2px)/x_unit)
-        let right = Math.ceil((node.x * x_unit + r2px)/x_unit) + gap_x
-        let top = Math.ceil((node.y * y_unit - r2px)/y_unit)
-        let bottom = Math.ceil((node.y * y_unit + r2px)/y_unit) + gap_y
-        axis_range.x[0]>left && (axis_range.x[0] = left)
-        axis_range.x[1]<right && (axis_range.x[1] = right)
-        axis_range.y[0]>top && (axis_range.y[0] = top)
-        axis_range.y[1]<bottom && (axis_range.y[1] = bottom)
+        let r2px = node.mapRadius/2/100*content_h  // 半径
+        let x = (node.x - axis_range.x[0]) * x_unit
+        let y = (axis_range.y[1] - node.y) * y_unit
+        let left =  x - r2px - gap_left
+        let right = x + r2px + gap_right
+        let top = y - r2px - gap_top
+        let bottom = y + r2px + gap_bottom
 
-        // let x = Math.ceil((node.x * x_unit + r2px)/x_unit) + gap_x
-        // axis_range[0]<x && (axis_range[0] = x)
-        // let y = Math.ceil((node.y * y_unit + r2px)/y_unit) + gap_y
-        // axis_range[1]<y && (axis_range[1] = y)
 
+        if(left<0){ // 左侧超过
+            let n = axis_range.x[1] - axis_range.x[0]
+            let left_add = Math.ceil(((node.x - axis_range.x[0]) * content_w -r2px*n)/(r2px - content_w))
+            axis_range.x[0] -= left_add
+            x_unit = countUnit(content_w, axis_range.x[1] - axis_range.x[0] )
+        }
+        if(right>content_w){ // 右侧超过
+            let n = axis_range.x[1] - axis_range.x[0]
+            let right_add = Math.ceil((content_w * n - (node.x - axis_range.x[0]) * content_w - r2px*n) / (r2px - content_w))
+            axis_range.x[1] += right_add
+            x_unit = countUnit(content_w, axis_range.x[1] - axis_range.x[0] )
+        }
+        if(top<0){ // 上侧超过
+            let n = axis_range.y[1]-axis_range.y[0]
+            let top_add = Math.ceil(
+                (r2px*n - content_h*axis_range.y[1] + content_h * node.y) / (content_h - r2px)
+            )
+            axis_range.y[1] += top_add
+            y_unit = countUnit(content_h, axis_range.y[1] - axis_range.y[0] )
+        }
+        if(bottom>content_h){ // 下侧超过
+            let n = axis_range.y[1]-axis_range.y[0]
+            let bottom_add = Math.ceil(
+                // ((content_h-r2px)*n - content_h*axis_range.y[1] + content_h*node.y)/(content_h-r2px)
+                (content_h*axis_range.y[1] - content_h*node.y)/(content_h-r2px) - n
+            )
+            axis_range.y[0] -= bottom_add
+            y_unit = countUnit(content_h, axis_range.y[1] - axis_range.y[0] )
+        }
         // 推入均匀模式下的x、y值
         x_category.push(node.x)
         y_category.push(node.y)
     })
-
     data.sort((a,b)=>b.mapRadius - a.mapRadius) // 按照半径排序
 
 
@@ -83,94 +109,71 @@ export function getLiquidData(
     //  此时数据按照从大到小的顺序排序
 
     if(data.length>0){ // 数据长度大于1继续均匀模式下的坐标计算
+
         // type=category时坐标系的单位长度
-        let x_unit_category = content_w/x_category.length // x单位长度
-        let y_unit_category = content_h/y_category.length // y单位长度
-        let half_x = x_unit_category/2
-        let half_y = y_unit_category/2
-        let g_left = 0 , g_right = 0, g_top = 0, g_bottom = 0;
+        let x_num = 0
+        let y_num = 0
+        let x_unit = 0
+        let y_unit = 0
+
+        // 刷新单位
+        function refreshUnit(){
+            x_num = x_category.length * 2
+            y_num = y_category.length * 2
+            x_unit = content_w / x_num // x单位
+            y_unit = content_h / y_num // y单位
+        }
+        refreshUnit()
         data.forEach((node,index)=>{
             let r2px = node.mapRadius/2/100*content_h // 半径px大小
-            let x_index = x_category.findIndex(i=>i == node.x) // x轴索引位置
-            let y_index = y_category.findIndex(i=>i == node.y) // y轴索引位置
 
-            let x = x_index * x_unit_category + half_x // 数据x中心点
-            let y = y_index * y_unit_category + half_y // 数据y中心点
+            let x_index = x_category.findIndex(i=>i == node.x)*2+1 // x轴索引位置
+            let y_index = y_category.findIndex(i=>i == node.y)*2+1 // y轴索引位置
 
+            let x = x_index * x_unit // 数据x中心点
+            let y = (y_num - y_index)*y_unit // 数据y中心点
             let left = x - r2px
             let right = x + r2px
             let top = y - r2px
             let bottom = y + r2px
-            g_left>left && (g_left = left)
-            g_right<right && (g_right = right)
-            g_top>top && (g_top = top)
-            g_bottom<bottom && (g_bottom = bottom)
+            if(left<0){ // 左侧超过
+                let n = x_num
+                let left_add = Math.ceil(((x_index - 0) * content_w -r2px*n)/(r2px - content_w)/2)
+                for(let i =0, pre= x_category[0];i<left_add;i++) {
+                    let temp = ''
+                    if(typeof pre == 'number' && (--pre)>=0)temp = pre
+                    x_category.unshift(temp)
+                }
+                refreshUnit()
+            }
+            if(right>content_w){ // 右侧超过
+                let n = x_num
+                let right_add = Math.ceil((content_w * n - (x_index - 0) * content_w - r2px*n) / (r2px - content_w)/2)
+                for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(++pre)
+                refreshUnit()
+            }
+            if(top<0){ // 上侧超过
+                let n = y_num
+                let top_add = Math.ceil(
+                    (r2px*n - content_h*y_num + content_h * y_index) / (content_h - r2px)/2
+                )
+                for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(++pre)
+                refreshUnit()
+            }
+            if(bottom>content_h){ // 下侧超过
+                let n = y_num
+                let bottom_add = Math.ceil(
+                    ((content_h*y_num - content_h*y_index)/(content_h-r2px) - n)/2
+                )
+                let last= x_category[0]
+                for(let i =0, pre= y_category[0];i<bottom_add;i++) {
+                    let temp = ''
+                    if(typeof pre == 'number' && (--pre)>=0)temp = pre
+                    y_category.unshift(temp)
+                }
+                refreshUnit()
+            }
         })
-        g_right -= content_w
-        g_bottom -= content_h
-        // 计算新增的数量
-        if(g_left<0 || g_right>0){
-            let over = 0 ; // 超界数量
-            let left_rate = 0, right_rate = 0 // 左右比重
-            let left_add = 0, right_add = 0; // 左右添加数量
-            if(g_left<0) {
-                left_rate = Math.abs(g_left)
-                over+=left_rate
-            }
-            if(g_right>0) {
-                right_rate = Math.abs(g_right)
-                over += Math.abs(right_rate)
-            }
-            left_rate  = left_rate / over
-            right_rate  = right_rate / over
-            let add = Math.ceil(x_category.length*over/(content_w-over))
-            left_add = Math.ceil(left_rate * add)
-            right_add = Math.ceil(right_rate * add)
-            // 向左兼容
-            let minX = x_category[0]
-            let maxX = x_category.slice(-1)[0]
-            for(let i =0; i< left_add; i++){
-                let addValue = minX - 1 - i
-                if(addValue<0) addValue = ''
-                x_category.unshift(addValue)
-            }
-            for(let i =0; i< right_add; i++)x_category.push(maxX + 1 + i)
-        }
-        if(g_top<0 || g_bottom>0){
-            let over = 0 ; // 超界数量
-            let top_rate = 0, bottom_rate = 0 // 左右比重
-            let top_add = 0, bottom_add = 0; // 左右添加数量
-            if(g_left<0) {
-                top_rate = Math.abs(g_top)
-                over+=top_rate
-            }
-            if(g_right>0) {
-                bottom_rate = Math.abs(g_bottom)
-                over += bottom_rate
-            }
-            top_rate  = top_rate / over
-            bottom_rate  = bottom_rate / over
-            let add = Math.ceil(y_category.length*over/(content_h-over))
-            top_add = Math.ceil(top_rate * add)
-            bottom_add = Math.ceil(bottom_rate * add)
-            // 向下兼容
-            let minY = y_category[0]
-            let maxY = y_category.slice(-1)[0]
-            for(let i =0; i< top_add; i++) y_category.push(maxY + 1 + i)
-            for(let i =0; i< bottom_add; i++){
-                let addValue = minY - 1 - i
-                if(addValue<0) addValue = ''
-                y_category.unshift(addValue)
-            }
-        }
-        if(g_top<0){ // 上侧超界
-            let addUnitNumber = Math.ceil(Math.abs(g_top)/y_unit_category) // 增加的单位数量
-            for(let i =0; i< addUnitNumber; i++)y_category.push('')
-        }
-        if(g_bottom<0){ // 下侧超界
-            let addUnitNumber = Math.ceil(g_bottom/y_unit_category) // 增加的单位数量
-            for(let i =0; i< addUnitNumber; i++)y_category.unshift('')
-        }
     }
     return {
         data,
@@ -186,15 +189,19 @@ export function getLiquidData(
  * @param optionTemp 水球图series的模板
  * @returns {*[]}
  */
-export function getLiquidOptions(data, optionTemp){
+export function getLiquidOptions(data,optionTemp,targetDom,grid){
     let options = []
+    let content_h = targetDom.clientHeight
+    grid.top = grid.top/content_h
+    grid.bottom = grid.bottom/content_h
+
     data.forEach((node,index)=>{
         let {config:color} = liquidColorMap[node.type]
 
         let topOption = copy(optionTemp)
         topOption.label.formatter = `{title|${node.radius}h}\n{subtitle|${node.name}}\n{subtitle|${node.wave}}{percent|%}`
         topOption.center = node.center // 中心坐标
-        topOption.radius = `${node.mapRadius}%`  // 半径
+        topOption.radius = `${node.mapRadius * (1 - grid.top - grid.bottom)*0.95}%`  // 半径
 
         let rich = topOption.label.rich
         rich.title.fontSize = useEffectMap(node.mapEffect, getpx(0.75),getpx(1.875))

@@ -49,7 +49,6 @@ function getOption(){
       }
     }
   })
-  console.log(totalNum.value)
   option.series[0].data = data
 
 }
