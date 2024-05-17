@@ -11,7 +11,7 @@ import {mockData as taskGantMockData} from './TaskGant/mockData.js'
 import {MockProgressTimelineData as TaskProgressMockData} from './TaskProgress/mockData.js'
 import {MockProgressTimelineData} from "@/components/Drawer/TaskProgress/mockData.js";
 import {useLocalDataStore} from "@/storage/index.js";
-import {filterBarData, filterGantData} from "@/utils/dataFilter.js";
+import {filterBarData, filterGantData, filterTimelineData} from "@/utils/dataFilter.js";
 const props = defineProps(['domId'])
 
 const store = useLocalDataStore()
@@ -34,12 +34,14 @@ const selectProjectBarChartDetails = params => request.get('/erp/visualize/selec
 function getTaskHourBarData(projId){
   console.time('柱状图')
   return selectProjectBarChartDetails({erpProjectId:projId}).then(res=>{
-    console.group('请求任务详情柱状图数据:',projId)
-    console.log(res)
-    console.groupEnd()
     res.data = filterBarData(res.data)
     proxy.$refs.TaskHourBarRef.initChart(res.data)
-    console.timeEnd('柱状图')
+    if(window.debugModeEnable){
+      console.group('请求任务详情柱状图数据:',projId)
+      console.log(res)
+      console.groupEnd()
+      console.timeEnd('柱状图')
+    }
   })
 }
 
@@ -48,11 +50,13 @@ const selectProjectGanttChartDetails = params => request.get('/erp/visualize/sel
 function getTaskGantData(projId){
   console.time('甘特图')
   return selectProjectGanttChartDetails({erpProjectId:projId}).then(res=>{
-    console.group('请求项目甘特图数据:',projId)
-    console.log(res)
-    console.groupEnd()
     res.data = filterGantData(res.data)
     proxy.$refs.TaskGantRef.dataReady(res.data)
+    if(window.debugModeEnable){
+      console.group('请求项目甘特图数据:',projId)
+      console.log(res)
+      console.groupEnd()
+    }
     console.timeEnd('甘特图')
   })
 }
@@ -63,12 +67,14 @@ const selectTaskProgress = params => request.get('/erp/visualize/selectTaskProgr
 function getTaskProgressData(projId){
   console.time('任务进度')
   return selectTaskProgress({erpProjectId:projId}).then(res=>{
-    console.group('请求任务进度数据:',projId)
-    console.log(res)
-    console.groupEnd()
-
-
+    if(window.debugModeEnable){
+      console.group('请求任务进度数据:',projId)
+      console.log(res)
+      console.groupEnd()
+    }
     console.timeEnd('任务进度')
+    res.data = filterTimelineData(res.data)
+    return res.data
   })
 }
 
@@ -76,14 +82,13 @@ function getTaskProgressData(projId){
 function initAll(projId){
   store.loading = true
   console.log('开始请求详情数据')
-  console.time('详情数据')
   Promise.all([
     getTaskHourBarData(projId),
     getTaskGantData(projId),
-    // getTaskProgressData(projId),
+    getTaskProgressData(projId),
   ]).then(res=>{
-    console.timeLog('详情数据请求完毕')
-    console.timeEnd('详情数据')
+    console.log('详情数据请求完毕')
+    proxy.$refs.TaskProgressRef.init(res[2])
     store.loading = false
   })
 }
@@ -102,6 +107,7 @@ function collapse(){
   store.selectProjId = undefined
   proxy.$refs.TaskHourBarRef.dispose()
   proxy.$refs.TaskGantRef.dispose()
+  proxy.$refs.TaskProgressRef.dispose()
   window.removeEventListener('click',clickCheck)
 }
 
@@ -111,12 +117,17 @@ function clickCheck(e){
   const x = e.x, y = e.y;
   if(x >= r.left && x <= r.right){ // 鼠标在x范围内
     if(y>= r.top && y<= r.bottom){ // 鼠标在y范围内
-      console.log('抽屉收回')
       return
     }
   }
   collapse()
 }
+
+
+
+onMounted(()=>{
+  // expand(123)
+})
 
 </script>
 
@@ -129,8 +140,8 @@ function clickCheck(e){
     <drawer-box title="项目甘特图" height="11.19rem">
       <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
     </drawer-box>
-    <drawer-box title="任务进度" height="24.5rem" style="background-color:rgba(255, 255, 255)">
-      <task-progress ref="TaskProgressRef" :data="taskProgressData" dom-id="task-progress-id" />
+    <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem" style="background-color:rgba(255, 255, 255)">
+      <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
     </drawer-box>
   </div>
 </template>

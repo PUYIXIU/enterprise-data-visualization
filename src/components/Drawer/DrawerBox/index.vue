@@ -23,6 +23,7 @@ const props = defineProps(['height','title'])
 
   padding:1.5rem;
   box-sizing: border-box;
+  position:relative;
   &:last-child{
     margin-bottom: 0;
   }

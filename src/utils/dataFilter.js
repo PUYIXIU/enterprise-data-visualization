@@ -79,8 +79,10 @@ export function filterProgressData(src){
 // 获取风险项目数据
 export function filterDangerProjData(src){
     let result = []
-    src.forEach(({map})=>{
+    src.forEach(({map}, index)=>{
+        map.index = index
         result.push(pick(map,[
+            'index', // 索引
             {propName:'projectName', rename:'name'}, // 模块名称
             'predict', // 预计
             {propName:'progress', type:Number}, // 进度
@@ -138,7 +140,48 @@ export function filterGantData(src){
 }
 
 // 对任务进度数据进行处理
+export function filterTimelineData(src){
+    let result = []
+    src.forEach(row=>{
+        result.push(pick(row,[
+            'id', // 任务唯一表示
+            'taskName', // 任务名称
+            'startTime', // 开始时间
+            'endTime', // 结束时间
+            {propName:'progress', type:Number,}, // 进度
+            'participantCount', // 参与人数
+            'predictProgress', // 预计进度
+        ]))
+    })
+    result = result.sort((a,b)=>{
+        return new Date(b.endTime) - new Date(a.startTime)
+    })
+    return result
+}
 
+// 对任务进度人员工时详情进行处理
+export function filterHourListData(src){
+    let result = []
+    src.forEach(row=>{
+        let maxHour = 0
+        row.hourList = row.hourList.split(', ').map(cell=> {
+            let entries = cell.split('=')
+            entries[1] *= 1
+            if(entries[1]>maxHour) maxHour = entries[1]
+            return entries
+        })
+        row.maxHour = maxHour
+        result.push(pick(row,[
+            'id', // 参与人id
+            'name', // 参与人姓名
+            'maxHour', // 最大工时
+            {propName:'totalHour', type:Number,}, // 工时
+            {propName:'percent', type:Number,}, // 进度
+            'hourList'
+        ]))
+    })
+    return result
+}
 
 // 摘取对象指定元素
 export function pick(obj, option){

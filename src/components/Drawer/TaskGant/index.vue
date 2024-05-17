@@ -238,7 +238,6 @@ defineExpose({
         top:calc(-50% - (1.5rem - 1.13rem) / 2 );
         left:0%;
         transform:translateY(-80%) translateX( var(--dx) );
-        width: 7.38rem;
         width: fit-content;
         height: 3.44rem;
         padding:0.5rem;

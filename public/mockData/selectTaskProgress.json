@@ -1,0 +1,1627 @@
+{
+  "msg": "操作成功",
+  "dateTime": "2024-05-17 15:55:53",
+  "code": 200,
+  "data": [
+    {
+      "id": "1789095943441440769",
+      "taskName": "梳理安装过程存在的问题",
+      "startTime": "2024-05-11",
+      "endTime": "2024-05-11",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.28
+    },
+    {
+      "id": "1787287822901403649",
+      "taskName": "现场设备调试",
+      "startTime": "2024-05-06",
+      "endTime": "2024-05-13",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 37.82
+    },
+    {
+      "id": "1786593893201698818",
+      "taskName": "交付跟进",
+      "startTime": "2024-05-04",
+      "endTime": "2024-05-10",
+      "progress": "60",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 41.38
+    },
+    {
+      "id": "1786593557485412354",
+      "taskName": "交付调试测试",
+      "startTime": "2024-05-04",
+      "endTime": "2024-05-10",
+      "progress": "47",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 74.17
+    },
+    {
+      "id": "1784835010816774146",
+      "taskName": "项目地配合安装",
+      "startTime": "2024-04-30",
+      "endTime": "2024-05-11",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 94.39
+    },
+    {
+      "id": "1784023178820587521",
+      "taskName": "杭州版本调试",
+      "startTime": "2024-04-26",
+      "endTime": "2024-05-06",
+      "progress": "80",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 34.71
+    },
+    {
+      "id": "1782213511689773057",
+      "taskName": "调整模型",
+      "startTime": "2024-04-22",
+      "endTime": "2024-04-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 9.56
+    },
+    {
+      "id": "1782213742925946882",
+      "taskName": "调整模型",
+      "startTime": "2024-04-22",
+      "endTime": "2024-04-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 14.41
+    },
+    {
+      "id": "1782346067227680770",
+      "taskName": "广州设备调试",
+      "startTime": "2024-04-22",
+      "endTime": "2024-05-06",
+      "progress": "10",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 274.80
+    },
+    {
+      "id": "1779689647105585154",
+      "taskName": "消防项目会议(登高&消控室)",
+      "startTime": "2024-04-15",
+      "endTime": "2024-04-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.11
+    },
+    {
+      "id": "1777139703949754370",
+      "taskName": "新版UI设计",
+      "startTime": "2024-04-10",
+      "endTime": "2024-04-30",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 35.63
+    },
+    {
+      "id": "1777902404946833410",
+      "taskName": "模型处理",
+      "startTime": "2024-04-10",
+      "endTime": "2024-04-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 14.36
+    },
+    {
+      "id": "1777981428020752386",
+      "taskName": "配合安装",
+      "startTime": "2024-04-10",
+      "endTime": "2024-04-30",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 243.90
+    },
+    {
+      "id": "1777139467378425857",
+      "taskName": "项目测试及问题修改",
+      "startTime": "2024-04-08",
+      "endTime": "2024-04-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 20.62
+    },
+    {
+      "id": "1777136539766816770",
+      "taskName": "项目跟进",
+      "startTime": "2024-04-08",
+      "endTime": "2024-04-30",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 45.07
+    },
+    {
+      "id": "1776778091900370945",
+      "taskName": "项目跟进",
+      "startTime": "2024-04-07",
+      "endTime": "2024-04-30",
+      "progress": "0",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 81.98
+    },
+    {
+      "id": "1776820467096289281",
+      "taskName": "软件测试及修改",
+      "startTime": "2024-04-07",
+      "endTime": "2024-04-21",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 87.04
+    },
+    {
+      "id": "1776777946878115842",
+      "taskName": "演示",
+      "startTime": "2024-04-07",
+      "endTime": "2024-04-07",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 2.84
+    },
+    {
+      "id": "1774603984270196737",
+      "taskName": "协助测试并修改BUG",
+      "startTime": "2024-04-01",
+      "endTime": "2024-04-03",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 26.60
+    },
+    {
+      "id": "1774598693193449474",
+      "taskName": "消防汇报PPT",
+      "startTime": "2024-04-01",
+      "endTime": "2024-04-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 14.15
+    },
+    {
+      "id": "1772464162873155585",
+      "taskName": "操作说明书完善",
+      "startTime": "2024-03-28",
+      "endTime": "2024-03-28",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.26
+    },
+    {
+      "id": "1772425200209195009",
+      "taskName": "客户参观演示",
+      "startTime": "2024-03-26",
+      "endTime": "2024-03-26",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 7.44
+    },
+    {
+      "id": "1772064209793413122",
+      "taskName": "管理后台功能对接",
+      "startTime": "2024-03-25",
+      "endTime": "2024-03-29",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 31.25
+    },
+    {
+      "id": "1770260615108681729",
+      "taskName": "项目对接会",
+      "startTime": "2024-03-20",
+      "endTime": "2024-03-20",
+      "progress": "75",
+      "predictProgress": 100,
+      "participantCount": 4,
+      "erpTaskTotalHours": 3.70
+    },
+    {
+      "id": "1769913223494688769",
+      "taskName": "软件流程优化",
+      "startTime": "2024-03-19",
+      "endTime": "2024-03-22",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 21.89
+    },
+    {
+      "id": "1769894358689701890",
+      "taskName": "项目介绍模型资料",
+      "startTime": "2024-03-19",
+      "endTime": "2024-03-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.05
+    },
+    {
+      "id": "1769623940158443522",
+      "taskName": "项目跟进",
+      "startTime": "2024-03-18",
+      "endTime": "2024-03-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 12.27
+    },
+    {
+      "id": "1768451918342639617",
+      "taskName": "管理后台测试",
+      "startTime": "2024-03-15",
+      "endTime": "2024-05-17",
+      "progress": "82",
+      "predictProgress": 99.84,
+      "participantCount": 3,
+      "erpTaskTotalHours": 594.53
+    },
+    {
+      "id": "1767815439723515905",
+      "taskName": "管理后台效果图设计",
+      "startTime": "2024-03-13",
+      "endTime": "2024-03-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.30
+    },
+    {
+      "id": "1766991052329963521",
+      "taskName": "定位器新方案验证",
+      "startTime": "2024-03-11",
+      "endTime": "2024-03-13",
+      "progress": "52",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 21.87
+    },
+    {
+      "id": "1766990845940846593",
+      "taskName": "项目介绍PPT策划",
+      "startTime": "2024-03-11",
+      "endTime": "2024-03-15",
+      "progress": "60",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 18.36
+    },
+    {
+      "id": "1766993433574756353",
+      "taskName": "新场景优化帧数",
+      "startTime": "2024-03-11",
+      "endTime": "2024-03-13",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 24.59
+    },
+    {
+      "id": "1765193977019748353",
+      "taskName": "体育场学校VR打包测试",
+      "startTime": "2024-03-06",
+      "endTime": "2024-03-09",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 27.40
+    },
+    {
+      "id": "1764454021963960321",
+      "taskName": "实际大厦联调效果",
+      "startTime": "2024-03-04",
+      "endTime": "2024-03-06",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 33.74
+    },
+    {
+      "id": "1764574860210327553",
+      "taskName": "管理后台跟进",
+      "startTime": "2024-03-04",
+      "endTime": "2024-05-17",
+      "progress": "95",
+      "predictProgress": 99.75,
+      "participantCount": 2,
+      "erpTaskTotalHours": 101.28
+    },
+    {
+      "id": "1764459239799771137",
+      "taskName": "大屏效果图设计",
+      "startTime": "2024-03-04",
+      "endTime": "2024-03-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 25.23
+    },
+    {
+      "id": "1764454434436009985",
+      "taskName": "场景效果跟进",
+      "startTime": "2024-03-04",
+      "endTime": "2024-03-06",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 4.00
+    },
+    {
+      "id": "1763462456432906242",
+      "taskName": "调整火焰效果",
+      "startTime": "2024-03-01",
+      "endTime": "2024-03-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 3.21
+    },
+    {
+      "id": "1763081570155745281",
+      "taskName": "技达蜂项目调度会",
+      "startTime": "2024-02-29",
+      "endTime": "2024-02-29",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.80
+    },
+    {
+      "id": "1763004304063188994",
+      "taskName": "新场景放入程序试效果",
+      "startTime": "2024-02-29",
+      "endTime": "2024-03-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 12.13
+    },
+    {
+      "id": "1762641413455728642",
+      "taskName": "解决VR加载 不了场景的问题",
+      "startTime": "2024-02-28",
+      "endTime": "2024-03-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 9.61
+    },
+    {
+      "id": "1759381421592137729",
+      "taskName": "梳理宣传资料",
+      "startTime": "2024-02-19",
+      "endTime": "2024-02-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 18.33
+    },
+    {
+      "id": "1759384131754250241",
+      "taskName": "登录UI动效设计",
+      "startTime": "2024-02-19",
+      "endTime": "2024-02-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.88
+    },
+    {
+      "id": "1759044881494036481",
+      "taskName": "登录页面设计",
+      "startTime": "2024-02-18",
+      "endTime": "2024-02-18",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.41
+    },
+    {
+      "id": "1759019825166536705",
+      "taskName": "新场景制作",
+      "startTime": "2024-02-18",
+      "endTime": "2024-02-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.97
+    },
+    {
+      "id": "1759015898635292673",
+      "taskName": "项目进度跟进",
+      "startTime": "2024-02-18",
+      "endTime": "2024-02-18",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.02
+    },
+    {
+      "id": "1755034225354715138",
+      "taskName": "模型燃烧效果处理",
+      "startTime": "2024-02-07",
+      "endTime": "2024-02-07",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.94
+    },
+    {
+      "id": "1755068241504088066",
+      "taskName": "后台对接",
+      "startTime": "2024-02-07",
+      "endTime": "2024-02-07",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 4.70
+    },
+    {
+      "id": "1754699266668605441",
+      "taskName": "设计效果图",
+      "startTime": "2024-02-06",
+      "endTime": "2024-02-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 17.03
+    },
+    {
+      "id": "1754311473547161601",
+      "taskName": "体育场场景优化",
+      "startTime": "2024-02-05",
+      "endTime": "2024-02-06",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 13.98
+    },
+    {
+      "id": "1753218051876827137",
+      "taskName": "测试跟进",
+      "startTime": "2024-02-02",
+      "endTime": "2024-02-02",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.28
+    },
+    {
+      "id": "1752862031015030786",
+      "taskName": "体育场场景处理",
+      "startTime": "2024-02-01",
+      "endTime": "2024-02-04",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 16.78
+    },
+    {
+      "id": "1752495874454040578",
+      "taskName": "给技达蜂汇报项目计划",
+      "startTime": "2024-01-31",
+      "endTime": "2024-02-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 9.23
+    },
+    {
+      "id": "1750343813310427137",
+      "taskName": "多部门任务跟进对接",
+      "startTime": "2024-01-25",
+      "endTime": "2024-01-26",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 3.36
+    },
+    {
+      "id": "1749964048397217794",
+      "taskName": "新制作场景-体育场",
+      "startTime": "2024-01-24",
+      "endTime": "2024-01-31",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 46.01
+    },
+    {
+      "id": "1749598624195260417",
+      "taskName": "培训测试人员",
+      "startTime": "2024-01-23",
+      "endTime": "2024-01-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.87
+    },
+    {
+      "id": "1749237494532780033",
+      "taskName": "管理后台开发",
+      "startTime": "2024-01-22",
+      "endTime": "2024-05-17",
+      "progress": "72",
+      "predictProgress": 99.45,
+      "participantCount": 5,
+      "erpTaskTotalHours": 589.93
+    },
+    {
+      "id": "1749256864772370433",
+      "taskName": "接收开发组设备",
+      "startTime": "2024-01-22",
+      "endTime": "2024-01-22",
+      "progress": "66",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 3.22
+    },
+    {
+      "id": "1749314890321604609",
+      "taskName": "多部门协调跟进",
+      "startTime": "2024-01-22",
+      "endTime": "2024-01-24",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 15.48
+    },
+    {
+      "id": "1749231169081946114",
+      "taskName": "设备移交测试组",
+      "startTime": "2024-01-22",
+      "endTime": "2024-01-22",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 4,
+      "erpTaskTotalHours": 13.81
+    },
+    {
+      "id": "1749311024171560962",
+      "taskName": "管理后台需求评审",
+      "startTime": "2024-01-22",
+      "endTime": "2024-02-04",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 14.72
+    },
+    {
+      "id": "1749256308439887874",
+      "taskName": "教学模式测试",
+      "startTime": "2024-01-22",
+      "endTime": "2024-02-07",
+      "progress": "69",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 172.80
+    },
+    {
+      "id": "1749305342051463170",
+      "taskName": "新场景添加着火点效果",
+      "startTime": "2024-01-22",
+      "endTime": "2024-01-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 13.67
+    },
+    {
+      "id": "1748530379338002434",
+      "taskName": "设备交接、测试",
+      "startTime": "2024-01-20",
+      "endTime": "2024-01-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.40
+    },
+    {
+      "id": "1748184221885378562",
+      "taskName": "24年项目计划表",
+      "startTime": "2024-01-19",
+      "endTime": "2024-01-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.62
+    },
+    {
+      "id": "1748166111535017986",
+      "taskName": "24年项目计划安排整理汇总",
+      "startTime": "2024-01-19",
+      "endTime": "2024-01-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.56
+    },
+    {
+      "id": "1747856499912978434",
+      "taskName": "投标文件参数填写",
+      "startTime": "2024-01-18",
+      "endTime": "2024-02-02",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 13.10
+    },
+    {
+      "id": "1747813492874522625",
+      "taskName": "测试组项目对接",
+      "startTime": "2024-01-18",
+      "endTime": "2024-01-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 40.61
+    },
+    {
+      "id": "1747077094320050177",
+      "taskName": "管理后台项目计划表",
+      "startTime": "2024-01-16",
+      "endTime": "2024-01-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.20
+    },
+    {
+      "id": "1747071933421916161",
+      "taskName": "PPT单页设计",
+      "startTime": "2024-01-16",
+      "endTime": "2024-01-16",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.50
+    },
+    {
+      "id": "1746788938769174530",
+      "taskName": "测试软件教学及说明书修改",
+      "startTime": "2024-01-15",
+      "endTime": "2024-01-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 30.83
+    },
+    {
+      "id": "1746771875841380353",
+      "taskName": "24年项目规划会议",
+      "startTime": "2024-01-15",
+      "endTime": "2024-01-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 1.69
+    },
+    {
+      "id": "1746698399919050754",
+      "taskName": "教学模块测试",
+      "startTime": "2024-01-15",
+      "endTime": "2024-01-26",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 103.26
+    },
+    {
+      "id": "1746767787854598145",
+      "taskName": "项目规划会议",
+      "startTime": "2024-01-15",
+      "endTime": "2024-01-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.00
+    },
+    {
+      "id": "1746842922955509762",
+      "taskName": "徐工PPT修改",
+      "startTime": "2024-01-15",
+      "endTime": "2024-01-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.86
+    },
+    {
+      "id": "1746706998963671041",
+      "taskName": "杭州奥体地标建筑优化",
+      "startTime": "2024-01-15",
+      "endTime": "2024-01-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 25.35
+    },
+    {
+      "id": "1745991084320428034",
+      "taskName": "测试软件逻辑流程",
+      "startTime": "2024-01-13",
+      "endTime": "2024-01-13",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 11.44
+    },
+    {
+      "id": "1746021279530160130",
+      "taskName": "配合测试",
+      "startTime": "2024-01-13",
+      "endTime": "2024-01-13",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.96
+    },
+    {
+      "id": "1745641816271233026",
+      "taskName": "技达蜂项目进度对接",
+      "startTime": "2024-01-13",
+      "endTime": "2024-01-13",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.15
+    },
+    {
+      "id": "1745611117229154305",
+      "taskName": "设备工作基础条件文档",
+      "startTime": "2024-01-12",
+      "endTime": "2024-01-13",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.06
+    },
+    {
+      "id": "1745251919853166594",
+      "taskName": "杭州场景VR适配",
+      "startTime": "2024-01-11",
+      "endTime": "2024-01-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 14.41
+    },
+    {
+      "id": "1744983637292130306",
+      "taskName": "操作说明书内容补充",
+      "startTime": "2024-01-10",
+      "endTime": "2024-01-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 11.52
+    },
+    {
+      "id": "1744180689729396737",
+      "taskName": "协助测试调试方案二的硬件问题",
+      "startTime": "2024-01-08",
+      "endTime": "2024-01-08",
+      "progress": "70",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.59
+    },
+    {
+      "id": "1744161429263130626",
+      "taskName": "后台管理原型优化",
+      "startTime": "2024-01-08",
+      "endTime": "2024-01-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 11.11
+    },
+    {
+      "id": "1744247093400870913",
+      "taskName": "教学模式测试",
+      "startTime": "2024-01-08",
+      "endTime": "2024-01-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 22.05
+    },
+    {
+      "id": "1744236328061149185",
+      "taskName": "教学模块测试",
+      "startTime": "2024-01-08",
+      "endTime": "2024-01-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 36.91
+    },
+    {
+      "id": "1744163007768469506",
+      "taskName": "教学模块测试",
+      "startTime": "2024-01-08",
+      "endTime": "2024-01-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 46.76
+    },
+    {
+      "id": "1744163327554789378",
+      "taskName": "杭州地标最终效果调试",
+      "startTime": "2024-01-08",
+      "endTime": "2024-01-10",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 25.78
+    },
+    {
+      "id": "1744163172000636930",
+      "taskName": "教学模块测试",
+      "startTime": "2024-01-08",
+      "endTime": "2024-01-12",
+      "progress": "0",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 27.66
+    },
+    {
+      "id": "1743456816037797890",
+      "taskName": "教学模式测试",
+      "startTime": "2024-01-06",
+      "endTime": "2024-01-06",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.70
+    },
+    {
+      "id": "1743089596531122178",
+      "taskName": "教学模式测试",
+      "startTime": "2024-01-06",
+      "endTime": "2024-01-06",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.44
+    },
+    {
+      "id": "1742731662085234689",
+      "taskName": "绘制PPT",
+      "startTime": "2024-01-04",
+      "endTime": "2024-01-04",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 8.33
+    },
+    {
+      "id": "1742346174551715842",
+      "taskName": "后台逻辑对接及会议讨论",
+      "startTime": "2024-01-03",
+      "endTime": "2024-01-03",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 4.20
+    },
+    {
+      "id": "1742347954056491009",
+      "taskName": "管理后台需求评审",
+      "startTime": "2024-01-03",
+      "endTime": "2024-01-05",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 11.42
+    },
+    {
+      "id": "1741987764224290817",
+      "taskName": "教学部分完成50%测试",
+      "startTime": "2024-01-02",
+      "endTime": "2024-01-05",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 17.20
+    },
+    {
+      "id": "1741988325506052098",
+      "taskName": "教学部分完成50%测试",
+      "startTime": "2024-01-02",
+      "endTime": "2024-01-05",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 18.88
+    },
+    {
+      "id": "1741988203774767105",
+      "taskName": "教学部分完成50%测试",
+      "startTime": "2024-01-02",
+      "endTime": "2024-01-05",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 10.52
+    },
+    {
+      "id": "1741990101340811265",
+      "taskName": "杭州地标场景绘制",
+      "startTime": "2024-01-02",
+      "endTime": "2024-01-05",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 32.44
+    },
+    {
+      "id": "1740312487660253186",
+      "taskName": "设备维护保养",
+      "startTime": "2023-12-29",
+      "endTime": "2024-06-30",
+      "progress": "20",
+      "predictProgress": 76.14,
+      "participantCount": 4,
+      "erpTaskTotalHours": 106.12
+    },
+    {
+      "id": "1740199506846838786",
+      "taskName": "整理技术路线",
+      "startTime": "2023-12-28",
+      "endTime": "2023-12-28",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.70
+    },
+    {
+      "id": "1739449151541256194",
+      "taskName": "项目演示准备及讲解",
+      "startTime": "2023-12-26",
+      "endTime": "2023-12-26",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.36
+    },
+    {
+      "id": "1739451573814730753",
+      "taskName": "运输拆分方案",
+      "startTime": "2023-12-26",
+      "endTime": "2023-12-28",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.74
+    },
+    {
+      "id": "1739090056757956609",
+      "taskName": "实操考核模块测试及优化",
+      "startTime": "2023-12-25",
+      "endTime": "2023-12-29",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 40.80
+    },
+    {
+      "id": "1739090710134050818",
+      "taskName": "各部门任务进度及计划跟进",
+      "startTime": "2023-12-25",
+      "endTime": "2023-12-25",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 3.25
+    },
+    {
+      "id": "1739101409702891522",
+      "taskName": "场景建模创建",
+      "startTime": "2023-12-25",
+      "endTime": "2023-12-29",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 34.01
+    },
+    {
+      "id": "1739090535617449985",
+      "taskName": "实操考核模块测试及优化",
+      "startTime": "2023-12-25",
+      "endTime": "2023-12-29",
+      "progress": "0",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 31.24
+    },
+    {
+      "id": "1739090332873183234",
+      "taskName": "实操考核模块测试及优化",
+      "startTime": "2023-12-25",
+      "endTime": "2023-12-31",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 35.50
+    },
+    {
+      "id": "1738130627841544193",
+      "taskName": "程序UI界面修改",
+      "startTime": "2023-12-23",
+      "endTime": "2023-12-24",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.45
+    },
+    {
+      "id": "1738446163058151425",
+      "taskName": "VR联调小区和商场测试",
+      "startTime": "2023-12-23",
+      "endTime": "2023-12-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.91
+    },
+    {
+      "id": "1737653852766236674",
+      "taskName": "徐工领导项目汇报",
+      "startTime": "2023-12-21",
+      "endTime": "2023-12-22",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 13.84
+    },
+    {
+      "id": "1736913806916349953",
+      "taskName": "正式版本调试及问题修复",
+      "startTime": "2023-12-19",
+      "endTime": "2023-12-22",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 27.58
+    },
+    {
+      "id": "1736948030222397441",
+      "taskName": "徐工消防PPT策划",
+      "startTime": "2023-12-19",
+      "endTime": "2023-12-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.36
+    },
+    {
+      "id": "1736913171424768001",
+      "taskName": "正式版本调试及问题修复",
+      "startTime": "2023-12-19",
+      "endTime": "2023-12-22",
+      "progress": "10",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 17.31
+    },
+    {
+      "id": "1736913678864248833",
+      "taskName": "正式版本调试及问题修复",
+      "startTime": "2023-12-19",
+      "endTime": "2023-12-22",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 31.01
+    },
+    {
+      "id": "1736554662308900866",
+      "taskName": "山西版本添加烧黑效果",
+      "startTime": "2023-12-18",
+      "endTime": "2023-12-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 20.67
+    },
+    {
+      "id": "1736554067489484802",
+      "taskName": "山西版本开发",
+      "startTime": "2023-12-18",
+      "endTime": "2023-12-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.16
+    },
+    {
+      "id": "1736551950435512322",
+      "taskName": "山西版本开发",
+      "startTime": "2023-12-18",
+      "endTime": "2023-12-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.03
+    },
+    {
+      "id": "1736554183252275201",
+      "taskName": "山西版本开发",
+      "startTime": "2023-12-18",
+      "endTime": "2023-12-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.13
+    },
+    {
+      "id": "1736554315276382210",
+      "taskName": "山西版本开发",
+      "startTime": "2023-12-18",
+      "endTime": "2023-12-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.52
+    },
+    {
+      "id": "1735830790689288194",
+      "taskName": "管理后台原型",
+      "startTime": "2023-12-16",
+      "endTime": "2023-12-22",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 13.65
+    },
+    {
+      "id": "1735098546643300354",
+      "taskName": "化工场景训练测试",
+      "startTime": "2023-12-14",
+      "endTime": "2023-12-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 15.60
+    },
+    {
+      "id": "1734744477051416577",
+      "taskName": "登高平台场景细节处理",
+      "startTime": "2023-12-13",
+      "endTime": "2023-12-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 20.59
+    },
+    {
+      "id": "1734402584321015810",
+      "taskName": "化工场景协助程序调试",
+      "startTime": "2023-12-12",
+      "endTime": "2023-12-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.25
+    },
+    {
+      "id": "1734124637857030146",
+      "taskName": "管理后台策划",
+      "startTime": "2023-12-11",
+      "endTime": "2023-12-15",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 17.61
+    },
+    {
+      "id": "1734014288201818113",
+      "taskName": "上消所申报材料准备",
+      "startTime": "2023-12-11",
+      "endTime": "2023-12-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 22.07
+    },
+    {
+      "id": "1734028945285226497",
+      "taskName": "学校场景细节丰富",
+      "startTime": "2023-12-11",
+      "endTime": "2023-12-12",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.79
+    },
+    {
+      "id": "1734013928489918465",
+      "taskName": "山西版本开发",
+      "startTime": "2023-12-11",
+      "endTime": "2023-12-15",
+      "progress": "66",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 99.82
+    },
+    {
+      "id": "1733297612028157954",
+      "taskName": "配合质检机构检测",
+      "startTime": "2023-12-09",
+      "endTime": "2023-12-09",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 3.20
+    },
+    {
+      "id": "1732926243868286977",
+      "taskName": "演示及验收",
+      "startTime": "2023-12-08",
+      "endTime": "2023-12-08",
+      "progress": "75",
+      "predictProgress": 100,
+      "participantCount": 4,
+      "erpTaskTotalHours": 31.06
+    },
+    {
+      "id": "1731843028462116866",
+      "taskName": "化工厂场景制作",
+      "startTime": "2023-12-05",
+      "endTime": "2023-12-10",
+      "progress": "80",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 60.76
+    },
+    {
+      "id": "1731476217522593794",
+      "taskName": "检测机构测试前功能完善",
+      "startTime": "2023-12-04",
+      "endTime": "2023-12-08",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 30.30
+    },
+    {
+      "id": "1731480197963227138",
+      "taskName": "化工场景绘制",
+      "startTime": "2023-12-04",
+      "endTime": "2023-12-05",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 6.86
+    },
+    {
+      "id": "1731483999814590466",
+      "taskName": "学校场景处理",
+      "startTime": "2023-12-04",
+      "endTime": "2023-12-05",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 5.91
+    },
+    {
+      "id": "1730774425994338305",
+      "taskName": "设配联调流程调试",
+      "startTime": "2023-12-02",
+      "endTime": "2023-12-09",
+      "progress": "66",
+      "predictProgress": 100,
+      "participantCount": 3,
+      "erpTaskTotalHours": 110.51
+    },
+    {
+      "id": "1730401056346152961",
+      "taskName": "学校模型制作",
+      "startTime": "2023-12-01",
+      "endTime": "2023-12-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.96
+    },
+    {
+      "id": "1730034640581369857",
+      "taskName": "学校场景丰富环境",
+      "startTime": "2023-11-30",
+      "endTime": "2023-12-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 11.52
+    },
+    {
+      "id": "1729674216136581121",
+      "taskName": "学校场景模型处理",
+      "startTime": "2023-11-29",
+      "endTime": "2023-12-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.81
+    },
+    {
+      "id": "1729783298252152834",
+      "taskName": "项目跟进及任务分配",
+      "startTime": "2023-11-29",
+      "endTime": "2023-12-01",
+      "progress": "60",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 21.05
+    },
+    {
+      "id": "1728960793631334402",
+      "taskName": "学校新场景前期制作",
+      "startTime": "2023-11-27",
+      "endTime": "2023-11-29",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 19.56
+    },
+    {
+      "id": "1728939041211621378",
+      "taskName": "对接can联线及测试任务",
+      "startTime": "2023-11-27",
+      "endTime": "2023-11-27",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.55
+    },
+    {
+      "id": "1728943332596981762",
+      "taskName": "设备联动性开发",
+      "startTime": "2023-11-27",
+      "endTime": "2023-12-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 26.02
+    },
+    {
+      "id": "1728943085133045761",
+      "taskName": "设备联动性开发",
+      "startTime": "2023-11-27",
+      "endTime": "2023-12-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 23.75
+    },
+    {
+      "id": "1728943233036787713",
+      "taskName": "设备联动性开发",
+      "startTime": "2023-11-27",
+      "endTime": "2023-12-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 16.73
+    },
+    {
+      "id": "1729061615845318657",
+      "taskName": "安全谷设备展示及演示协助",
+      "startTime": "2023-11-27",
+      "endTime": "2023-11-28",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 8.51
+    },
+    {
+      "id": "1727851408083460098",
+      "taskName": "项目进度跟进",
+      "startTime": "2023-11-24",
+      "endTime": "2023-11-24",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.21
+    },
+    {
+      "id": "1727507689895436289",
+      "taskName": "整理目前的开发任务",
+      "startTime": "2023-11-23",
+      "endTime": "2023-11-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.69
+    },
+    {
+      "id": "1727519008539353090",
+      "taskName": "消防协助工业设计测试",
+      "startTime": "2023-11-23",
+      "endTime": "2023-11-23",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 0.50
+    },
+    {
+      "id": "1725316322591055874",
+      "taskName": "项目存在的问题整理",
+      "startTime": "2023-11-17",
+      "endTime": "2023-11-17",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.27
+    },
+    {
+      "id": "1724273202059354113",
+      "taskName": "设备检测报告资料整理",
+      "startTime": "2023-11-14",
+      "endTime": "2023-11-18",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 9.72
+    },
+    {
+      "id": "1724314694022930434",
+      "taskName": "检测报告资料整理",
+      "startTime": "2023-11-14",
+      "endTime": "2023-11-17",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 16.45
+    },
+    {
+      "id": "1722054418204532737",
+      "taskName": "观看消防大赛直播",
+      "startTime": "2023-11-08",
+      "endTime": "2023-11-08",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 3.88
+    },
+    {
+      "id": "1719898113217994753",
+      "taskName": "拆装设备",
+      "startTime": "2023-11-02",
+      "endTime": "2023-12-31",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 7,
+      "erpTaskTotalHours": 175.26
+    },
+    {
+      "id": "1718803714438406145",
+      "taskName": "协助设备打包",
+      "startTime": "2023-11-01",
+      "endTime": "2023-11-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 7.01
+    },
+    {
+      "id": "1718795233794793473",
+      "taskName": "南训版本需求软件开发",
+      "startTime": "2023-10-30",
+      "endTime": "2023-11-03",
+      "progress": "0",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 0.00
+    },
+    {
+      "id": "1718794891539587074",
+      "taskName": "逻辑流程测试",
+      "startTime": "2023-10-30",
+      "endTime": "2023-11-01",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.60
+    },
+    {
+      "id": "1718790447900991489",
+      "taskName": "项目解决方案对接",
+      "startTime": "2023-10-30",
+      "endTime": "2023-10-30",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 2.71
+    },
+    {
+      "id": "1718080352644833282",
+      "taskName": "展会情况梳理及设备安装跟进",
+      "startTime": "2023-10-28",
+      "endTime": "2023-10-28",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.58
+    },
+    {
+      "id": "1716623442544500737",
+      "taskName": "和技达蜂对接后期工作计划",
+      "startTime": "2023-10-24",
+      "endTime": "2023-10-24",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 0.48
+    },
+    {
+      "id": "1714816990628618242",
+      "taskName": "优化训练场VR场景",
+      "startTime": "2023-10-19",
+      "endTime": "2023-10-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 11.93
+    },
+    {
+      "id": "1714829203443621890",
+      "taskName": "产品介绍PPT风格处理",
+      "startTime": "2023-10-19",
+      "endTime": "2023-10-19",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 2,
+      "erpTaskTotalHours": 1.71
+    },
+    {
+      "id": "1678208098380783617",
+      "taskName": "实操版本VR六轴动作匹配",
+      "startTime": "2023-10-17",
+      "endTime": "2023-10-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 21.41
+    },
+    {
+      "id": "1714165247406317570",
+      "taskName": "根据北京展会情况跟进修改程序",
+      "startTime": "2023-10-17",
+      "endTime": "2023-10-20",
+      "progress": "100",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 20.52
+    }
+  ]
+}

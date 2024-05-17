@@ -86,18 +86,21 @@ const data = ref([])
 
 const loading = ref(true)
 function dataReady(src){
-  debugger
   // 数据变化
-  let patch = src.slice(0,5)
-  data.value = src.concat(patch)
+  if(src.length>=5){
+    let patch = src.slice(0,5)
+    data.value = src.concat(patch)
+  }else{
+    data.value = src
+  }
   return nextTick(()=>loading.value = false)
 }
 
 let tween
 // loading = false代表数据加载结束
 watch(loading,(nv,ov)=>{
-  let dom = document.querySelector('#hot-kanban')
   if(nv == false){
+    let dom = document.querySelector('#hot-kanban')
     dom.scrollTop = 0
     let scroll_h = dom.scrollHeight
     let dom_h = dom.clientHeight
@@ -112,13 +115,13 @@ watch(loading,(nv,ov)=>{
         ease:'none',
       })
       dom.onmouseenter = e =>{
-        tween.pause()
-        dom.onscroll = e =>dom.scrollTop == offset && (dom.scrollTop = 0)
+        tween.pause()  // 动画暂停
+        dom.onscroll = e =>dom.scrollTop == offset && (dom.scrollTop = 0) // 开始监听用户滚动事件
       }
       dom.onmouseleave = e => {
         let current_offset =  offset - dom.scrollTop
         let radio = current_offset / offset * duration
-        tween = gsap.to(dom,{
+        tween = gsap.to(dom,{ // 重新开启动画
           scrollTop:offset,
           duration:radio,
           ease:'none',
@@ -129,6 +132,7 @@ watch(loading,(nv,ov)=>{
     }
   }else{
     tween.kill()
+    tween = null
   }
 })
 

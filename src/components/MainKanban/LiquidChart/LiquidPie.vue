@@ -77,7 +77,7 @@ function getCanvasPieCenter(){
   canvasSize = [canvasWidth,canvasHeight]
   let halfWidth = canvasWidth * 0.3, halfHeight = canvasHeight * 0.5 // 一半的宽高
   center[0] = halfWidth + boundBox.left + grid.left
-  center[1] = halfHeight + boundBox.top + grid.top
+  center[1] = halfHeight + boundBox.top + grid.top + window.scrollY
 }
 
 onMounted(()=>{ // 初始化时就获取画布中心点
@@ -86,12 +86,14 @@ onMounted(()=>{ // 初始化时就获取画布中心点
 
 // 获取偏移量
 function getRectCenter(){
+  // 当页面垂直滚动时，包围盒中心点会计算会忽略页面滚动值scrollTop
   rectCenter = [ // 包围盒的中心点
     boundRect.left + boundRect.width/2,
-    boundRect.top + boundRect.height/2
+    boundRect.top + boundRect.height/2 + window.scrollY
   ] // 目标圆当前中心点
   const dX = center[0] - rectCenter[0]
   const dY = center[1] - rectCenter[1]
+  console.log(`centerX:${center[0]} centerY:${center[1]} rectCenterX:${rectCenter[0]} rectCenterY:${rectCenter[1]} dX:${dX} dY:${dY}`)
   return [dX,dY]
 }
 
@@ -99,9 +101,6 @@ function getRectCenter(){
 function moveIn(){
   // 求取整个画布的中心点 rectCenter
   const [dX, dY] = getRectCenter()
-
-  // const currentRadius = parseFloat(liquidFillSeriesOption[0].radius)
-  // const scaleLevel = targetRadius / currentRadius
   gsap.set(`#${props.domId} svg`,{
     transformOrigin:'50% 30%',
   })

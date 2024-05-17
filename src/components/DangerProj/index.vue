@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, reactive, watch, getCurrentInstance} from 'vue'
+import {ref, onMounted, reactive, watch, getCurrentInstance,nextTick} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import {mockData} from './mockData.js'
 import {getpx} from "@/utils/style.js";
@@ -8,6 +8,7 @@ import {useLocalDataStore} from "@/storage/index.js";
 import request from "@/utils/request.js";
 import {filterDangerProjData} from "@/utils/dataFilter.js";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
+import gsap from "gsap";
 const {proxy} = getCurrentInstance()
 const store = useLocalDataStore()
 const colorList = [
@@ -15,7 +16,7 @@ const colorList = [
   '#6459F4',
   '#A26CE6',
 ]
-const data = ref(mockData)
+const data = ref([])
 
 const queryParams = reactive({
   department:undefined
@@ -42,12 +43,17 @@ const selectRiskyProject = params => request.get('/erp/visualize/selectRiskyProj
 // 获取风险项目数据
 function getDangerProjData(){
   return selectRiskyProject({deptId:queryParams.department}).then(res=>{
-    console.group('获取风险项目数据')
-    console.log(res.data)
     data.value = filterDangerProjData(res.data)
-    console.log(data.value)
-    console.groupEnd()
-    loading.value = false
+    if(data.value.length>=5){
+      data.value = data.value.concat(data.value.slice(0,5))
+    }
+
+    if(window.debugModeEnable){
+      console.group('获取风险项目数据')
+      console.log(data.value)
+      console.groupEnd()
+    }
+    nextTick(()=> loading.value = false)
   })
 }
 watch(()=>queryParams.department,(nv,ov)=>{
@@ -64,8 +70,46 @@ function init(){
 }
 function ready(){
   loading.value = false;
-  console.log('风险项目动画开始')
 }
+
+let tween
+watch(loading,(nv,ov)=>{
+  if(nv == false){
+    let dom = document.querySelector('#danger-kanban')
+    dom.scrollTop = 0
+    let scroll_h = dom.scrollHeight
+    let dom_h = dom.clientHeight
+    let offset = scroll_h - dom_h
+    let delay = 3
+    let duration = 30
+    if(offset>0){
+      tween = gsap.to(dom,{
+        scrollTop:offset,
+        duration:30,
+        delay:delay,
+        ease:'none',
+      })
+      dom.onmouseenter = e =>{
+        tween.pause()  // 动画暂停
+        dom.onscroll = e =>dom.scrollTop == offset && (dom.scrollTop = 0) // 开始监听用户滚动事件
+      }
+      dom.onmouseleave = e => {
+        let current_offset =  offset - dom.scrollTop
+        let radio = current_offset / offset * duration
+        tween = gsap.to(dom,{ // 重新开启动画
+          scrollTop:offset,
+          duration:radio,
+          ease:'none',
+        })
+        tween.play()
+      }
+      tween.repeat(-1)
+    }
+  }else{
+    tween.kill()
+    tween = null
+  }
+})
 
 defineExpose({
   init,ready
@@ -84,15 +128,15 @@ defineExpose({
         @change="(()=>getChangeFun(0))()"
         v-model:value="queryParams.department" />
     <window-loading :loading="loading && store.loading"/>
-    <div class="kanban-content">
+    <div class="kanban-content" id="danger-kanban">
       <div class="kanban-item" :class="{'ready':!loading && !store.loading}" v-for="(item, index) in data"
            :style="{
-              '--color':colorList[index]||'#B3B5BB',
-              '--bg-color':colorList[index]?colorList[index]+'33':'#D9D9D933',
-              '--inner-color':colorList[index]||'#D9D9D9',
-              '--index':index,
+              '--color':colorList[item.index]||'#B3B5BB',
+              '--bg-color':colorList[item.index]?colorList[index]+'33':'#D9D9D933',
+              '--inner-color':colorList[item.index]||'#D9D9D9',
+              '--index':item.index,
            }">
-        <div class="index num">{{index+1}}</div>
+        <div class="index num">{{item.index+1}}</div>
         <div class="progress-box">
           <div class="progress-label">
             <p class="name">{{item.name}}</p>
@@ -127,6 +171,7 @@ defineExpose({
   max-height: calc(22rem - $content-header-h - 1.5rem - 2.94rem - 0.6rem);
 }
 .kanban-content{
+  cursor: pointer;
   margin-top:1.75rem;
   $item-h:2.13rem;
   $item-mb:1.13rem;

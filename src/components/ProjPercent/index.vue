@@ -42,11 +42,12 @@ const selectProjectProportion = params => request.get('/erp/visualize/selectProj
 // 获取项目占比数据
 function getProjPercentData(){
   return selectProjectProportion({deptId:queryParams.department}).then(res=>{
-    console.group('项目占比数据')
-    console.log(res.data)
     data.value = filterProgressData(res.data)
-    console.log(data.value)
-    console.groupEnd()
+    if(window.debugModeEnable){
+      console.group('项目占比数据')
+      console.log(data.value)
+      console.groupEnd()
+    }
     nextTick(()=>{
       proxy.$refs.RingPieRef.updateChart()
     })

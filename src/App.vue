@@ -13,7 +13,7 @@ const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
 let app_init = true
 const selectProjectPopularity = params => request.get('/erp/visualize/selectProjectPopularity', {params}) // 请求项目热度
-const selectDeptList = params => request.get('/erp/visualize/selectDeptList',{params}) // 请求部门信息
+const selectDeptList = (params={}) => request.get('/erp/visualize/selectDeptList',{params}) // 请求部门信息
 
 // 获取主表格数据
 function getMainChartData(params=defaultHotParams){
@@ -24,18 +24,20 @@ function getMainChartData(params=defaultHotParams){
     // 数据分发到表格
     const {chartData, tableData, hotData} = filterMainData(res.data)
 
-    console.group('热度、图表数据请求结束')
-    console.log(res.data)
-    console.group('图表数据')
-    console.log(chartData)
-    console.groupEnd()
-    console.group('表格数据')
-    console.log(tableData)
-    console.groupEnd()
-    console.group('热度数据')
-    console.log(hotData)
-    console.groupEnd()
-    console.groupEnd()
+    if(window.debugModeEnable){
+      console.group('热度、图表数据请求结束')
+      console.log(res.data)
+      console.group('图表数据')
+      console.log(chartData)
+      console.groupEnd()
+      console.group('表格数据')
+      console.log(tableData)
+      console.groupEnd()
+      console.group('热度数据')
+      console.log(hotData)
+      console.groupEnd()
+      console.groupEnd()
+    }
 
     // 数据分发到项目热度
     proxy.$refs.HotSortRef.dataReady(hotData)
@@ -54,8 +56,10 @@ function getDeptData(){
       }
     })
     store.deptList.unshift({label:'所有部门', value:''})
-    console.log(store.deptList)
-    console.group('部门数据请求结束')
+    if(window.debugModeEnable){
+      console.log(store.deptList)
+      console.group('部门数据请求结束')
+    }
     proxy.$refs.ProjPercentRef.init() // 初始化项目占比
     proxy.$refs.DangerProjRef.init() // 初始化项目占比
   })
