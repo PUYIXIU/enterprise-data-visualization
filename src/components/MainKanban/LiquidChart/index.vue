@@ -69,11 +69,13 @@ const selectProjectDetails = params=>request.get('/erp/visualize/selectProjectDe
 // 获取饼图数据
 function getPieData(projData){
   return selectProjectDetails({erpProjectId:projData.id}).then(res=>{
-    console.group('请求到环饼图数据')
-    console.log(res)
-    console.groupEnd()
     res.data = filterPieData(res.data) // 过滤接口数据
     projData.peopleList = handlePieData(res.data) // 处理数据
+    if(window.debugModeEnable){
+      console.group('请求到环饼图数据')
+      console.log(res)
+      console.groupEnd()
+    }
     return projData
   })
 }

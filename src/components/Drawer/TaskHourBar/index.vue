@@ -133,9 +133,8 @@ function getOption(data){
 // 销毁表格
 function dispose(){
   window.removeEventListener('resize',resize)
-  chart.dispose()
+  chart && chart.dispose()
   chart = null
-  console.log('柱状图销毁')
 }
 
 defineExpose({

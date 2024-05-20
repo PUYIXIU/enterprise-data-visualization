@@ -1,5 +1,7 @@
 <script setup>
-const props = defineProps(['height','title'])
+
+import {QuestionFilled} from '@element-plus/icons-vue'
+const props = defineProps(['height','title','tooltip'])
 </script>
 
 <template>
@@ -7,12 +9,35 @@ const props = defineProps(['height','title'])
     <div class="box-header">
         <span></span>
         <h5>{{props.title}}</h5>
+        <el-popover trigger="hover" placement="top" :width="tooltip.width" v-if="tooltip">
+          <template #reference>
+            <el-button size="large" :icon="QuestionFilled" circle text />
+          </template>
+          <template #default>
+            <p class="popover-text">
+              <span>提示：</span>
+              <span>{{tooltip.context}}</span>
+            </p>
+          </template>
+        </el-popover>
     </div>
     <slot></slot>
   </div>
 </template>
 
 <style scoped lang="scss">
+.popover-text{
+  font-family: SourceHanSansCN-Regular;
+  white-space: nowrap;
+  width:100%;
+  text-align: center;
+  span:first-child{
+    color: #332b69;
+  }
+  span:last-child{
+    color: rgba(51, 43, 105, 0.69);
+  }
+}
 .drawer-box-wrapper{
   width:100%;
   background-color: rgba(255, 255, 255,0.8);

@@ -6,6 +6,7 @@ import {mockData} from './mockData.js'
 import gsap from 'gsap'
 import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
+import Empty from "@/components/Loading/Empty.vue";
 const {proxy} = getCurrentInstance()
 const store = useLocalDataStore()
 const colorList = [
@@ -81,7 +82,9 @@ watch(queryParams,(nv,ov)=>{
   loading.value = true
   emit('queryChange',queryParams)
 })
-
+watch(()=>store.timeTrigger,()=>{ // 定时请求数据
+  emit('queryChange',queryParams, true)
+})
 const data = ref([])
 
 const loading = ref(true)
@@ -99,8 +102,8 @@ function dataReady(src){
 let tween
 // loading = false代表数据加载结束
 watch(loading,(nv,ov)=>{
+  let dom = document.querySelector('#hot-kanban')
   if(nv == false){
-    let dom = document.querySelector('#hot-kanban')
     dom.scrollTop = 0
     let scroll_h = dom.scrollHeight
     let dom_h = dom.clientHeight
@@ -131,8 +134,11 @@ watch(loading,(nv,ov)=>{
       tween.repeat(-1)
     }
   }else{
-    tween.kill()
+    tween && tween.kill()
     tween = null
+    dom.onmouseenter = undefined
+    dom.onmouseleave = undefined
+    dom.onscroll = undefined
   }
 })
 
@@ -163,6 +169,7 @@ defineExpose({
         :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"
         v-model:value="queryParams.filterType" />
     <window-loading :loading="loading"/>
+    <empty :show-div="!loading && data.length == 0" />
     <div class="kanban-content" id="hot-kanban">
       <div class="kanban-item" :class="{'ready':!store.loading}" v-for="(item, index) in data"
            :style="{

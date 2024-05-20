@@ -15,6 +15,7 @@ import {filterHourListData} from "@/utils/dataFilter.js";
 import QueryBox from "@/components/QueryBox/index.vue";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
 import {getpx} from "@/utils/style.js";
+import Empty from "@/components/Loading/Empty.vue";
 const domId = ref('progress-timeline')
 
 const groupData = new VisData.DataSet()
@@ -30,9 +31,11 @@ let loading = ref(true)
 
 // 清空所有数据
 function dispose(){
-  timeline.destroy()
-  groupData.clear()
-  itemData.clear()
+  try{
+    timeline && timeline.destroy()
+  }catch(e){console.log('销毁vis-timeline时报错')}
+  groupData && groupData.clear()
+  itemData && itemData.clear()
   timeLineData = []
   renderGroupIds = []
   hourMap = {}
@@ -203,9 +206,11 @@ function getHourListByTaskId(id){
     }
     res.data = filterHourListData(res.data)
     hourMap[id] = res.data
-    console.group('请求任务进度人员详情',id)
-    console.log(res.data)
-    console.groupEnd()
+    if(window.debugModeEnable){
+      console.group('请求任务进度人员详情',id)
+      console.log(res.data)
+      console.groupEnd()
+    }
     return hourMap[id]
   })
 }
@@ -219,7 +224,6 @@ function progressClick(data){
       let index = renderGroupIds.findIndex(i=>i == data.id)
       let barHeight = getpx(barRowHeightRem)
       if(index>=0){
-        console.log('人员详情收回')
         renderGroupIds.splice(index,1) // 删掉这个id
         let hourData = hourMap[data.id]
         hourData.forEach(person=>{
@@ -278,7 +282,7 @@ function setProgressStyle(){
     nodeContent.onmousemove = progressMove // 进度条随鼠标移动
     nodeContent.onmouseleave = progressLeave // 进度条随鼠标移动
     const label = getDiv('label')
-    label.innerHTML = `${data.progress} <span>%</span>`
+    label.innerHTML = `${data.erpTaskTotalHours} <span>h</span>`
     node.append(label)
   }
 }
@@ -332,10 +336,10 @@ function progressMove(e){
   // 任务进度的外层定位容器
   let wrapper = document.querySelector('#progress-wrapper-dom')
   let rect = wrapper.getBoundingClientRect()
-  let baseTop = rect.top + window.scrollY
+  let baseTop = rect.top
   let baseLeft = rect.left
+  toolTipData.value.top = e.clientY - baseTop
   toolTipData.value.left = e.x - baseLeft
-  toolTipData.value.top = e.y - baseTop
 }
 function progressLeave(e){
   toolTipData.value.show = false
@@ -345,9 +349,9 @@ let contentHeight = 0 //动态计算高度
 // 绑定事件
 function addEvent(){
   let content = document.querySelector('.vis-timeline')
-  let height = content.style.height; // 原始高度
-  content.style.setProperty('--content-height',height)
-  contentHeight = parseFloat(height)
+  let originHeight = parseFloat(content.style.height); // 原始高度
+  contentHeight = Math.max( getpx(4) * 5 ,originHeight)
+  content.style.setProperty('--content-height',contentHeight + 'px')
   content.classList.add('fix-height')
 }
 
@@ -357,9 +361,16 @@ function setContentHeight(height){
   content.style.setProperty('--content-height',contentHeight + 'px')
 }
 
+let isEmpty = ref(false)
 // 初始化时间轴表格
 function init(src){
   timeLineData = src
+  if(src.length == 0){
+    isEmpty.value = true
+    loading.value = false
+    return
+  }
+  isEmpty.value = false
   const targetDom = document.getElementById(domId.value)
   let baseValue = 1000 // 用于做基类，方便在group基值之间插入新组
   let min = dayjs() // 最早时间
@@ -385,26 +396,6 @@ function init(src){
     groupData.add(groupOption)
     createProgressItemData(groupOption.id, task) // 创建任务进度条group
 
-    // 获取所有人员中最大单日工时，最小单日工时
-    // let allHourData = task.children.map(i=>i.hourList.map(o=>o[1])).flat().sort()
-    // let maxHour = allHourData[allHourData.length-1]
-    // let minHour = allHourData[0]
-    // // 添加参与人员柱状图
-    // task.children.forEach((person,personIndex)=>{
-    //   const subColor = mainColor.subColor[personIndex % mainColor.subColor.length]
-    //   person.color = subColor
-    //   const groupOption = {
-    //     id:counter++,
-    //     className:`
-    //       ${barGroupClassName}
-    //       person-${person.name}-${person.totalHour}
-    //       color-${person.color}
-    //       `,
-    //     content:``,
-    //   }
-    //   groupData.add(groupOption)
-    //   createBarItemData(groupOption.id, person, minHour, maxHour)
-    // })
   })
   max = max.add(3,'month') // 结尾增加一个月用于展示结尾label
   let start = min.clone(), end = max.clone()
@@ -413,8 +404,10 @@ function init(src){
   if(diff>1){ // 相差年限大于1年，显示最近1年
     start = end.subtract(1,'year')
   }
-  console.log('相差年数：'+diff)
-  console.log('最早和最晚时间：',min.format('YYYY-MM-DD'),max.format('YYYY-MM-DD'))
+  if(window.debugModeEnable){
+    console.log('相差年数：'+diff)
+    console.log('最早和最晚时间：',min.format('YYYY-MM-DD'),max.format('YYYY-MM-DD'))
+  }
   let options = {
     stack: false, // 堆叠
     onInitialDrawComplete:()=>{  // 绘制结束的回调
@@ -432,9 +425,9 @@ function init(src){
     },
     // zoomKey: "ctrlKey",
     zoomKey: "shiftKey",
-    start: start.format('YYYY-MM-DD'), // 开始
+    // start: start.format('YYYY-MM-DD'), // 开始
     min:min.format('YYYY-MM-DD'), // 最小时间
-    end: end.format('YYYY-MM-DD'), // 结束
+    // end: end.format('YYYY-MM-DD'), // 结束
     max: max.format('YYYY-MM-DD'), // 最大时间
     snap:null, // 吸附
     margin: {
@@ -456,6 +449,7 @@ defineExpose({
 
 <template>
   <div :id="domId" class="timeline-wrapper"></div>
+  <empty :show-div="!loading && isEmpty" />
   <window-loading class="progress-window-loading" :loading="loading"/>
   <div id="timeline-tooltip" :style="{
     '--left':toolTipData.left + 'px',
@@ -486,15 +480,12 @@ $text-height:1.13rem;
   position:absolute;
   z-index:99;
   top:calc(
-          var(--top) + $draw-padding-top + $text-height +
-          $minor-title-height +
-          $majar-border-bottom-width +
-          $majar-margin-bottom + $majar-title-height - 1px
+      var(--top)
   );
   left:var(--left);
   opacity: 0;transition-property: opacit;transition-timing-function: ease-in-out;
   transition-duration: 0.2s;
-  transform:translateX(-50%) translateY(-30%);
+  transform:translateX(-50%) translateY(-100%);
   width: fit-content;
   height: 3.44rem;
   padding:0.5rem;

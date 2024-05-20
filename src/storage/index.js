@@ -1,12 +1,15 @@
 import {defineStore} from "pinia";
 
 export const defaultHotParams = {
-    filterDay:3,
+    filterDay:1,
     filterType:1
 }
 
+
+const timeScale = 1000 * 60 * 60 * 8 // 8个小时
 export const useLocalDataStore = defineStore('local',{
     state:()=>({
+        timeTrigger:0, // 定时触发器，每8个小时改变一次
         loading:true, // 主页loading
         mapMode:0, // 0为均匀模式 1为全局模式
         currentProjectIndex:undefined, // 鼠标hover过的球体的inedx
@@ -16,5 +19,10 @@ export const useLocalDataStore = defineStore('local',{
     }),
     getters:{},
     actions:{
+        startTimeCount(){
+            setInterval(()=>{
+                this.timeTrigger ++
+            },timeScale)
+        }
     }
 })

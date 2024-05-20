@@ -19,8 +19,8 @@ const darkBlue = {
 const violet = {
     liquid:{color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30},
     pie:[
-        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
-        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
+        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
+        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
     ]
 }
 

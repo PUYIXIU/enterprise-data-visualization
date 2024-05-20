@@ -252,7 +252,7 @@ export function handlePieData(data){ // 对饼图进行处理
             node.valueEffect = (node.value - minValue) / valueDiff // 计算出半径系数
         }
     })
-    data.sort((a,b)=>a.value - b.value) // 排序
+    data.sort((a,b)=>b.value - a.value) // 排序
     return data
 }
 
@@ -273,7 +273,7 @@ export function getPieOptions(data, pieColor, pieOptionTemp, liquidOptionTemp,ca
     let angle = 360 / pieNum - gap // 单个弧形所占的弧度
     let minRadius = innerRadius + 30 // 最小外半径（40 - 80）
     let maxRadius = 95 // 最大外半径
-
+    let angleDiff = 45 // 角度偏移
     data.forEach((node,index)=>{
         let temp = [0,1].includes(index)?(index+1):index
         const i = (temp+1)%pieColor.length
@@ -286,7 +286,7 @@ export function getPieOptions(data, pieColor, pieOptionTemp, liquidOptionTemp,ca
         pieOption.radius[1] = `${outerRadius}%`
 
         /** 计算起始角度 */
-        pieOption.startAngle = - index * (angle + gap)
+        pieOption.startAngle = - index * (angle + gap) + angleDiff
         let realAngle = angle>20? 20:angle // 真正的跨越角度
         pieOption.endAngle = pieOption.startAngle - realAngle
 

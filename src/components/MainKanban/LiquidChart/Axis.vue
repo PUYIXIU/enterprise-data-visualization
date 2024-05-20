@@ -174,7 +174,7 @@ defineExpose({
 
 onBeforeUnmount(()=>{
   window.removeEventListener('resize',resize)
-  chart.dispose()
+  chart && chart.dispose()
   chart = null
 })
 </script>

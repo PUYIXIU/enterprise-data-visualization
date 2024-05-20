@@ -32,7 +32,6 @@ watch(()=>store.selectProjId,(nv,ov)=>{
 // 获取柱状图数据
 const selectProjectBarChartDetails = params => request.get('/erp/visualize/selectProjectBarChartDetails',{params})
 function getTaskHourBarData(projId){
-  console.time('柱状图')
   return selectProjectBarChartDetails({erpProjectId:projId}).then(res=>{
     res.data = filterBarData(res.data)
     proxy.$refs.TaskHourBarRef.initChart(res.data)
@@ -40,7 +39,6 @@ function getTaskHourBarData(projId){
       console.group('请求任务详情柱状图数据:',projId)
       console.log(res)
       console.groupEnd()
-      console.timeEnd('柱状图')
     }
   })
 }
@@ -48,7 +46,6 @@ function getTaskHourBarData(projId){
 // 获取项目甘特图数据
 const selectProjectGanttChartDetails = params => request.get('/erp/visualize/selectProjectGanttChartDetails',{params})
 function getTaskGantData(projId){
-  console.time('甘特图')
   return selectProjectGanttChartDetails({erpProjectId:projId}).then(res=>{
     res.data = filterGantData(res.data)
     proxy.$refs.TaskGantRef.dataReady(res.data)
@@ -57,7 +54,6 @@ function getTaskGantData(projId){
       console.log(res)
       console.groupEnd()
     }
-    console.timeEnd('甘特图')
   })
 }
 
@@ -65,14 +61,12 @@ function getTaskGantData(projId){
 const selectTaskProgress = params => request.get('/erp/visualize/selectTaskProgress',{params})
 
 function getTaskProgressData(projId){
-  console.time('任务进度')
   return selectTaskProgress({erpProjectId:projId}).then(res=>{
     if(window.debugModeEnable){
       console.group('请求任务进度数据:',projId)
       console.log(res)
       console.groupEnd()
     }
-    console.timeEnd('任务进度')
     res.data = filterTimelineData(res.data)
     return res.data
   })
@@ -81,13 +75,11 @@ function getTaskProgressData(projId){
 // 初始化所有数据
 function initAll(projId){
   store.loading = true
-  console.log('开始请求详情数据')
   Promise.all([
     getTaskHourBarData(projId),
     getTaskGantData(projId),
     getTaskProgressData(projId),
   ]).then(res=>{
-    console.log('详情数据请求完毕')
     proxy.$refs.TaskProgressRef.init(res[2])
     store.loading = false
   })
@@ -134,13 +126,13 @@ onMounted(()=>{
 <template>
   <div class="drawer-wrapper" :class="{'expand':visible}" :id="domId">
     <h3>项目详情</h3>
-    <drawer-box title="任务工时" height="15.69rem">
+    <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
       <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
     </drawer-box>
     <drawer-box title="项目甘特图" height="11.19rem">
       <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
     </drawer-box>
-    <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem" style="background-color:rgba(255, 255, 255)">
+    <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
       <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
     </drawer-box>
   </div>

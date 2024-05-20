@@ -16,10 +16,10 @@ const selectProjectPopularity = params => request.get('/erp/visualize/selectProj
 const selectDeptList = (params={}) => request.get('/erp/visualize/selectDeptList',{params}) // 请求部门信息
 
 // 获取主表格数据
-function getMainChartData(params=defaultHotParams){
-  !app_init && (store.loading = true)
+function getMainChartData(params=defaultHotParams, auto=false){
+  (!app_init && !auto) && (store.loading = true)
   return selectProjectPopularity(params).then(res=>{
-    !app_init && (store.loading = false)
+    (!app_init && !auto) && (store.loading = false)
     res.data = res.data.map(item=>item.map)
     // 数据分发到表格
     const {chartData, tableData, hotData} = filterMainData(res.data)
@@ -41,8 +41,7 @@ function getMainChartData(params=defaultHotParams){
 
     // 数据分发到项目热度
     proxy.$refs.HotSortRef.dataReady(hotData)
-    proxy.$refs.MainChartRef.chartDataReady(chartData)
-    proxy.$refs.MainChartRef.tableDataReady(tableData)
+    proxy.$refs.MainChartRef.dataReady(chartData, tableData, auto)
   })
 }
 
@@ -84,6 +83,7 @@ function init(){
 
 onMounted(()=>{
   init()
+  store.startTimeCount() // 开始计时
 })
 
 

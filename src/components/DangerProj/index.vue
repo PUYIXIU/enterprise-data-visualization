@@ -9,6 +9,7 @@ import request from "@/utils/request.js";
 import {filterDangerProjData} from "@/utils/dataFilter.js";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
 import gsap from "gsap";
+import Empty from "@/components/Loading/Empty.vue";
 const {proxy} = getCurrentInstance()
 const store = useLocalDataStore()
 const colorList = [
@@ -56,13 +57,12 @@ function getDangerProjData(){
     nextTick(()=> loading.value = false)
   })
 }
-watch(()=>queryParams.department,(nv,ov)=>{
-  if(nv!==ov){
-    loading.value = true
-    getDangerProjData()
-    let label = store.deptList.find(o=>o.value == nv).label
-    btnList.value[0].name = btnList.value[0].deactiveName = label
-  }
+watch(()=>[queryParams.department,store.timeTrigger],(nv,ov)=>{
+  let auto  = nv[0] == ov[0] && nv[1] !== ov[1] // 自动触发
+  !auto && (loading.value = true) // 自动触发不loading
+  getDangerProjData()
+  let label = store.deptList.find(o=>o.value == queryParams.department).label
+  btnList.value[0].name = btnList.value[0].deactiveName = label
 })
 
 function init(){
@@ -74,13 +74,13 @@ function ready(){
 
 let tween
 watch(loading,(nv,ov)=>{
+  let dom = document.querySelector('#danger-kanban')
   if(nv == false){
-    let dom = document.querySelector('#danger-kanban')
     dom.scrollTop = 0
     let scroll_h = dom.scrollHeight
     let dom_h = dom.clientHeight
     let offset = scroll_h - dom_h
-    let delay = 3
+    let delay = 5
     let duration = 30
     if(offset>0){
       tween = gsap.to(dom,{
@@ -106,8 +106,11 @@ watch(loading,(nv,ov)=>{
       tween.repeat(-1)
     }
   }else{
-    tween.kill()
+    tween && tween.kill()
     tween = null
+    dom.onmouseenter = undefined
+    dom.onmouseleave = undefined
+    dom.onscroll = undefined
   }
 })
 
@@ -128,6 +131,7 @@ defineExpose({
         @change="(()=>getChangeFun(0))()"
         v-model:value="queryParams.department" />
     <window-loading :loading="loading && store.loading"/>
+    <empty :show-div="!loading && data.length == 0" />
     <div class="kanban-content" id="danger-kanban">
       <div class="kanban-item" :class="{'ready':!loading && !store.loading}" v-for="(item, index) in data"
            :style="{

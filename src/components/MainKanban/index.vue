@@ -61,21 +61,21 @@ const btnList = ref([
 
 let chartData = []
 let tableData = []
-// 图表数据处理结束
-function chartDataReady(src){
-  chartData = src
-  proxy.$refs.LiquidChartRef.dataReady(copy(src))
+function dataReady(chartSrc, tableSrc, auto=false){
+  chartData = chartSrc
+  tableData = tableSrc
+  if(auto && currentQueryParams!==undefined){ // 自动刷新需要保留筛选项
+    filterData(currentQueryParams)
+  }else{  // 来自手动刷新
+    proxy.$refs.LiquidChartRef.dataReady(copy(chartSrc))
+    proxy.$refs.ProjTableRef.dataReady(copy(tableSrc))
+  }
 }
 
-// 表格数据处理结束
-function tableDataReady(src){
-  tableData = src
-  proxy.$refs.ProjTableRef.dataReady(copy(src))
-
-}
-
+let currentQueryParams = undefined
 // 数据过滤
 function filterData(params){
+  currentQueryParams = params
   let filterChartData = []
   let filterTableData = []
   for(let i = 0; i<chartData.length; i++){
@@ -98,8 +98,7 @@ watch(()=>store.mapMode,(nv,ov)=>{
 })
 
 defineExpose({
-  chartDataReady,
-  tableDataReady
+  dataReady
 })
 
 function getChangeFun(index){

@@ -4,7 +4,7 @@ import 'echarts-liquidfill'
 import gsap from 'gsap'
 import {getHSL, getpx} from "@/utils/style.js";
 import {pieOptionTemp} from "@/components/MainKanban/LiquidChart/colorConfig.js";
-import {onBeforeUnmount, onMounted, ref} from 'vue'
+import {onBeforeUnmount, onMounted, ref, nextTick} from 'vue'
 import {getPieOptions} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 const props = defineProps(['domId',"color",'data','grid','pieDomId'])
 // 水球模版
@@ -93,7 +93,7 @@ function getRectCenter(){
   ] // 目标圆当前中心点
   const dX = center[0] - rectCenter[0]
   const dY = center[1] - rectCenter[1]
-  console.log(`centerX:${center[0]} centerY:${center[1]} rectCenterX:${rectCenter[0]} rectCenterY:${rectCenter[1]} dX:${dX} dY:${dY}`)
+  // console.log(`centerX:${center[0]} centerY:${center[1]} rectCenterX:${rectCenter[0]} rectCenterY:${rectCenter[1]} dX:${dX} dY:${dY}`)
   return [dX,dY]
 }
 
@@ -114,10 +114,12 @@ function moveIn(){
       // 平移结束后，设置饼状图的option
       getPieOption()
       pieChart.setOption(pieOption)
-      // 饼图绘制结束后，轻微旋转动画
-      const targetDom = document.querySelector(`#${props.pieDomId} svg > g`)
-      targetDom.style.transformOrigin = [canvasSize[0]*0.3+props.grid.left+'px', canvasSize[1]*0.5 + 10 + 'px'].join(' ')
-      targetDom.classList.add('rotate')
+      nextTick(()=>{
+        // 饼图绘制结束后，轻微旋转动画
+        const targetDom = document.querySelector(`#${props.pieDomId} svg > g`)
+        targetDom.style.transformOrigin = [canvasSize[0]*0.3+props.grid.left+'px', canvasSize[1]*0.5 + 10 + 'px'].join(' ')
+        targetDom.classList.add('rotate')
+      })
 
     }
   })

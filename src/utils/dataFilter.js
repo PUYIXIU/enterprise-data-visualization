@@ -151,6 +151,7 @@ export function filterTimelineData(src){
             {propName:'progress', type:Number,}, // 进度
             'participantCount', // 参与人数
             'predictProgress', // 预计进度
+            'erpTaskTotalHours', // 总工时
         ]))
     })
     result = result.sort((a,b)=>{
@@ -164,6 +165,7 @@ export function filterHourListData(src){
     let result = []
     src.forEach(row=>{
         let maxHour = 0
+        if(row.hourList == '') return // hourList为''时，不进行展示
         row.hourList = row.hourList.split(', ').map(cell=> {
             let entries = cell.split('=')
             entries[1] *= 1

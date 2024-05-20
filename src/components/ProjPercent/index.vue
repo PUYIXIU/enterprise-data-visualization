@@ -54,11 +54,11 @@ function getProjPercentData(){
   })
 }
 
-// 项目部门变化 请求数据
-watch(()=>queryParams.department,(nv,ov)=>{
+// 项目部门变化/定时器被触发 请求数据
+watch(()=>[queryParams.department, store.timeTrigger],(nv,ov)=>{
   if(nv!==ov){
     getProjPercentData()
-    let label = store.deptList.find(o=>o.value == nv).label
+    let label = store.deptList.find(o=>o.value == queryParams.department).label
     btnList.value[0].name = btnList.value[0].deactiveName = label
   }
 })
