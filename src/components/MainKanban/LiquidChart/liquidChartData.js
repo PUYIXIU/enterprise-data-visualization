@@ -1,11 +1,47 @@
 import {getHSL, getpx} from "@/utils/style.js";
-import {liquidColorMap} from "@/components/MainKanban/LiquidChart/colorConfig.js";
-
+import {colorList, liquidColorMap} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 
 function countUnit(total, splitNumber){
     if(splitNumber == 0) return total;
     return total / splitNumber
 }
+
+// 根据数据离散程度，选择映射算法
+function getMapType(data){
+    let sum = data.reduce((a,b)=>a+b,0)
+    let ave = sum / data.length; // 平均值
+    //
+    let ltCounter = 0 // 小于平均数
+    let gtCounter = 0 // 大于平均数
+    let dir = 0 // 0表示平均 1表示数值偏小 2表示数值偏大
+    data.forEach(value=>{
+        (value>ave) && gtCounter++
+        (value<ave) && ltCounter++
+    })
+    gtCounter>ltCounter && (dir = 1) // 数据普遍偏大
+    gtCounter<ltCounter && (dir = 2) // 数据普遍偏小
+    let x2effect = (gtCounter-ltCounter)/data.length
+    let variance = data.reduce((a,b)=>{
+       return a + Math.pow(b-ave, 2)
+    },0)/data.length // 方差
+    let standard_var = Math.sqrt (variance) // 标准差
+    let effect = standard_var/ave
+
+    let SDR = effect > 0.25 // true表示数据相差大，false表示数据相差小
+
+    console.log(`标准差：${standard_var}，标准差大于指定值：${SDR}，数据偏向：${dir}`)
+    if(SDR){ // 数据离散大 无需映射或者二次函数映射
+        if(dir == 0) return 'linear'  // 线性映射
+        else return x2effect // 二次映射 ax^2 +(1-a)x
+    }else{ // 数据相差小 需要进行指数映射或者对数因社会
+        if(dir == 1){ // 数据偏小指数映射
+            return 'pow'
+        }else if(dir){ // 数据偏大或者过于均匀对数映射
+            return 'log'
+        }
+    }
+}
+
 /**
  * 获取水球图处理的结果
  * x：x轴坐标
@@ -39,19 +75,23 @@ export function getLiquidData(
     let x_unit = content_w/max_x // x轴单位长度（px）
     let y_unit = content_h/max_y // y轴单位长度（px）
 
-    let max_mapR = 50, min_mapR = 10 // 最终半径映射范围（%）
+    let max_mapR = 50, min_mapR = 15 // 最终半径映射范围（%）
     let axis_range = {
         x:[0,max_x],
         y:[0,max_y]
     } // 坐标轴范围
     let gap_left = 0 ,gap_right = 0, gap_top = 0, gap_bottom = 0 // 坐标轴留白
     let x_category = [], y_category = []
-
-    data.forEach(node=>{
+    let mapType = 'linear' // 0表示线性映射 1表示指数映射
+    data.length &&  (mapType = getMapType(data.map(item=>item.radius))) // 根据半径离散程度获取对应映射算法
+    // 现将data按照x轴排序领取颜色
+    data.sort((a,b)=>a.x - b.x) // 按照半径排序
+    data.forEach((node, index)=>{
+        node.color = colorList[index%colorList.length];
         // 水面高度由 百分制 转换为 小数制
         node.waveValue = (node.wave / 100) || 0
         // 直径大小映射到
-        let mapResult = valueMap(node.radius, [min_r, max_r],[min_mapR, max_mapR])
+        let mapResult = valueMap(node.radius, [min_r, max_r],[min_mapR, max_mapR], mapType)
         node.mapEffect = mapResult.mapEffect
         node.mapRadius = mapResult.mapValue
         // 计算x轴，y轴范围
@@ -194,9 +234,9 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
     let content_h = targetDom.clientHeight
     grid.top = grid.top/content_h
     grid.bottom = grid.bottom/content_h
-
     data.forEach((node,index)=>{
-        let {config:color} = liquidColorMap[node.type]
+        // let {config:color} = liquidColorMap[node.type]
+        let {config:color} = node.color
 
         let topOption = copy(optionTemp)
         topOption.label.formatter = `{title|${node.radius}h}\n{subtitle|${node.name}}\n{subtitle|${node.wave}}{percent|%}`
@@ -320,12 +360,31 @@ function useEffectMap(effect,min,max){
 }
 
 // 数据映射到指定范围内
-function valueMap(value, [ min, max ],[map_min, map_max]){
+function valueMap(value, [ min, max ],[map_min, map_max], mapType){
     if(max == min) return value.value>0?{mapEffect: 1,mapValue: map_max}:{mapEffect: 0,mapValue: map_min} // 最大值=最小值
+
+    // mapEffect将数据映射到 0-1
     let mapEffect = (value - min) / (max - min)
+
+    let mapValue = 0; // 映射结果
+    if(mapType == 'linear'){ // 线性映射
+        mapValue = (map_max - map_min)*mapEffect + map_min
+    }else if(mapType == 'pow'){ // 对数映射
+        let base = map_max / map_min
+        let effect = map_min
+        mapValue = effect * Math.pow(base, mapEffect)
+    }else if(mapType == 'log'){ // y=x^(1/3)
+        let diff = map_max - map_min
+        mapValue = Math.pow(mapEffect, 1/3)*diff + map_min
+    }else{ // 二次映射
+        let effect = mapType
+        mapValue = effect * Math.pow(mapEffect,2) + (map_max - effect - map_min) * mapEffect + map_min
+    }
+
+    window.debugModeEnable && (console.log(`映射类型：${mapType}，映射系数：${mapEffect}，映射结果：${mapValue}`))
     return {
         mapEffect, // 映射系数
-        mapValue:(map_max - map_min)*mapEffect + map_min
+        mapValue // 线性映射
     }
 }
 
@@ -333,8 +392,8 @@ function valueMap(value, [ min, max ],[map_min, map_max]){
 function getAxisRange(data){
     let max_x = 0
     let max_y = 0
-    let max_r = 0
-    let min_r = 0
+    let max_r = -Infinity
+    let min_r = Infinity
     data.forEach(({x,y,radius})=>{
         if(max_x<x) max_x = x
         if(max_y<y) max_y = y
