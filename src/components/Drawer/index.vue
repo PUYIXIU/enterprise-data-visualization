@@ -32,7 +32,8 @@ watch(()=>store.selectProjId,(nv,ov)=>{
 // 获取柱状图数据
 const selectProjectBarChartDetails = params => request.get('/erp/visualize/selectProjectBarChartDetails',{params})
 function getTaskHourBarData(projId){
-  return selectProjectBarChartDetails({erpProjectId:projId}).then(res=>{
+  // 获取柱状图数据，传项目id 和时间长度
+  return selectProjectBarChartDetails({erpProjectId:projId, filterDay:store.timeRange}).then(res=>{
     res.data = filterBarData(res.data)
     proxy.$refs.TaskHourBarRef.initChart(res.data)
     if(window.debugModeEnable){
@@ -61,7 +62,7 @@ function getTaskGantData(projId){
 const selectTaskProgress = params => request.get('/erp/visualize/selectTaskProgress',{params})
 
 function getTaskProgressData(projId){
-  return selectTaskProgress({erpProjectId:projId}).then(res=>{
+  return selectTaskProgress({erpProjectId:projId, filterDay:store.timeRange}).then(res=>{
     if(window.debugModeEnable){
       console.group('请求任务进度数据:',projId)
       console.log(res)
@@ -126,11 +127,11 @@ onMounted(()=>{
 <template>
   <div class="drawer-wrapper" :class="{'expand':visible}" :id="domId">
     <h3>项目详情</h3>
-    <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
-      <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
-    </drawer-box>
     <drawer-box title="项目甘特图" height="11.19rem">
       <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
+    </drawer-box>
+    <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
+      <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
     </drawer-box>
     <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
       <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />

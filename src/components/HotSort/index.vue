@@ -65,6 +65,7 @@ function getChangeFun(index){
 
 watch(()=>queryParams.filterDay,(nv,ov)=>{
   if(nv!==ov){
+    store.timeRange = nv // 时间长度修改
     let label = filterDayOptions.find(o=>o.value==nv).label
     btnList.value[0].name = btnList.value[0].deactiveName = label
   }

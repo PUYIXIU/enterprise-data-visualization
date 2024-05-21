@@ -1,6 +1,7 @@
 // 过滤出主图数据
 export function filterChartData(src){
     return pick(src,[
+        {propName:'index', rename:'no'}, // 排名 用于区分颜色
         {propName:'projectId', rename:'id'}, // id
         {propName:'projectName', rename:'name'}, // 项目名
         {propName:'status', rename:'type'}, // 项目状态-类型
@@ -50,7 +51,7 @@ export function filterMainData(src){
     let tableData = [] // 表格数据
     let hotData = [] // 热度数据
     src.forEach((row,index)=>{
-        row.index = index + 1
+        row.index = index + 1 // 排名
         chartData.push(filterChartData(row))
         tableData.push(filterTableData(row))
         hotData.push(filterHotData(row))

@@ -6,21 +6,31 @@ import {getHSL, getpx} from "@/utils/style.js";
  *  s_add: 饱和度偏移
  *  l_add: 明暗度偏移
  */
-// 深蓝色
-const darkBlue = {
-    liquid:{color:[235, 93, 67, 50], h_add:0, s_add:0, l_add:-30,},
+// 草绿色 第一名
+const green = {
+    // liquid:{color:[101, 75, 63, 50], h_add:0, s_add:0, l_add:0,},
+    liquid:{color:[153, 61, 69, 50], h_add:10, s_add:-20, l_add:-25,},
     pie:[
-        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
-        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
+        {color:[153, 61, 69, 50], h_add:0, s_add:0, l_add:-20, alpha:75,},
+        {color:[153, 61, 69, 50], h_add:0, s_add:0, l_add:-20, alpha:75,},
     ]
 }
 
-// 紫色
+// 紫色 第二名
 const violet = {
     liquid:{color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30},
     pie:[
         {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
         {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
+    ]
+}
+
+// 深蓝色 第三名
+const darkBlue = {
+    liquid:{color:[235, 93, 67, 50], h_add:0, s_add:0, l_add:-30,},
+    pie:[
+        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
+        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
     ]
 }
 
@@ -44,7 +54,7 @@ const cyan = {
 
 // 橘红色
 const orange = {
-    liquid:{color:[22, 78, 49], h_add:0, s_add:10, l_add:-5,},
+    liquid:{color:[22, 90, 66], h_add:0, s_add:10, l_add:-5,},
     pie:[
         {color:[22, 78, 49], h_add:0, s_add:10, l_add:-5, alpha:75,},
         {color:[22, 78, 49], h_add:0, s_add:10, l_add:-5, alpha:75,},
@@ -52,11 +62,12 @@ const orange = {
 }
 
 export const colorList = [
+    green,
     darkBlue,
-    violet,
-    lightBlue,
     cyan,
-    orange
+    lightBlue,
+    violet,
+    orange,
 ]
 
 // 计算图例颜色-阴影颜色-背景颜色-波浪颜色等等
@@ -73,8 +84,8 @@ function getColorOption(){
             const {color, h_add, s_add, l_add} = colorNode.liquid
             config.top.itemStyleColor = getHSL(color, 100,{h_add,s_add,l_add}) // 主水波颜色
             config.top.shadowColor = getHSL(color, 100) // 主阴影颜色
-            config.top.backgroundColor = getHSL(color, 20) // 主背景颜色
-            config.base.backgroundColor = getHSL(color, 20,{h_add,s_add,l_add}) // 叠底背景颜色
+            config.top.backgroundColor = getHSL(color, 15) // 主背景颜色
+            config.base.backgroundColor = getHSL(color, 15,{h_add,s_add,l_add}) // 叠底背景颜色
             config.base.shadowColor = getHSL(color, 100,{h_add,s_add,l_add}) // 叠底阴影颜色
         }
 
@@ -127,36 +138,39 @@ export const pieOptionTemp = {
         }
     },
     label:{
-        position:'inner',
+        position:'outside',
         rotate:'radial',
-        color:'#fff',
+        color:'#a3a7b0',
         formatter:(param)=>`{num|120}{unit|h}\t{name|${param.name}}`,
         rich:{
             num:{
-                textShadowColor:'rgba(0,0,0,0.75)',
-                textShadowBlur:3,
+                // textShadowColor:'rgba(0,0,0,0.5)',
+                // textShadowBlur:3,
                 textShadowOffsetY:1,
                 fontSize:getpx(1.5),
                 fontFamily:'SourceHanSansCN-Regular',
+                verticalAlign:'middle'
             },
             unit:{
-                textShadowColor:'rgba(0,0,0,0.75)',
-                textShadowBlur:3,
+                // textShadowColor:'rgba(0,0,0,0.5)',
+                // textShadowBlur:3,
                 textShadowOffsetY:1,
                 fontSize:getpx(0.8),
                 fontFamily:'SourceHanSansCN-Regular',
+                verticalAlign:'middle'
             },
             name:{
-                textShadowColor:'rgba(0,0,0,0.75)',
-                textShadowBlur:3,
+                // textShadowColor:'rgba(0,0,0,0.5)',
+                // textShadowBlur:3,
                 textShadowOffsetY:1,
                 fontSize:getpx(1.5),
                 fontFamily:'SourceHanSansCN-Regular',
+                verticalAlign:'middle'
             }
         }
     },
     labelLine:{
-        show:false
+        // show:false
     },
     animation:false
 }

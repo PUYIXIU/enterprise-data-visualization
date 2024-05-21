@@ -21,5 +21,6 @@ const props = defineProps(['showDiv'])
   font-size: 2rem;
   color: #cecece;
   opacity: 0.5;
+  pointer-events: none;
 }
 </style>

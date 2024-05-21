@@ -68,7 +68,8 @@ const selectProjectDetails = params=>request.get('/erp/visualize/selectProjectDe
 
 // 获取饼图数据
 function getPieData(projData){
-  return selectProjectDetails({erpProjectId:projData.id}).then(res=>{
+  // 传项目id 和 时间长度
+  return selectProjectDetails({erpProjectId:projData.id, filterDay:store.timeRange}).then(res=>{
     res.data = filterPieData(res.data) // 过滤接口数据
     projData.peopleList = handlePieData(res.data) // 处理数据
     if(window.debugModeEnable){
@@ -83,7 +84,9 @@ function getPieData(projData){
 // 渲染水球
 function renderLiquidPie(index, seriesList, rect){
   let selectProj = chartData.value[index] // 被选中的数据
-  liquidPieColorConfig.value = liquidColorMap[selectProj.type]
+  // liquidPieColorConfig.value = liquidColorMap[selectProj.type]
+  liquidPieColorConfig.value = selectProj.color
+
   store.selectProjId = selectProj.id // 全局选中id
   getPieData(selectProj).then(res=>{
     liquidPieData.value = res
@@ -121,7 +124,7 @@ defineExpose({
 <template>
   <div class="chart-wrapper">
     <div class="nav-head">
-      <div class="tooltip-box">
+      <div class="tooltip-box" style="opacity: 0;">
         <p v-for="item in navList">
           <i :style="{'--color':item.color}"></i>
           <span>{{item.label}}</span>
@@ -131,7 +134,7 @@ defineExpose({
     </div>
     <div class="canvas">
 <!--      坐标系-->
-      <Axis ref="AxisRef" dom-id="axisId" :grid="grid" @resize="resize" />
+      <Axis ref="AxisRef" class="liquid-axes"  :class="{fade:pieRendering}" dom-id="axisId" :grid="grid" @resize="resize" />
 <!--      散点图-->
       <LiquidScatter class="liquid-scatter" :grid="grid" :class="{fade:pieRendering}" ref="LiquidRef" dom-id="liquidId" @render-pie="renderLiquidPie" @update-pie="updatePie"/>
 <!--      饼图-->
@@ -189,7 +192,7 @@ $padding-top:1.94rem;
   height:calc(100% - $nav-header-height);
   position:relative;
 }
-.liquid-scatter{
+.liquid-scatter, .liquid-axes{
   opacity:1;
   transition-property: opacity;
   transition-duration: 0.3s;

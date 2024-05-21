@@ -5,7 +5,7 @@ import gsap from 'gsap'
 import {getHSL, getpx} from "@/utils/style.js";
 import {pieOptionTemp} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 import {onBeforeUnmount, onMounted, ref, nextTick} from 'vue'
-import {getPieOptions} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {getPieOptions, getRich} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 const props = defineProps(['domId',"color",'data','grid','pieDomId'])
 // 水球模版
 let liquidFillSeriesOption = []
@@ -104,6 +104,25 @@ function moveIn(){
   gsap.set(`#${props.domId} svg`,{
     transformOrigin:'50% 30%',
   })
+
+  let radius = {value:parseFloat(liquidFillSeriesOption[0].radius)} // 目标半径
+  gsap.to(radius,{
+    value:25,
+    duration:0.25,
+    ease:'power2.inOut',
+    onUpdate:()=>{
+      // 使用效率最低方式——重绘，进行缩放调整
+      liquidOption.series[0].radius = `${radius.value}%`
+      liquidOption.series[1].radius = `${radius.value}%`
+      liquidChart.setOption(liquidOption,{notMerge:false})
+    },
+    onComplete:()=>{ // 结束后调整字体大小
+      getRich(0.5, liquidOption.series[1].label.rich)
+      liquidChart.setOption(liquidOption,{notMerge:false})
+    }
+  })
+
+
   // 平移至此
   gsap.to(`#${props.domId} svg`,{
     x:dX,
@@ -137,16 +156,17 @@ function getLiquidOption(){
   let option = liquidFillSeriesOption[1]
   let {data} = props
   option.label.formatter =
-      `{title|${data.radius}h}\n{subtitle|${data.name}}\n{subtitle|${data.wave}}{percent|%}\n{subtitle|${data.commander}}`
+      `{title|${data.radius}h}\n{subtitle|${data.name}}\n{subtitle|${data.wave}}{percent|%}{right|0}{subtitle|${data.wave}}{percent|%}\n{subtitle|${data.commander}}`
   liquidOption.series = liquidFillSeriesOption
 }
 
 // 设置饼图的option
 function getPieOption(){
   pieOptionTemp.center = [canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + getpx(0.625)]
+  console.log(props.color)
   pieOption.series = getPieOptions(
       props.data.peopleList,
-      props.color.pie,
+      props.color,
       pieOptionTemp,
       liquidOption.series[1],
       canvasSize

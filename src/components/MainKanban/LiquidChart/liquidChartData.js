@@ -36,8 +36,9 @@ function getMapType(data){
     }else{ // 数据相差小 需要进行指数映射或者对数因社会
         if(dir == 1){ // 数据偏小指数映射
             return 'pow'
-        }else if(dir){ // 数据偏大或者过于均匀对数映射
+        }else { // 数据偏大或者过于均匀（对数映射似乎会导致数据普遍偏大？）
             return 'log'
+            // return 'linear' // 线性映射
         }
     }
 }
@@ -86,8 +87,14 @@ export function getLiquidData(
     data.length &&  (mapType = getMapType(data.map(item=>item.radius))) // 根据半径离散程度获取对应映射算法
     // 现将data按照x轴排序领取颜色
     data.sort((a,b)=>a.x - b.x) // 按照半径排序
+    let unique = 3
     data.forEach((node, index)=>{
-        node.color = colorList[index%colorList.length];
+        // 颜色规则： 1-2-3名有独特颜色，剩下的元素的颜色在余下范围内选择
+        if(node.no<=unique){ // 前3名
+            node.color = colorList[node.no - 1]
+        }else{
+            node.color = colorList[index%(colorList.length-unique)+unique]
+        }
         // 水面高度由 百分制 转换为 小数制
         node.waveValue = (node.wave / 100) || 0
         // 直径大小映射到
@@ -223,6 +230,14 @@ export function getLiquidData(
     }
 }
 
+export function getRich(mapEffect, rich){
+    rich.title.fontSize = useEffectMap(mapEffect, getpx(0.75),getpx(1.875))
+    rich.subtitle.fontSize = useEffectMap(mapEffect, getpx(0.5),getpx(1.375))
+    rich.percent.fontSize = useEffectMap(mapEffect, getpx(0.5),getpx(0.75))
+    rich.title.lineHeight = useEffectMap(mapEffect, getpx(1.125),getpx(2.5))
+    rich.subtitle.lineHeight = useEffectMap(mapEffect, getpx(1.125),getpx(2.5))
+}
+
 /**
  * 获取水球散点图需要的options
  * @param data 元数据
@@ -239,16 +254,11 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
         let {config:color} = node.color
 
         let topOption = copy(optionTemp)
-        topOption.label.formatter = `{title|${node.radius}h}\n{subtitle|${node.name}}\n{subtitle|${node.wave}}{percent|%}`
+        topOption.label.formatter = `{title|${node.radius}h}\n{subtitle|${node.name}}\n{subtitle|${node.wave}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}`
         topOption.center = node.center // 中心坐标
         topOption.radius = `${node.mapRadius * (1 - grid.top - grid.bottom)*0.95}%`  // 半径
 
-        let rich = topOption.label.rich
-        rich.title.fontSize = useEffectMap(node.mapEffect, getpx(0.75),getpx(1.875))
-        rich.subtitle.fontSize = useEffectMap(node.mapEffect, getpx(0.5),getpx(1.375))
-        rich.percent.fontSize = useEffectMap(node.mapEffect, getpx(0.5),getpx(0.75))
-        rich.title.lineHeight = useEffectMap(node.mapEffect, getpx(1.125),getpx(2.5))
-        rich.subtitle.lineHeight = useEffectMap(node.mapEffect, getpx(1.125),getpx(2.5))
+        getRich(node.mapEffect, topOption.label.rich)
         topOption.data = [node.wave/100]
 
         topOption.itemStyle.color = color.top.itemStyleColor
@@ -279,7 +289,7 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
  * @returns {*}
  */
 export function handlePieData(data){ // 对饼图进行处理
-    let minValue = 0, maxValue = 0; // 最大值和最小值
+    let minValue = 0, maxValue = 0; // 最大值和最小值 实际上最小值肯定为0，此处计算有问题
     data.forEach(o=>{
         if(minValue>o.value) minValue = o.value;
         if(maxValue<o.value) maxValue = o.value;
@@ -296,24 +306,25 @@ export function handlePieData(data){ // 对饼图进行处理
     return data
 }
 
-export function getPieOptions(data, pieColor, pieOptionTemp, liquidOptionTemp,canvasSize){
+export function getPieOptions(data, {liquid,pie:pieColor,config}, pieOptionTemp, liquidOptionTemp, canvasSize){
     let options = []
     let pieNum = data.length // 弧形的个数
-    let innerOuterGap = 3 // 水球和环的间隔百分比
+    let innerOuterGap = 5 // 水球和环的间隔百分比
     let innerRadius = parseFloat(liquidOptionTemp.radius)+innerOuterGap // 内部水球图的半径
     let pxRadius = innerRadius * canvasSize[1] / 100 // px半径
     let circleLength = 2 * Math.PI * pxRadius // 计算圆周 注意这里的innerRadius是百分比，因此无法计算出精确值
-    pieOptionTemp.radius[0] = `${innerRadius+3}%`
+    pieOptionTemp.radius[0] = `${innerRadius}%`
     let fontEffect = circleLength / pieNum * 0.7 // 一个字体对应的最小值
-    pieOptionTemp.label.rich.num.fontSize = Math.min( getpx(1.2), fontEffect)
+    pieOptionTemp.label.rich.num.fontSize = Math.min( getpx(1), fontEffect)
     pieOptionTemp.label.rich.unit.fontSize = Math.min( getpx(0.8), fontEffect*0.8/1.2)
-    pieOptionTemp.label.rich.name.fontSize = Math.min( getpx(1.2), fontEffect)
-
+    pieOptionTemp.label.rich.name.fontSize = Math.min( getpx(1), fontEffect)
+    pieOptionTemp.label.color = config.top.itemStyleColor // 字体颜色和水球颜色一致
     let gap = 3 // 饼图间隔
-    let angle = 360 / pieNum - gap // 单个弧形所占的弧度
-    let minRadius = innerRadius + 30 // 最小外半径（40 - 80）
-    let maxRadius = 95 // 最大外半径
-    let angleDiff = 45 // 角度偏移
+    let angle = Math.min(360 / pieNum - gap, 10) // 单个弧形所占的弧度
+    // let minRadius = innerRadius + 30 // 最小外半径（40 - 80）
+    let minRadius = innerRadius + 1   // 最小外半径（40 - 80）
+    let maxRadius = 75 // 最大外半径
+    let angleDiff = 135 // 角度偏移
     data.forEach((node,index)=>{
         let temp = [0,1].includes(index)?(index+1):index
         const i = (temp+1)%pieColor.length
@@ -321,15 +332,20 @@ export function getPieOptions(data, pieColor, pieOptionTemp, liquidOptionTemp,ca
         let pieOption = copy(pieOptionTemp)
         pieOption.label.formatter = `{num|${node.value}}{unit|h} {name|${node.name}}`
 
+
         /** 计算外半径 */
         const outerRadius = useEffectMap(node.valueEffect, minRadius, maxRadius)
         pieOption.radius[1] = `${outerRadius}%`
 
         /** 计算起始角度 */
         pieOption.startAngle = - index * (angle + gap) + angleDiff
-        let realAngle = angle>20? 20:angle // 真正的跨越角度
-        pieOption.endAngle = pieOption.startAngle - realAngle
+        // let realAngle = angle>20? 20:angle // 真正的跨越角度
+        pieOption.endAngle = pieOption.startAngle - angle
 
+        // 行高应该为弧度的长度
+        let height =  outerRadius * canvasSize[1]/100 * Math.sin(angle/180*Math.PI/2)
+        pieOption.label.lineHeight = height
+        pieOption.label.height = height
 
         let middle = (pieOption.endAngle + pieOption.startAngle)/2
 

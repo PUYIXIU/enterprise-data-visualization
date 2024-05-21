@@ -15,6 +15,7 @@ export const useLocalDataStore = defineStore('local',{
         currentProjectIndex:undefined, // 鼠标hover过的球体的inedx
         selectProjId:undefined, // 选中项目的项目id
         showType:0, // 0 图表展示 1 表格展示
+        timeRange:defaultHotParams.filterDay, // 筛选时间长度，用于查询项目详情传参，在项目热度中修改
         deptList:[], // 部门列表
     }),
     getters:{},

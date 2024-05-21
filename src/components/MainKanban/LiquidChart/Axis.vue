@@ -180,22 +180,24 @@ onBeforeUnmount(()=>{
 </script>
 
 <template>
-<!-- 坐标轴 -->
-<div class="axis-wrapper full" :id="domId"></div>
+<div class="axis-content-wrapper full">
+  <!-- 坐标轴 -->
+  <div class="axis-wrapper full" :id="domId"></div>
   <!-- x轴名称 -->
-<span class="axis-name x" :style="{
+  <span class="axis-name x" :style="{
   '--bottom':grid.bottom + 'px',
   '--right':grid.right + 'px',
 }">项目任务数量</span>
-<!-- y轴名称 -->
-<span class="axis-name y" :style="{
+  <!-- y轴名称 -->
+  <span class="axis-name y" :style="{
   '--top':grid.top + 'px',
   '--left':grid.left + 'px',
 }">参与人数</span>
+</div>
 </template>
 
 <style scoped lang="scss">
-.axis-wrapper{
+.axis-wrapper,.axis-content-wrapper{
   position:absolute;
   z-index:1;
   top:0;

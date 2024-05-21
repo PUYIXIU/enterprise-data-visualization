@@ -28,7 +28,7 @@ const SeriesOptionTemp = {
   radius:'17%', // 半径
   itemStyle:{
     color:'rgba(52,38,246,0.75)',
-    opacity:0.2,
+    opacity:0.15,
   },
   amplitude:10, // 水波曲度
   direction:'right', // 水波方向
@@ -75,6 +75,13 @@ const SeriesOptionTemp = {
         textShadowBlur:5,
         textShadowOffsetY:2,
         fontFamily:'SourceHanSansCN-Light',
+      },
+      right:{
+        color:'#00000000',
+        height:20,
+        backgroundColor:{
+          image:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNSAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9Ikh1Z2UtaWNvbi9hcnJvd3Mvb3V0bGluZS9hcnJvdy1yaWdodCI+CjxwYXRoIGlkPSJWZWN0b3IgMTkwIiBkPSJNMTQuMzczIDE2TDE4LjM3MyAxMk0xOC4zNzMgMTJMMTQuMzczIDhNMTguMzczIDEyTDYuMzczMDUgMTIiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K'
+        }
       }
     }
   },
@@ -155,7 +162,7 @@ function liquidHover(e){
   const svg = document.querySelector(`#${props.domId} svg`)
   const svg_g = document.querySelector(`#${props.domId} svg g`)
   const svg_children = Array.from(svg_g.children)
-  const domNum = 16; // 一个svg包含16个标签
+  const domNum = 21; // 一个svg包含21个标签
   let index = svg_children.indexOf(e.target)
   if(index<0 && ['path','g'].includes(e.target.tagName)){
     let parent = e.target.parentNode

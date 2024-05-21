@@ -16,6 +16,10 @@ import QueryBox from "@/components/QueryBox/index.vue";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
 import {getpx} from "@/utils/style.js";
 import Empty from "@/components/Loading/Empty.vue";
+import {useLocalDataStore} from "@/storage/index.js";
+
+const store = useLocalDataStore()
+
 const domId = ref('progress-timeline')
 
 const groupData = new VisData.DataSet()
@@ -200,7 +204,7 @@ function getProgressDom(param){
 const selectTaskProgressStaffDetails = params => request.get('/erp/visualize/selectTaskProgressStaffDetails',{params})
 function getHourListByTaskId(id){
   if(hourMap[id]) return Promise.resolve(hourMap[id])
-  return selectTaskProgressStaffDetails({taskId:id}).then(res=>{
+  return selectTaskProgressStaffDetails({taskId:id,filterDay:store.timeRange}).then(res=>{
     if(window.debugModeEnable){
 
     }
@@ -399,10 +403,14 @@ function init(src){
   })
   max = max.add(3,'month') // 结尾增加一个月用于展示结尾label
   let start = min.clone(), end = max.clone()
-
+  let axisUnit = 'month'
   let diff = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 365.25)
+  let diffMonth = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 30) // 如果时间范围比一个月还小，时间单位以天获取
   if(diff>1){ // 相差年限大于1年，显示最近1年
     start = end.subtract(1,'year')
+  }
+  if(diffMonth<1){
+    axisUnit = 'day'
   }
   if(window.debugModeEnable){
     console.log('相差年数：'+diff)
@@ -421,7 +429,7 @@ function init(src){
     selectable:false, // 节点可选
 
     timeAxis:{
-      scale:'month', // 固定缩放单位月
+      scale:axisUnit, // 固定缩放单位月
     },
     // zoomKey: "ctrlKey",
     zoomKey: "shiftKey",
@@ -840,7 +848,7 @@ $minor-title-width:3.8125rem;
       $majar-title-height +
       $minor-title-height +
       $majar-border-bottom-width +
-      $majar-margin-bottom
+      $majar-margin-bottom - 1px
   ) !important;
   .vis-time-axis{
     height:100% !important;
@@ -862,27 +870,28 @@ $minor-title-width:3.8125rem;
     box-shadow: 0px 6px 10px rgb(238 235 243 / 60%);
     position:fixed;
     //top:0;
-    margin-top:-1px;
     box-sizing: border-box;
     width:$left-width;
-    height:calc(
-        $minor-title-height +
-        $majar-border-bottom-width +
-        $majar-margin-bottom + $majar-title-height - 1px
-    );
+    //height:calc(
+    //    $minor-title-height +
+    //    $majar-border-bottom-width +
+    //    $majar-margin-bottom + $majar-title-height
+    //);
     .head-title{
       background: #ffffff;
-      border-top:$majar-border-bottom-width solid #847CF0;
+      //border-top:$majar-border-bottom-width solid #847CF0;
       margin-top:calc($majar-title-height - $majar-border-bottom-width);
       .head-text{
+        border-top:$majar-border-bottom-width solid #ffffff;
+        box-shadow:0px -3px 0px 0px #847CF0;
         background: #ebeafb;
         height:$majar-title-height;
         line-height:$minor-title-height;
         margin-top:$majar-margin-bottom;
         padding-left:2.8125rem;
-        font-size: 1rem;
+        font-size: 0.88rem;
         color: #001133;
-        font-family: 时尚中黑简体;
+        font-family: SourceHanSansCN-Normal;
       }
     }
   }
