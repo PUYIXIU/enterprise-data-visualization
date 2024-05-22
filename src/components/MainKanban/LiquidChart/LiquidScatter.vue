@@ -1,9 +1,9 @@
 <script setup>
-import {onMounted, nextTick, onBeforeUnmount} from "vue";
+import {onMounted, nextTick, onBeforeUnmount, watch} from "vue";
 import * as echarts from 'echarts'
 import 'echarts-liquidfill'
 import {useLocalDataStore} from "@/storage/index.js";
-import {getLiquidOptions} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {getLiquidOptions, resetLabel} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 import {getpx} from "@/utils/style.js";
 
 const props = defineProps(["domId",'grid'])
@@ -53,8 +53,8 @@ const SeriesOptionTemp = {
         color:'#fff',
         fontSize:12,
         fontWeight:'bold',
-        textShadowColor:'rgba(0,0,0,0.75)',
-        textShadowBlur:3,
+        textShadowColor:'rgba(0,0,0,0.3)',
+        textShadowBlur:5,
         textShadowOffsetY:1,
         lineHeight:18,
         fontFamily:'SourceHanSansCN-Heavy',
@@ -62,7 +62,7 @@ const SeriesOptionTemp = {
       subtitle:{
         color:'#fff',
         fontSize:10,
-        textShadowColor:'rgba(0,0,0,0.5)',
+        textShadowColor:'rgba(0,0,0,0.3)',
         textShadowBlur:5,
         textShadowOffsetY:2,
         lineHeight:18,
@@ -71,7 +71,7 @@ const SeriesOptionTemp = {
       percent:{
         color:'#fff',
         fontSize:8,
-        textShadowColor:'rgba(0,0,0,0.5)',
+        textShadowColor:'rgba(0,0,0,0.3)',
         textShadowBlur:5,
         textShadowOffsetY:2,
         fontFamily:'SourceHanSansCN-Light',
@@ -89,6 +89,7 @@ const SeriesOptionTemp = {
   animationDuration: 0,
   animationDurationUpdate: 1000,
   animationEasingUpdate: 'cubicOut',
+  blendMode:'lighter',
 }
 
 function resize(){
@@ -202,6 +203,14 @@ function getOption(){
   const targetDom = document.getElementById(props.domId)
   option.series = getLiquidOptions(data,SeriesOptionTemp,targetDom,props.grid)
 }
+
+// 切换模式
+watch(()=>store.visitMode,(nv,ov)=>{
+  if(nv==ov) return
+  option.series = resetLabel(data, option.series)
+  chart.setOption(option,{notMerge:false})
+  console.log(option)
+})
 
 defineExpose({
   initChart,

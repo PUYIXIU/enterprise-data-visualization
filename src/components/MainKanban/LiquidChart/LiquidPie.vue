@@ -4,9 +4,11 @@ import 'echarts-liquidfill'
 import gsap from 'gsap'
 import {getHSL, getpx} from "@/utils/style.js";
 import {pieOptionTemp} from "@/components/MainKanban/LiquidChart/colorConfig.js";
-import {onBeforeUnmount, onMounted, ref, nextTick} from 'vue'
-import {getPieOptions, getRich} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {onBeforeUnmount, onMounted, ref, nextTick, watch} from 'vue'
+import {getPieFormatter, getPieOptions, getRich} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {useLocalDataStore} from "@/storage/index.js";
 const props = defineProps(['domId',"color",'data','grid','pieDomId'])
+const store = useLocalDataStore()
 // 水球模版
 let liquidFillSeriesOption = []
 let liquidChart, pieChart
@@ -79,6 +81,7 @@ function getCanvasPieCenter(){
   center[0] = halfWidth + boundBox.left + grid.left
   center[1] = halfHeight + boundBox.top + grid.top + window.scrollY
 }
+
 
 onMounted(()=>{ // 初始化时就获取画布中心点
   getCanvasPieCenter()
@@ -155,8 +158,7 @@ function getLiquidOption(){
   // label字体变化 添加项目负责人字样
   let option = liquidFillSeriesOption[1]
   let {data} = props
-  option.label.formatter =
-      `{title|${data.radius}h}\n{subtitle|${data.name}}\n{subtitle|${data.wave}}{percent|%}{right|0}{subtitle|${data.wave}}{percent|%}\n{subtitle|${data.commander}}`
+  option.label.formatter = getPieFormatter(data)
   liquidOption.series = liquidFillSeriesOption
 }
 
@@ -172,6 +174,12 @@ function getPieOption(){
       canvasSize
   )
 }
+
+watch(()=>store.visitMode, (nv,ov)=>{
+  if(nv == ov) return
+  getLiquidOption()
+  liquidChart.setOption(liquidOption)
+})
 
 defineExpose({
   initChart,

@@ -3,9 +3,10 @@ import {ref,computed,reactive} from 'vue'
 import {mockData} from './mockData.js'
 import {getpx} from "@/utils/style.js";
 import {predictType, productType} from "@/components/MainKanban/ProjectTable/dataType.js";
+import {useLocalDataStore} from "@/storage/index.js";
 
 const data = ref([])
-
+const store = useLocalDataStore()
 let status = ['no-sort','top-sort','bottom-sort']
 
 // 排序
@@ -53,15 +54,19 @@ const sortTableData = computed(()=>{
   return result
 })
 
+function rowClick(params){
+  store.selectProjId = params.projectId // 全局选中id.id // 全局选中id
+}
+
 </script>
 
 <template>
-  <div class="table-wrapper">
+  <div class="table-wrapper" >
 
-    <el-table :data="sortTableData" :height="'100%'">
-      <el-table-column prop="projectName" label="产品名称" :width="getpx(9.19)" show-overflow-tooltip header-align="left"></el-table-column>
-      <el-table-column prop="erpProjectCode" label="代号" show-overflow-tooltip header-align="center" :width="getpx(7)"></el-table-column>
-      <el-table-column prop="priority" label="优先级" header-align="center" :width="getpx(7)" >
+    <el-table :data="sortTableData" :height="'100%'" @row-click="rowClick">
+      <el-table-column v-if="store.visitMode == 0" prop="projectName" label="项目名称" :width="getpx(9)" show-overflow-tooltip header-align="center"></el-table-column>
+      <el-table-column v-if="store.visitMode == 1" prop="erpProjectCode" label="代号" show-overflow-tooltip header-align="center" :width="getpx(7)"></el-table-column>
+      <el-table-column prop="priority" label="优先级" header-align="center" :width="getpx(6)" >
         <template #default="{row}">
         <span class="predict-item"
               :style="{
@@ -70,7 +75,7 @@ const sortTableData = computed(()=>{
         }">{{row.priority}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="commander" label="产品负责人" show-overflow-tooltip :width="getpx(10)"  header-align="center" class-name="medium"></el-table-column>
+      <el-table-column prop="commander" label="产品负责人" show-overflow-tooltip :width="getpx(7)"  header-align="center" class-name="medium"></el-table-column>
       <el-table-column prop="productLine" label="产品业务线" :width="getpx(8)" header-align="center">
         <template #default="{row}">
         <span class="predict-item" v-if="productType[row.productLine]"

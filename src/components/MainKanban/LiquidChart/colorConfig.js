@@ -62,12 +62,12 @@ const orange = {
 }
 
 export const colorList = [
-    green,
     darkBlue,
     cyan,
+    orange,
     lightBlue,
     violet,
-    orange,
+    green,
 ]
 
 // 计算图例颜色-阴影颜色-背景颜色-波浪颜色等等
@@ -84,8 +84,8 @@ function getColorOption(){
             const {color, h_add, s_add, l_add} = colorNode.liquid
             config.top.itemStyleColor = getHSL(color, 100,{h_add,s_add,l_add}) // 主水波颜色
             config.top.shadowColor = getHSL(color, 100) // 主阴影颜色
-            config.top.backgroundColor = getHSL(color, 15) // 主背景颜色
-            config.base.backgroundColor = getHSL(color, 15,{h_add,s_add,l_add}) // 叠底背景颜色
+            config.top.backgroundColor = getHSL(color, 20) // 主背景颜色
+            config.base.backgroundColor = getHSL(color, 20,{h_add,s_add,l_add}) // 叠底背景颜色
             config.base.shadowColor = getHSL(color, 100,{h_add,s_add,l_add}) // 叠底阴影颜色
         }
 

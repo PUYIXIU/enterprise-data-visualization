@@ -465,7 +465,10 @@ defineExpose({
   }" :class="{
     show:toolTipData.show
   }">
-    <p>任务成员（共{{toolTipData.participantCount}}人）</p>
+    <p>
+      <span>任务成员（共{{toolTipData.participantCount}}人）</span>
+      <span>[ 点击查看详情 ]</span>
+    </p>
     <p>
       <span class="tip-icon red"></span>
       <span class="tip-text red">预计进度 {{toolTipData.predictProgress}}%</span>
@@ -510,6 +513,11 @@ $text-height:1.13rem;
       color: rgba(28, 28, 28, 0.7);
       font-size: 0.75rem;
       margin-bottom:0.25rem;
+      //display: flex;
+      //justify-content: space-between;
+      span:last-child{
+        opacity: 0.7;
+      }
     }
     &:nth-child(2){
       font-family: SourceHanSansCN-Medium;

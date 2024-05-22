@@ -9,6 +9,7 @@ export const defaultHotParams = {
 const timeScale = 1000 * 60 * 60 * 8 // 8个小时
 export const useLocalDataStore = defineStore('local',{
     state:()=>({
+        visitMode:0, // 0 为管理者模式 1 为访客模式
         timeTrigger:0, // 定时触发器，每8个小时改变一次
         loading:true, // 主页loading
         mapMode:0, // 0为均匀模式 1为全局模式

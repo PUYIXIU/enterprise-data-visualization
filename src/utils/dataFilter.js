@@ -9,7 +9,9 @@ export function filterChartData(src){
         {propName:'participantCount', type:Number,rename:'y'}, // 参与人数-y轴
         {propName:'projectRate', type:Number,rename:'wave'}, // 进度-水面
         {propName:'laborHours', type:Number,rename:'radius'}, // 工时-半径
+        {propName:'preProjectRate', type:Number}, // 查询时间段中最早时间点时，项目的进度
         'commander', // 产品负责人
+        {propName:'erpProjectCode', rename:'code'}, // 代号
     ])
 }
 
@@ -42,6 +44,7 @@ export function filterHotData(src){
         'projectName', // 产品名称
         'commander', // 产品负责人
         'grade', //项目热度
+        {propName:'erpProjectCode', rename:'code'}, // 代号
     ])
 }
 

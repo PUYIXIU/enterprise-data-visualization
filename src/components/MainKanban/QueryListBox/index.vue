@@ -3,6 +3,7 @@ import DropDownBox from '@/components/DropDownBox'
 import {ref,reactive} from 'vue'
 import {useLocalDataStore} from "@/storage/index.js";
 import {copy} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {priorityDict, productLineDict, showTypeDict, statusDict} from "@/components/MainKanban/Dict.js";
 const visible = ref(false)
 const props = defineProps(['btnId'])
 const emit = defineEmits(['change','filterData'])
@@ -16,11 +17,6 @@ let lastParams = copy(initQueryParams)
 
 function expand(){
   visible.value = !visible.value
-  // if(visible.value){ // 进入后记录参数状态
-  //   lastParams = copy(queryParams.value)
-  // }else if(lastParams != copy(queryParams)){ // 退出后对比参数状态
-  //    filterData()
-  // }
   // 通知父元素修改按钮的状态
   emit('change', visible.value)
 }
@@ -46,54 +42,28 @@ function reset(){
     }
     filterData()
   }
-
 }
 
 const queryOptions = [
   {
     title:'展示方式', // 标题
     propName:(value)=>store.showType=value,
-    options:[
-        {value:0,label:'图表展示'},
-        {value:1,label:'列表展示'},
-    ]
+    options:showTypeDict
   },
   {
     title:'优先等级',
     propName:'priority',
-    options:[
-      {value:'全部',label:'全部'},
-      {value:'高',label:'高'},
-      {value:'中',label:'中'},
-      {value:'低',label:'低'},
-    ]
+    options:priorityDict
   },
   {
     title:'项目状态',
     propName:'status',
-    options:[
-      {value:'全部',label:'全部'},
-      {value:'进行中',label:'进行中'},
-      {value:'已完成',label:'已完成'},
-      {value:'迭代中',label:'迭代中'},
-      {value:'运维中',label:'运维中'},
-      {value:'已逾期',label:'已逾期'},
-    ]
+    options:statusDict
   },
   {
     title:'产品业务线',
     propName:'productLine',
-    options:[
-      {value:'全部',label:'全部'},
-      {value:'消防业务',label:'消防业务'},
-      {value:'实操业务',label:'实操业务'},
-      {value:'单品系列',label:'单品系列'},
-      {value:'展馆业务',label:'展馆业务'},
-      {value:'业务系列',label:'业务系列'},
-      {value:'化工业务',label:'化工业务'},
-      {value:'链工宝',label:'链工宝'},
-      {value:'课程内容',label:'课程内容'},
-    ]
+    options:productLineDict
   },
 ]
 

@@ -1,11 +1,10 @@
 <script setup>
-const props = defineProps(['title','btnList'])
 
-function btnClick(btn){
-  // 有2种状态切换的按钮
-  if(!btn.deactiveName) btn.deactiveName = btn.name
-  btn.onclick()
-}
+import BtnList from "@/components/ContentHeader/BtnList.vue";
+
+const props = defineProps(['title','btnList','fade'])
+
+
 
 </script>
 
@@ -13,12 +12,7 @@ function btnClick(btn){
 <!--看板头部-->
   <div class="kanban-head">
     <div class="title">{{title}}</div>
-    <div class="tool-box">
-      <p class="tool-btn" v-for="(btn,i) in btnList" :key="i" @click="btnClick(btn)" :id="btn.id || ''">
-        <span>{{btn.active?btn.deactiveName:btn.name}}</span>
-        <i :class="btn.class" :style="btn.active?btn.deactiveIconStyle:{}"></i>
-      </p>
-    </div>
+    <btn-list :btn-list="btnList" class="btn-list-box" :class="{'fade':fade}" />
   </div>
 </template>
 
@@ -30,43 +24,19 @@ function btnClick(btn){
   justify-content: space-between;
   height:$content-header-h;
   .title{
-    font-family: D-DINExp;
+    font-family: SourceHanSansCN-Regular;
     font-size: 1.5rem;
     color: #001133;
   }
-  .tool-box{
-    display: flex;
-    .tool-btn{
-      color: #9e9ebc;
-      display: flex;
-      align-items: center;
-      margin-right: 1.5rem;
-      cursor: pointer;
-      transition-property: color;
-      transition-duration: 0.1s;
-      transition-timing-function: ease-in-out;
-      &:hover{
-        color: #7d7dc5;
-      }
-      &:last-child{
-        margin-right: 0;
-      }
-      span{
-        font-family: SourceHanSansCN-Medium;
-        font-size: 0.75rem;
-      }
-      i{
-        display: inline-block;
-        width:1rem;
-        height:1rem;
-        background-color: currentColor;
-        transition:all 0.1s ease-in-out;
-        mask-size:100% 100%;
-        &.reload{mask-image: $reload-icon;}
-        &.expand{mask-image: $bottom-arrow-icon;}
-      }
-    }
+}
+.btn-list-box{
+  opacity:1;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+  &.fade{
+    opacity: 0.1;
+    pointer-events: none;
   }
 }
-
 </style>

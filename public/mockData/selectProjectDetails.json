@@ -4,242 +4,37 @@
   "data": [
     {
       "map": {
-        "employeeName": "王宇晓",
-        "totalHour": "1502"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "魏子栋",
-        "totalHour": "541"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "武雨",
-        "totalHour": "393"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "王颂",
-        "totalHour": "327"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "魏哲柱",
-        "totalHour": "322"
+        "employeeName": "丁坤",
+        "projectHour": "4804.42",
+        "totalHour": "29"
       }
     },
     {
       "map": {
         "employeeName": "王淑仪",
-        "totalHour": "282"
+        "projectHour": "4804.42",
+        "totalHour": "28"
       }
     },
     {
       "map": {
-        "employeeName": "何创伟",
-        "totalHour": "218"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "宋博",
-        "totalHour": "218"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "田楷文",
-        "totalHour": "134"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "徐海婷",
-        "totalHour": "132"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "臧可",
-        "totalHour": "121"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "陆游",
-        "totalHour": "104"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "张志超",
-        "totalHour": "92"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "李行健",
-        "totalHour": "77"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "丁坤",
-        "totalHour": "68"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "纪龙",
-        "totalHour": "44"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "刘滕",
-        "totalHour": "33"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "龚仅仅",
-        "totalHour": "24"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "庄志",
-        "totalHour": "12"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "张强",
+        "employeeName": "王颂",
+        "projectHour": "4804.42",
         "totalHour": "11"
       }
     },
     {
       "map": {
-        "employeeName": "宋雅兰",
-        "totalHour": "9"
+        "employeeName": "王宇晓",
+        "projectHour": "4804.42",
+        "totalHour": "11"
       }
     },
     {
       "map": {
-        "employeeName": "林毅",
-        "totalHour": "7"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "王家轩",
-        "totalHour": "7"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "高天龙",
-        "totalHour": "7"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "徐子凡",
-        "totalHour": "5"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "韩建省",
-        "totalHour": "5"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "孟祥宇",
-        "totalHour": "4"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "沈洋",
-        "totalHour": "4"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "吴高扬",
+        "employeeName": "宋博",
+        "projectHour": "4804.42",
         "totalHour": "2"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "张希",
-        "totalHour": "2"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "顾文俊",
-        "totalHour": "2"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "张震",
-        "totalHour": "2"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "韩蜜",
-        "totalHour": "1"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "苗一明",
-        "totalHour": "1"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "陈国锋",
-        "totalHour": "0"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "卢云飞",
-        "totalHour": "0"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "武傲君",
-        "totalHour": "0"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "刘彩霞",
-        "totalHour": "0"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "马自强",
-        "totalHour": "0"
-      }
-    },
-    {
-      "map": {
-        "employeeName": "宋友康",
-        "totalHour": "0"
       }
     }
   ],

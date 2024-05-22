@@ -5,6 +5,7 @@ import ProjPercent from '@/components/ProjPercent'
 import DangerProj from '@/components/DangerProj'
 import Drawer from '@/components/Drawer'
 import Loading from "@/components/Loading/Loading.vue";
+import NavHead from '@/components/NavHead'
 import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
 import {onMounted,getCurrentInstance,ref} from 'vue'
 import request from '@/utils/request.js'
@@ -18,6 +19,7 @@ const selectDeptList = (params={}) => request.get('/erp/visualize/selectDeptList
 // 获取主表格数据
 function getMainChartData(params=defaultHotParams, auto=false){
   (!app_init && !auto) && (store.loading = true)
+  !auto && (proxy.$refs.HotSortRef.startLoading()) // 项目热度遮罩
   return selectProjectPopularity(params).then(res=>{
     (!app_init && !auto) && (store.loading = false)
     res.data = res.data.map(item=>item.map)
@@ -92,7 +94,10 @@ onMounted(()=>{
 <template>
   <div class="wrapper">
     <Loading :delay="loading_delay" :duration="loading_duration" />
-    <div class="head"></div>
+    <div class="head">
+<!--      看板头部-->
+      <nav-head @query-change="getMainChartData"/>
+    </div>
     <div class="content">
       <div class="main-content br-box">
 <!--        主看板-->
@@ -101,7 +106,7 @@ onMounted(()=>{
       <div class="sub-content">
 <!--        项目热度-->
         <div class="sub-top br-box">
-          <hot-sort ref="HotSortRef" @query-change="getMainChartData" />
+          <hot-sort ref="HotSortRef"/>
         </div>
 <!--        项目占比 -->
         <div class="sub-middle br-box">

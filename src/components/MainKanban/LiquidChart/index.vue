@@ -9,7 +9,7 @@ import {mockPeopleList} from '@/mock/liquidPieData.js'
 import {getToolTips, liquidColorMap} from './colorConfig.js'
 import {getHSL, getpx} from "@/utils/style.js";
 import {useLocalDataStore} from "@/storage/index.js";
-import {getLiquidData, handlePieData} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {copy, getLiquidData, handlePieData} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 import request from "@/utils/request.js";
 import {filterPieData} from "@/utils/dataFilter.js";
 const { proxy } = getCurrentInstance()
@@ -51,7 +51,7 @@ function resize(){
 
 // // 监听到有水球被点中了
 watch(()=>store.currentProjectIndex,(nv,ov)=>{
-  if(nv == undefined){
+  if(nv == undefined && store.showType == 0){
     pieRendering.value = false
     setTimeout(()=>{
       proxy.$refs.LiquidPieRef.moveOut() // 饼图移出
@@ -59,9 +59,10 @@ watch(()=>store.currentProjectIndex,(nv,ov)=>{
   }
 })
 
+
 // 更新饼图
 function updatePie(taskId, seriesList, rect){
-  proxy.$refs.LiquidPieRef.updateChart(seriesList, rect)
+  proxy.$refs.LiquidPieRef.updateChart(copy(seriesList), rect)
 }
 
 const selectProjectDetails = params=>request.get('/erp/visualize/selectProjectDetails',{params})
@@ -92,7 +93,7 @@ function renderLiquidPie(index, seriesList, rect){
     liquidPieData.value = res
     pieRendering.value = true
     nextTick(()=>{
-      proxy.$refs.LiquidPieRef.initChart(seriesList, rect)
+      proxy.$refs.LiquidPieRef.initChart(copy(seriesList), rect)
     })
   })
 }
@@ -116,7 +117,8 @@ function dataReady(src){
 
 
 defineExpose({
-  dataReady
+  dataReady,
+  pieRendering
 })
 
 </script>
@@ -124,13 +126,13 @@ defineExpose({
 <template>
   <div class="chart-wrapper">
     <div class="nav-head">
+      <div class="tip-mes" :class="{fade:pieRendering}" >【圆形面积大小代表工时数量】</div>
       <div class="tooltip-box" style="opacity: 0;">
         <p v-for="item in navList">
           <i :style="{'--color':item.color}"></i>
           <span>{{item.label}}</span>
         </p>
       </div>
-      <div class="tip-mes">【圆形面积大小代表工时数量】</div>
     </div>
     <div class="canvas">
 <!--      坐标系-->
@@ -185,6 +187,13 @@ $padding-top:1.94rem;
     }
     .tip-mes{
       font-family: SourceHanSansCN-Regular;
+      opacity:1;
+      transition-property: opacity;
+      transition-duration: 0.3s;
+      transition-timing-function: ease-in-out;
+      &.fade{
+        opacity: 0.1;
+      }
     }
   }
 }

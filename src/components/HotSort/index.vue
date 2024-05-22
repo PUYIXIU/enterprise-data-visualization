@@ -15,77 +15,6 @@ const colorList = [
   '#6459F4',
 ]
 
-const filterDayOptions = [
-  {value:1,label:'近七天'},
-  {value:2,label:'近15天'},
-  {value:3,label:'近1个月'},
-  {value:4,label:'近2个月'},
-  {value:5,label:'近3个月'},
-  {value:6,label:'近半年'},
-  {value:7,label:'近一年'},
-]
-
-const filterTypeOptions = [
-  {value:1,label:'综合'},
-  {value:2,label:'工时'},
-  {value:3,label:'参与人数'},
-  {value:4,label:'提交次数'},
-]
-
-const queryParams = reactive(defaultHotParams)
-
-const btnList = ref([
-  {
-    name:filterDayOptions.find(o=>o.value==queryParams.filterDay).label,
-    class:'expand',
-    deactiveIconStyle:{transform:'rotateZ(-180deg)'},
-    id:'hot-time-select-btn',
-    onclick:()=>{
-      proxy.$refs.TimeRangeQueryRef.expand()
-    },
-    active:false,
-
-  },  {
-    name:filterTypeOptions.find(o=>o.value==queryParams.filterType).label,
-    class:'expand',
-    id:'hot-depart-select-btn',
-    deactiveIconStyle:{transform:'rotateZ(-180deg)'},
-    onclick:()=>{
-      proxy.$refs.DepartSelectQueryRef.expand()
-    },
-    active:false
-  },
-])
-
-function getChangeFun(index){
-  return function(visible){
-    btnList.value[index].active = visible
-  }
-}
-
-watch(()=>queryParams.filterDay,(nv,ov)=>{
-  if(nv!==ov){
-    store.timeRange = nv // 时间长度修改
-    let label = filterDayOptions.find(o=>o.value==nv).label
-    btnList.value[0].name = btnList.value[0].deactiveName = label
-  }
-})
-watch(()=>queryParams.filterType,(nv,ov)=>{
-  if(nv!==ov){
-    let label = filterTypeOptions.find(o=>o.value==nv).label
-    btnList.value[1].name = btnList.value[1].deactiveName = label
-  }
-})
-
-const emit = defineEmits(['queryChange'])
-// 请求页面数据
-watch(queryParams,(nv,ov)=>{
-  loading.value = true
-  emit('queryChange',queryParams)
-})
-watch(()=>store.timeTrigger,()=>{ // 定时请求数据
-  emit('queryChange',queryParams, true)
-})
 const data = ref([])
 
 const loading = ref(true)
@@ -100,6 +29,10 @@ function dataReady(src){
   return nextTick(()=>loading.value = false)
 }
 
+function startLoading(){
+  loading.value = true
+}
+
 let tween
 // loading = false代表数据加载结束
 watch(loading,(nv,ov)=>{
@@ -112,11 +45,14 @@ watch(loading,(nv,ov)=>{
     let delay = 3
     let duration = 30
     if(offset>0){
-      tween = gsap.to(dom,{
+      let initTweenOption = {
         scrollTop:offset,
-        duration:30,
-        delay:delay,
+        duration:duration,
         ease:'none',
+      }
+      tween = gsap.to(dom,{
+        ...initTweenOption,
+        delay:delay,
       })
       dom.onmouseenter = e =>{
         tween.pause()  // 动画暂停
@@ -129,6 +65,12 @@ watch(loading,(nv,ov)=>{
           scrollTop:offset,
           duration:radio,
           ease:'none',
+          onComplete:()=>{
+            dom.scrollTop = 0
+            tween = gsap.to(dom,initTweenOption)
+            tween.play()
+            tween.repeat(-1)
+          }
         })
         tween.play()
       }
@@ -144,31 +86,32 @@ watch(loading,(nv,ov)=>{
 })
 
 defineExpose({
-  dataReady
+  dataReady,
+  startLoading
 })
 </script>
 
 <template>
   <div class="kanban-wrapper">
-    <content-header title="项目热度" :btn-list="btnList" />
+    <content-header title="项目热度" :btn-list="[]" />
 
-    <query-box
-        ref="TimeRangeQueryRef"
-        class="query-box"
-        :btn-id="btnList[0].id" dom-id="time-range-dom-id"
-        :options="filterDayOptions"
-        :height="(1.13+0.5)*Math.ceil(filterDayOptions.length/2) + 0.5*2"
-        @change="(()=>getChangeFun(0))()"
-        v-model:value="queryParams.filterDay" />
+<!--    <query-box-->
+<!--        ref="TimeRangeQueryRef"-->
+<!--        class="query-box"-->
+<!--        :btn-id="btnList[0].id" dom-id="time-range-dom-id"-->
+<!--        :options="filterDayOptions"-->
+<!--        :height="(1.13+0.5)*Math.ceil(filterDayOptions.length/2) + 0.5*2"-->
+<!--        @change="(()=>getChangeFun(0))()"-->
+<!--        v-model:value="queryParams.filterDay" />-->
 
-    <query-box
-        ref="DepartSelectQueryRef"
-        class="query-box"
-        :btn-id="btnList[1].id" dom-id="depart-range-dom-id"
-        :options="filterTypeOptions"
-        @change="(()=>getChangeFun(1))()"
-        :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"
-        v-model:value="queryParams.filterType" />
+<!--    <query-box-->
+<!--        ref="DepartSelectQueryRef"-->
+<!--        class="query-box"-->
+<!--        :btn-id="btnList[1].id" dom-id="depart-range-dom-id"-->
+<!--        :options="filterTypeOptions"-->
+<!--        @change="(()=>getChangeFun(1))()"-->
+<!--        :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"-->
+<!--        v-model:value="queryParams.filterType" />-->
     <window-loading :loading="loading"/>
     <empty :show-div="!loading && data.length == 0" />
     <div class="kanban-content" id="hot-kanban">
@@ -180,7 +123,9 @@ defineExpose({
         <div class="index num">{{item.index}}</div>
         <div class="split-line"></div>
         <div class="info-box">
-          <div class="proj-name">{{item.projectName}}</div>
+          <div class="proj-name">
+            {{[item.projectName,item.code][store.visitMode]}}
+          </div>
           <div class="commander-name">{{item.commander}}</div>
         </div>
         <div class="grade num">{{item.grade}}</div>

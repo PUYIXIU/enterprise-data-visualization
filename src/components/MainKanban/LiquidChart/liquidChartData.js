@@ -1,5 +1,6 @@
 import {getHSL, getpx} from "@/utils/style.js";
 import {colorList, liquidColorMap} from "@/components/MainKanban/LiquidChart/colorConfig.js";
+import {useLocalDataStore} from "@/storage/index.js";
 
 function countUnit(total, splitNumber){
     if(splitNumber == 0) return total;
@@ -254,7 +255,7 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
         let {config:color} = node.color
 
         let topOption = copy(optionTemp)
-        topOption.label.formatter = `{title|${node.radius}h}\n{subtitle|${node.name}}\n{subtitle|${node.wave}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}`
+        topOption.label.formatter = getFormatter(node)
         topOption.center = node.center // 中心坐标
         topOption.radius = `${node.mapRadius * (1 - grid.top - grid.bottom)*0.95}%`  // 半径
 
@@ -276,7 +277,7 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
 
         topOption.z = index
         baseOption.z = index
-
+        topOption.uniqueId = node.no // 用index作为唯一标识
         options.push(baseOption)
         options.push(topOption)
     })
@@ -366,6 +367,24 @@ export function getPieOptions(data, {liquid,pie:pieColor,config}, pieOptionTemp,
     })
     return options
 }
+
+
+export function getFormatter(node){
+     return `{title|${node.radius}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}`
+}
+
+export function getPieFormatter(node){
+    return `{title|${node.radius}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}\n{subtitle|${node.commander}}`
+}
+
+export function resetLabel(data,series){
+    data.forEach(node=>{
+        let targetSeries = series.find(o=>o.uniqueId == node.no)
+        targetSeries.label.formatter = getFormatter(node)
+    })
+    return series
+}
+
 
 export function copy(obj){
     return JSON.parse(JSON.stringify(obj))

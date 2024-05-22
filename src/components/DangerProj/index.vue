@@ -83,11 +83,14 @@ watch(loading,(nv,ov)=>{
     let delay = 5
     let duration = 30
     if(offset>0){
-      tween = gsap.to(dom,{
+      let initTweenOption = {
         scrollTop:offset,
-        duration:30,
-        delay:delay,
+        duration:duration,
         ease:'none',
+      }
+      tween = gsap.to(dom,{
+        ...initTweenOption,
+        delay:delay,
       })
       dom.onmouseenter = e =>{
         tween.pause()  // 动画暂停
@@ -100,6 +103,12 @@ watch(loading,(nv,ov)=>{
           scrollTop:offset,
           duration:radio,
           ease:'none',
+          onComplete:()=>{
+            dom.scrollTop = 0
+            tween = gsap.to(dom,initTweenOption)
+            tween.play()
+            tween.repeat(-1)
+          }
         })
         tween.play()
       }

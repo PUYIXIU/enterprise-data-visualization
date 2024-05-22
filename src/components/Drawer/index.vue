@@ -126,16 +126,19 @@ onMounted(()=>{
 
 <template>
   <div class="drawer-wrapper" :class="{'expand':visible}" :id="domId">
-    <h3>项目详情</h3>
-    <drawer-box title="项目甘特图" height="11.19rem">
-      <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
-    </drawer-box>
-    <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
-      <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
-    </drawer-box>
-    <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
-      <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
-    </drawer-box>
+    <p class="tooltip-p">（可点击空白区域退出）</p>
+    <div class="drawer-inner full">
+      <h3>项目详情</h3>
+      <drawer-box title="项目甘特图" height="11.19rem">
+        <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
+      </drawer-box>
+      <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
+        <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
+      </drawer-box>
+      <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
+        <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
+      </drawer-box>
+    </div>
   </div>
 </template>
 
@@ -143,6 +146,19 @@ onMounted(()=>{
 .drawer-wrapper{
   &.expand{
     transform: translateX(0%);
+    .tooltip-p{
+      position:absolute;
+      left:-2rem;
+      top:1rem;
+      transform:translateX(-100%);
+      color: #4971D7;
+      font-size: 1rem;
+      font-family: SourceHanSansCN-Regular;
+      opacity: 1;
+    }
+  }
+  .tooltip-p{
+    opacity: 0;
   }
   transition-property: transform;
   transition-duration: 0.3s;
@@ -154,6 +170,11 @@ onMounted(()=>{
   top:4.22rem;
   width: 60rem;
   height: 58.44rem;
+  width: 60rem;
+  height: 58.44rem;
+}
+.drawer-inner{
+  overflow: hidden;
   background: linear-gradient( 90deg, #e6ecfc 0%, rgba(33, 51, 98, 0) 100%);
   backdrop-filter: blur(0.75rem);
   filter:drop-shadow(-1px 0px 0.5rem rgba(217, 226, 255, 0.2));
@@ -169,15 +190,13 @@ onMounted(()=>{
   padding-left:1.88rem;
   padding-right:1.13rem;
   padding-bottom:1.19rem;
-
-  overflow: hidden;
 }
 
 h3{
   color: #001133;
   font-weight: 400;
-  font-size: 1.5rem;
-  font-family: 时尚中黑简体;
+  font-size: 1.4rem;
+  font-family: SourceHanSansCN-Regular;
   margin-bottom: 1.5rem;
   padding-left:0.75rem;
 }
