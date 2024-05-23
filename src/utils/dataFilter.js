@@ -88,6 +88,7 @@ export function filterDangerProjData(src){
         result.push(pick(map,[
             'index', // 索引
             {propName:'projectName', rename:'name'}, // 模块名称
+            {propName:'erpProjectCode', rename:'code'}, // 代号
             'predict', // 预计
             {propName:'progress', type:Number}, // 进度
         ]))

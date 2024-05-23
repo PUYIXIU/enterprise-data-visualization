@@ -95,6 +95,7 @@ function expand(projId){
 }
 
 function collapse(){
+  console.log('抽屉合上')
   visible.value = false
   store.currentProjectIndex = undefined
   store.selectProjId = undefined

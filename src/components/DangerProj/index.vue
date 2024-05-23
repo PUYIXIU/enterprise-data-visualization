@@ -152,7 +152,7 @@ defineExpose({
         <div class="index num">{{item.index+1}}</div>
         <div class="progress-box">
           <div class="progress-label">
-            <p class="name">{{item.name}}</p>
+            <p class="name">{{[item.name,item.code][store.visitMode]}}</p>
             <p class="predict">预计{{item.predict}}%</p>
           </div>
           <el-progress

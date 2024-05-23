@@ -1,5 +1,5 @@
 import {getHSL, getpx} from "@/utils/style.js";
-import {colorList, liquidColorMap} from "@/components/MainKanban/LiquidChart/colorConfig.js";
+import {colorList} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 import {useLocalDataStore} from "@/storage/index.js";
 
 function countUnit(total, splitNumber){
@@ -77,7 +77,7 @@ export function getLiquidData(
     let x_unit = content_w/max_x // x轴单位长度（px）
     let y_unit = content_h/max_y // y轴单位长度（px）
 
-    let max_mapR = 50, min_mapR = 15 // 最终半径映射范围（%）
+    let max_mapR = 50, min_mapR = 11 // 最终半径映射范围（%）
     let axis_range = {
         x:[0,max_x],
         y:[0,max_y]
@@ -277,6 +277,10 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
 
         topOption.z = index
         baseOption.z = index
+
+        topOption.uuid = node.id  // 此处是用于使用项目id找到series的
+        baseOption.uuid = node.id
+
         topOption.uniqueId = node.no // 用index作为唯一标识
         options.push(baseOption)
         options.push(topOption)
@@ -405,9 +409,10 @@ function valueMap(value, [ min, max ],[map_min, map_max], mapType){
     if(mapType == 'linear'){ // 线性映射
         mapValue = (map_max - map_min)*mapEffect + map_min
     }else if(mapType == 'pow'){ // 对数映射
-        let base = map_max / map_min
-        let effect = map_min
-        mapValue = effect * Math.pow(base, mapEffect)
+        // let base = map_max / map_min
+        // let effect = map_min
+        // mapValue = effect * Math.pow(base, mapEffect)
+        mapValue = 2 * Math.pow(mapEffect,4) + 3
     }else if(mapType == 'log'){ // y=x^(1/3)
         let diff = map_max - map_min
         mapValue = Math.pow(mapEffect, 1/3)*diff + map_min
@@ -416,7 +421,7 @@ function valueMap(value, [ min, max ],[map_min, map_max], mapType){
         mapValue = effect * Math.pow(mapEffect,2) + (map_max - effect - map_min) * mapEffect + map_min
     }
 
-    window.debugModeEnable && (console.log(`映射类型：${mapType}，映射系数：${mapEffect}，映射结果：${mapValue}`))
+    // window.debugModeEnable && (console.log(`映射类型：${mapType}，映射系数：${mapEffect}，映射结果：${mapValue}`))
     return {
         mapEffect, // 映射系数
         mapValue // 线性映射

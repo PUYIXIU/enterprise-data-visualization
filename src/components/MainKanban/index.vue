@@ -1,5 +1,5 @@
 <script setup>
-import {ref,getCurrentInstance,watch,computed} from 'vue'
+import {ref,getCurrentInstance,watch} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import LiquidChart from '@/components/MainKanban/LiquidChart'
 import ProjectTable from '@/components/MainKanban/ProjectTable'
@@ -215,7 +215,10 @@ watch(()=>store.selectProjId,(nv,ov)=>{
         @change="(()=>getChangeFun(6))()"
         v-model:value="store.showType" />
 
-    <liquid-chart ref="LiquidChartRef" class="tab-content full" :class="{show:store.showType == 0}" />
+    <liquid-chart ref="LiquidChartRef" class="tab-content chart full"
+     :class="{
+      show:store.showType == 0,
+      fadeIn:store.selectProjId !== undefined && store.showType == 1}" />
     <project-table ref="ProjTableRef"  class="tab-content"
      :class="{
       show:store.showType == 1,
@@ -254,8 +257,30 @@ watch(()=>store.selectProjId,(nv,ov)=>{
     opacity: 1;
   }
   &.fade{
-    opacity: 0.1;
+    opacity: 0;
     pointer-events: none;
+  }
+  &.chart{
+    opacity: 1;
+    .nav-head{opacity: 0}
+    ::v-deep(.canvas){
+      .axis-content-wrapper{opacity: 0 ;}
+      .liquid-chart{opacity: 0 ;}
+      .pie-wrapper{opacity: 1}
+    }
+    &.show{
+      .nav-head{opacity: 1}
+      ::v-deep(.canvas){
+        .axis-content-wrapper{opacity: 1;}
+        .liquid-chart{opacity: 1}
+      }
+    }
+    &.fadeIn {
+      ::v-deep(.canvas){
+        .axis-content-wrapper{opacity: 0.1;}
+        .liquid-chart{opacity: 0.1}
+      }
+    }
   }
 }
 </style>

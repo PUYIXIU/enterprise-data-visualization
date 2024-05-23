@@ -50,12 +50,10 @@ function resize(){
 }
 
 // // 监听到有水球被点中了
-watch(()=>store.currentProjectIndex,(nv,ov)=>{
-  if(nv == undefined && store.showType == 0){
+watch(()=>store.selectProjId,(nv,ov)=>{
+  if(nv == undefined){
     pieRendering.value = false
-    setTimeout(()=>{
-      proxy.$refs.LiquidPieRef.moveOut() // 饼图移出
-    },300) // 0.3s后饼图清除
+    proxy.$refs.LiquidPieRef.moveOut() // 饼图移出
   }
 })
 
@@ -85,9 +83,7 @@ function getPieData(projData){
 // 渲染水球
 function renderLiquidPie(index, seriesList, rect){
   let selectProj = chartData.value[index] // 被选中的数据
-  // liquidPieColorConfig.value = liquidColorMap[selectProj.type]
   liquidPieColorConfig.value = selectProj.color
-
   store.selectProjId = selectProj.id // 全局选中id
   getPieData(selectProj).then(res=>{
     liquidPieData.value = res
@@ -207,7 +203,7 @@ $padding-top:1.94rem;
   transition-duration: 0.3s;
   transition-timing-function: ease-in-out;
   &.fade{
-    opacity: 0.1;
+    opacity: 0.1 !important;
     pointer-events: none;
   }
 }
@@ -217,7 +213,7 @@ $padding-top:1.94rem;
   transition-duration: 0.3s;
   transition-timing-function: ease-in-out;
   &.fade{
-    opacity: 0;
+    opacity: 0 !important;
   }
 }
 </style>

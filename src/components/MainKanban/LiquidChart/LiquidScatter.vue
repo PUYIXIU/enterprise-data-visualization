@@ -150,6 +150,26 @@ function liquidSelect(e){
   }
 }
 
+watch(()=>store.selectProjId,(nv,ov)=>{
+  if(nv == undefined || store.showType == 0) return // 仅对表格点击有效
+  // 找到currentSeriesIndex， 和它的包围盒
+  currentSeriesIndex = option.series.findIndex(o=>o.uuid == nv)/2
+  if(currentSeriesIndex>-1){
+    // 找到目标sereis
+    let base_series = option.series[currentSeriesIndex*2] // 指定series
+    let series = option.series[currentSeriesIndex*2+1] // 指定series
+
+    // 找到目标包围盒
+    const svg_g = document.querySelector(`#${props.domId} svg g`)
+    const svg_children = Array.from(svg_g.children)
+    let path = svg_children[currentSeriesIndex * domNum] // 目标series的范围圆
+    let rect = path.getBoundingClientRect() // 范围圆的包围盒子
+    currentRect = rect
+
+    emit('renderPie', currentSeriesIndex,  [base_series,series], currentRect)
+  }
+})
+
 // 刷新当前目标的包围盒
 function getCurrentPathRect(){
   const svg_g = document.querySelector(`#${props.domId} svg g`)
@@ -158,12 +178,12 @@ function getCurrentPathRect(){
   currentRect = path.getBoundingClientRect() // 范围圆的包围盒子
 }
 
+const domNum = 21; // 一个svg包含21个标签
 // 水球悬浮
 function liquidHover(e){
   const svg = document.querySelector(`#${props.domId} svg`)
   const svg_g = document.querySelector(`#${props.domId} svg g`)
   const svg_children = Array.from(svg_g.children)
-  const domNum = 21; // 一个svg包含21个标签
   let index = svg_children.indexOf(e.target)
   if(index<0 && ['path','g'].includes(e.target.tagName)){
     let parent = e.target.parentNode

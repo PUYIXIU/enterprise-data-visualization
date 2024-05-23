@@ -34,6 +34,9 @@ onBeforeUnmount(()=>{
   liquidChart = null
   pieChart = null
 })
+
+
+// 来自图表自身的绘制
 function initChart(seriesList, rect){
   liquidFillSeriesOption = seriesList // 水球的option = 被点击水球的option
   boundRect = rect // 被点击水球的包围盒，用来平移位置
@@ -110,7 +113,7 @@ function moveIn(){
 
   let radius = {value:parseFloat(liquidFillSeriesOption[0].radius)} // 目标半径
   gsap.to(radius,{
-    value:25,
+    value:20,
     duration:0.25,
     ease:'power2.inOut',
     onUpdate:()=>{
@@ -149,8 +152,22 @@ function moveIn(){
 
 // 移出
 function moveOut(){
-  liquidChart.dispose()
-  pieChart.dispose()
+  gsap.to(`#${props.domId}`,{
+    opacity:0,
+    duration:0.3,
+    onComplete:()=>{
+      liquidChart.dispose()
+      gsap.set(`#${props.domId}`,{opacity:1})
+    }
+  })
+  gsap.to(`#${props.pieDomId}`,{
+    opacity:0,
+    duration:0.3,
+    onComplete:()=>{
+      pieChart.dispose()
+      gsap.set(`#${props.pieDomId}`,{opacity:1})
+    }
+  })
 }
 
 // 设置水球图的option
@@ -158,7 +175,13 @@ function getLiquidOption(){
   // label字体变化 添加项目负责人字样
   let option = liquidFillSeriesOption[1]
   let {data} = props
+  console.log(liquidFillSeriesOption)
   option.label.formatter = getPieFormatter(data)
+
+  // 此处是为了防止画布平移距离过大，导致的阴影出界
+  option.backgroundStyle.shadowBlur = 10
+  option.backgroundStyle.shadowOffsetY = 0
+  option.backgroundStyle.shadowOffsetX = 0
   liquidOption.series = liquidFillSeriesOption
 }
 
@@ -174,12 +197,6 @@ function getPieOption(){
       canvasSize
   )
 }
-
-watch(()=>store.visitMode, (nv,ov)=>{
-  if(nv == ov) return
-  getLiquidOption()
-  liquidChart.setOption(liquidOption)
-})
 
 defineExpose({
   initChart,

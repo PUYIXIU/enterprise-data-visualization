@@ -64,7 +64,7 @@ function rowClick(params){
   <div class="table-wrapper" >
 
     <el-table :data="sortTableData" :height="'100%'" @row-click="rowClick">
-      <el-table-column v-if="store.visitMode == 0" prop="projectName" label="项目名称" :width="getpx(9)" show-overflow-tooltip header-align="center"></el-table-column>
+      <el-table-column v-if="store.visitMode == 0" prop="projectName" label="项目名称" :width="getpx(9)" show-overflow-tooltip header-align="center"  class-name="align-left"></el-table-column>
       <el-table-column v-if="store.visitMode == 1" prop="erpProjectCode" label="代号" show-overflow-tooltip header-align="center" :width="getpx(7)"></el-table-column>
       <el-table-column prop="priority" label="优先级" header-align="center" :width="getpx(6)" >
         <template #default="{row}">
