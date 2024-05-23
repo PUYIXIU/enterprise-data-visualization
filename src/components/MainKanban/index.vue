@@ -23,6 +23,7 @@ let lastParams = copy(initQueryParams) // 上一次查询的数据
 const queryParams = ref(copy(initQueryParams)) // 当前查询的数据
 const btnList = ref([
   {
+    // show:false,
     name:'切换全局模式',
     deactiveName:'切换均匀模式',
     class:'reload',
@@ -163,7 +164,8 @@ watch(queryParams,(nv,ov)=>{
 },{deep:true})
 
 watch(()=>store.mapMode,(nv,ov)=>{
-  proxy.$refs.QueryBoxRef.filterData()
+  // proxy.$refs.QueryBoxRef.filterData()
+  filterData(queryParams.value)
 })
 defineExpose({
   dataReady

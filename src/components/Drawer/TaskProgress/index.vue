@@ -105,19 +105,19 @@ function setBarStyle(){
 
     const nodes = group.querySelectorAll(`.${barItemClassName}`)
     if(!nodes.length) break; // 当前元素没渲染出来
+    // let showNodeLength = 0  // 真正进行展示的元素数量
+    // for(let i = 0;i<nodes.length;i++){
+    //   let node = nodes[i]
+    //   let x = parseFloat(node.style.transform.split('(')[1])
+    //   // if(x<-2.73254) break
+    //   if(x>=0) showNodeLength++
+    // }
+    let showNodeLength = nodes.length // 真正进行展示的元素数量
+
     for(let i =0; i<nodes.length;i++){
       let node = nodes[i]
       let id = Array.from(node.classList).
       find(i=>/id-/.test(i))
-      if(renderedList.includes(id)){
-        // 已经绘制，检测是否是最后一个元素
-        if(i<nodes.length-1){ // 不是最后一个元素但有label
-          let label = node.querySelector('.label')
-          label && label.remove()
-        }
-        continue;
-      }
-      renderedList.push(id)
       let height =Number(
           Array.from(node.classList).
           find(i=>/height/.test(i)).
@@ -125,7 +125,16 @@ function setBarStyle(){
       )
       node.style.height = `${height}%`
 
-      if(i == nodes.length-1){ // 最后一个
+      if(renderedList.includes(id)){
+        // 已经绘制，检测是否是最后一个元素
+        if(i<showNodeLength-1){ // 不是最后一个元素但有label
+          let label = node.querySelector('.label')
+          label && label.remove()
+        }
+        continue;
+      }
+      renderedList.push(id)
+      if(i == showNodeLength-1){ // 最后一个
         let info = Array.from(group.classList).find(i=>/person/.test(i)).split('-')
         let name = info[1]
         let hour = info[2]

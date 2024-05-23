@@ -135,7 +135,6 @@ export function getLiquidData(
         if(bottom>content_h){ // 下侧超过
             let n = axis_range.y[1]-axis_range.y[0]
             let bottom_add = Math.ceil(
-                // ((content_h-r2px)*n - content_h*axis_range.y[1] + content_h*node.y)/(content_h-r2px)
                 (content_h*axis_range.y[1] - content_h*node.y)/(content_h-r2px) - n
             )
             axis_range.y[0] -= bottom_add
@@ -409,10 +408,7 @@ function valueMap(value, [ min, max ],[map_min, map_max], mapType){
     if(mapType == 'linear'){ // 线性映射
         mapValue = (map_max - map_min)*mapEffect + map_min
     }else if(mapType == 'pow'){ // 对数映射
-        // let base = map_max / map_min
-        // let effect = map_min
-        // mapValue = effect * Math.pow(base, mapEffect)
-        mapValue = 2 * Math.pow(mapEffect,4) + 3
+        mapValue = (map_max-map_min) * Math.pow(mapEffect,2) + map_min
     }else if(mapType == 'log'){ // y=x^(1/3)
         let diff = map_max - map_min
         mapValue = Math.pow(mapEffect, 1/3)*diff + map_min
