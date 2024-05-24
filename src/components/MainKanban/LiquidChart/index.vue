@@ -29,7 +29,8 @@ function getGrid(){
   return { // 坐标系栅格
     top:getpx(1),
     bottom:getpx(2.8125),
-    left:getpx(1.875),
+    // left:getpx(1.875),
+    left:getpx(3),
     right:getpx(0.9375),
   }
 }

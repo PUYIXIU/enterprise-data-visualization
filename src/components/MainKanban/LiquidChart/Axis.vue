@@ -192,7 +192,7 @@ onBeforeUnmount(()=>{
   <span class="axis-name y" :style="{
   '--top':grid.top + 'px',
   '--left':grid.left + 'px',
-}">参与人数</span>
+}">工时</span>
 </div>
 </template>
 

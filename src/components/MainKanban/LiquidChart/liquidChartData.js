@@ -29,19 +29,20 @@ function getMapType(data){
     let effect = standard_var/ave
 
     let SDR = effect > 0.25 // true表示数据相差大，false表示数据相差小
-
-    console.log(`标准差：${standard_var}，标准差大于指定值：${SDR}，数据偏向：${dir}`)
+    let type
     if(SDR){ // 数据离散大 无需映射或者二次函数映射
-        if(dir == 0) return 'linear'  // 线性映射
-        else return x2effect // 二次映射 ax^2 +(1-a)x
+        if(dir == 0) type =  'linear'  // 线性映射
+        else type = x2effect // 二次映射 ax^2 +(1-a)x
     }else{ // 数据相差小 需要进行指数映射或者对数因社会
         if(dir == 1){ // 数据偏小指数映射
-            return 'pow'
+            type = 'pow'
         }else { // 数据偏大或者过于均匀（对数映射似乎会导致数据普遍偏大？）
-            return 'log'
+            type = 'log'
             // return 'linear' // 线性映射
         }
     }
+    console.log(`标准差：${standard_var}，标准差大于指定值：${SDR}，数据偏向：${dir}，映射方式：${type}`)
+    return type
 }
 
 /**
