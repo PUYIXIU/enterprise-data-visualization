@@ -1,10 +1,10 @@
 import {mock_liquidData} from "@/mock/liquidScatterData.js";
 
-// 测试参与人名单
+// 获取项目参与人员工时详情
 export const mockPeopleList = [
     {
-        name:'张三',
-        totalHour:75,
+        name:'张三', // 人名
+        totalHour:75, // 工时
     },
     {
         name:'李四',

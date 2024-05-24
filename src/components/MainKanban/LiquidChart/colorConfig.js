@@ -1,4 +1,4 @@
-import {getpx} from "@/utils/style.js";
+import {getHSL, getpx} from "@/utils/style.js";
 
 /**
  *  color: [h, s, l]
@@ -6,131 +6,112 @@ import {getpx} from "@/utils/style.js";
  *  s_add: 饱和度偏移
  *  l_add: 明暗度偏移
  */
-export const liquidColorList = [
-    { // 深蓝 0
-        color:[235, 93, 67, 50],
-        h_add:0,
-        s_add:0,
-        l_add:-30,
-    },
-    { // 紫色 1
-        color:[267, 71, 66, 40],
-        h_add:25,
-        s_add:20,
-        l_add:-30
-    },
-    { //浅蓝 2
-        color:[218, 97, 70, 50],
-        h_add:0,
-        s_add:0,
-        l_add:-20
-    },
-    { // 靛青 3
-        color:[179, 49, 54],
-        h_add:0,
-        s_add:20,
-        l_add:-15,
-    },
-    { // 红色 4
-        color:[22, 78, 49],
-        h_add:0,
-        s_add:10,
-        l_add:-5,
-    },
+// 草绿色 第一名
+const green = {
+    // liquid:{color:[101, 75, 63, 50], h_add:0, s_add:0, l_add:0,},
+    liquid:{color:[153, 61, 69, 50], h_add:10, s_add:-20, l_add:-25,},
+    pie:[
+        {color:[153, 61, 69, 50], h_add:0, s_add:0, l_add:-20, alpha:75,},
+        {color:[153, 61, 69, 50], h_add:0, s_add:0, l_add:-20, alpha:75,},
+    ]
+}
+
+// 紫色 第二名
+const violet = {
+    liquid:{color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30},
+    pie:[
+        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
+        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
+    ]
+}
+
+// 深蓝色 第三名
+const darkBlue = {
+    liquid:{color:[235, 93, 67, 50], h_add:0, s_add:0, l_add:-30,},
+    pie:[
+        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
+        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
+    ]
+}
+
+// 浅蓝色
+const lightBlue = {
+    liquid:{color:[218, 97, 70, 50], h_add:0, s_add:0, l_add:-20},
+    pie:[
+        {color:[222, 100, 71], h_add:0, s_add:0, l_add:0, alpha:50,},
+        {color:[222, 100, 71], h_add:0, s_add:0, l_add:0, alpha:50,},
+    ]
+}
+
+// 靛青色
+const cyan = {
+    liquid:{color:[179, 49, 54], h_add:0, s_add:20, l_add:-15,},
+    pie:[
+        {color:[179, 49, 54], h_add:0, s_add:0, l_add:-20, alpha:50,},
+        {color:[179, 49, 54], h_add:0, s_add:0, l_add:-20, alpha:50,},
+    ]
+}
+
+// 橘红色
+const orange = {
+    liquid:{color:[22, 90, 66], h_add:0, s_add:10, l_add:-5,},
+    pie:[
+        {color:[22, 78, 49], h_add:0, s_add:10, l_add:-5, alpha:75,},
+        {color:[22, 78, 49], h_add:0, s_add:10, l_add:-5, alpha:75,},
+    ]
+}
+
+export const colorList = [
+    darkBlue,
+    cyan,
+    orange,
+    lightBlue,
+    violet,
+    green,
 ]
 
-export const liquidPieColor = [
-    { // 深蓝
-        pie:[
-            { // 深紫色紫色
-                color:[241, 95, 75, 50],
-                h_add:0,
-                s_add:0,
-                l_add:-30,
-                alpha:100,
-            },
-            { // 浅紫色
-                color:[241, 95, 75, 50],
-                h_add:0,
-                s_add:0,
-                l_add:-30,
-                alpha:100,
-            },
-        ]
-    },
-    { // 紫色
-        pie:[
-            { // 深紫色紫色
-                color: [269, 95, 71],
-                h_add:0,
-                s_add:0,
-                l_add:0,
-                alpha:50,
-            },
-            { // 浅紫色
-                color: [269, 95, 71],
-                h_add:0,
-                s_add:0,
-                l_add:0,
-                alpha:50,
-            },
-        ]
-    },
-    { // 浅蓝
-        pie:[
-            { // 深紫色紫色
-                color:[222, 100, 71],
-                h_add:0,
-                s_add:0,
-                l_add:0,
-                alpha:50,
-            },
-            { // 浅紫色
-                color:[222, 100, 71],
-                h_add:0,
-                s_add:0,
-                l_add:0,
-                alpha:50,
-            },
-        ]
-    },
-    { // 靛青
-        pie:[
-            { // 深紫色紫色
-                color:[179, 49, 54],
-                h_add:0,
-                s_add:0,
-                l_add:-20,
-                alpha:50,
-            },
-            { // 浅紫色
-                color:[179, 49, 54],
-                h_add:0,
-                s_add:0,
-                l_add:-20,
-                alpha:50,
-            },
-        ]
-    },
-    { // 红色
-        pie:[
-            { // 深紫色紫色
-                color:[22, 78, 49],
-                h_add:0,
-                s_add:10,
-                l_add:-5,
-                alpha:75,
-            },
-            { // 浅紫色
-                color:[22, 78, 49],
-                h_add:0,
-                s_add:10,
-                l_add:-5,
-                alpha:75,
-            },
-        ]
-    },
-]
+// 计算图例颜色-阴影颜色-背景颜色-波浪颜色等等
+function getColorOption(){
+    colorList.forEach(colorNode=>{
+        let config = {
+            top:{},
+            base:{}
+        }
+
+        config.toolTipColor =  getHSL(colorNode.liquid.color) // 图例颜色
+        {
+            // 水球颜色
+            const {color, h_add, s_add, l_add} = colorNode.liquid
+            config.top.itemStyleColor = getHSL(color, 100,{h_add,s_add,l_add}) // 主水波颜色
+            config.top.shadowColor = getHSL(color, 100) // 主阴影颜色
+            config.top.backgroundColor = getHSL(color, 20) // 主背景颜色
+            config.base.backgroundColor = getHSL(color, 20,{h_add,s_add,l_add}) // 叠底背景颜色
+            config.base.shadowColor = getHSL(color, 100,{h_add,s_add,l_add}) // 叠底阴影颜色
+        }
+
+        colorNode.config = config
+    })
+}
+getColorOption()
+
+export const liquidColorMap = {
+    '进行中':colorList[0],
+    '已完成':colorList[1],
+    '迭代中':colorList[2],
+    '运维中':colorList[3],
+    '已逾期':colorList[4],
+}
+
+// 获取图例及其配色
+export function getToolTips(){
+    return Object.entries(liquidColorMap).map(([key,value])=>{
+        return {
+            label:key,
+            value:key,
+            color:value.config.toolTipColor
+        }
+    })
+}
 
 // 饼图模版
 export const pieOptionTemp = {
@@ -157,36 +138,39 @@ export const pieOptionTemp = {
         }
     },
     label:{
-        position:'inner',
+        position:'outside',
         rotate:'radial',
-        color:'#fff',
+        color:'#a3a7b0',
         formatter:(param)=>`{num|120}{unit|h}\t{name|${param.name}}`,
         rich:{
             num:{
-                textShadowColor:'rgba(0,0,0,0.75)',
-                textShadowBlur:3,
+                // textShadowColor:'rgba(0,0,0,0.5)',
+                // textShadowBlur:3,
                 textShadowOffsetY:1,
                 fontSize:getpx(1.5),
                 fontFamily:'SourceHanSansCN-Regular',
+                verticalAlign:'middle'
             },
             unit:{
-                textShadowColor:'rgba(0,0,0,0.75)',
-                textShadowBlur:3,
+                // textShadowColor:'rgba(0,0,0,0.5)',
+                // textShadowBlur:3,
                 textShadowOffsetY:1,
                 fontSize:getpx(0.8),
                 fontFamily:'SourceHanSansCN-Regular',
+                verticalAlign:'middle'
             },
             name:{
-                textShadowColor:'rgba(0,0,0,0.75)',
-                textShadowBlur:3,
+                // textShadowColor:'rgba(0,0,0,0.5)',
+                // textShadowBlur:3,
                 textShadowOffsetY:1,
                 fontSize:getpx(1.5),
                 fontFamily:'SourceHanSansCN-Regular',
+                verticalAlign:'middle'
             }
         }
     },
     labelLine:{
-        show:false
+        // show:false
     },
     animation:false
 }

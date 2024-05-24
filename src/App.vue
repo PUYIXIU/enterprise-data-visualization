@@ -1,32 +1,120 @@
 <script setup>
-import {onMounted} from "vue";
 import MainKanban from '@/components/MainKanban'
 import HotSort from '@/components/HotSort'
 import ProjPercent from '@/components/ProjPercent'
 import DangerProj from '@/components/DangerProj'
 import Drawer from '@/components/Drawer'
+import Loading from "@/components/Loading/Loading.vue";
+import NavHead from '@/components/NavHead'
+import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
+import {onMounted,getCurrentInstance,ref} from 'vue'
+import request from '@/utils/request.js'
+import {filterMainData} from "@/utils/dataFilter.js";
+const store = useLocalDataStore()
+const {proxy} = getCurrentInstance()
+let app_init = true
+const selectProjectPopularity = params => request.get('/erp/visualize/selectProjectPopularity', {params}) // 请求项目热度
+const selectDeptList = (params={}) => request.get('/erp/visualize/selectDeptList',{params}) // 请求部门信息
+
+// 获取主表格数据
+function getMainChartData(params=defaultHotParams, auto=false){
+  (!app_init && !auto) && (store.loading = true)
+  !auto && (proxy.$refs.HotSortRef.startLoading()) // 项目热度遮罩
+  return selectProjectPopularity(params).then(res=>{
+    (!app_init && !auto) && (store.loading = false)
+    res.data = res.data.map(item=>item.map)
+    // 数据分发到表格
+    const {chartData, tableData, hotData} = filterMainData(res.data)
+
+    if(window.debugModeEnable){
+      console.group('热度、图表数据请求结束')
+      console.log(res.data)
+      console.group('图表数据')
+      console.log(chartData)
+      console.groupEnd()
+      console.group('表格数据')
+      console.log(tableData)
+      console.groupEnd()
+      console.group('热度数据')
+      console.log(hotData)
+      console.groupEnd()
+      console.groupEnd()
+    }
+
+    // 数据分发到项目热度
+    proxy.$refs.HotSortRef.dataReady(hotData)
+    proxy.$refs.MainChartRef.dataReady(chartData, tableData, auto)
+  })
+}
+
+// 获取部门列表
+function getDeptData(){
+  return selectDeptList().then(res=>{
+    store.deptList = res.data.map(i=>{
+      return {
+        value:i.map.deptId,
+        label:i.map.deptName,
+      }
+    })
+    store.deptList.unshift({label:'所有部门', value:''})
+    if(window.debugModeEnable){
+      console.log(store.deptList)
+      console.group('部门数据请求结束')
+    }
+    proxy.$refs.ProjPercentRef.init() // 初始化项目占比
+    proxy.$refs.DangerProjRef.init() // 初始化项目占比
+  })
+}
+
+const loading_delay = ref(0)  // loading消失延迟
+const loading_duration = ref(0.5) // loading消失持续时间
+const total_time = loading_delay.value + loading_duration.value
+function init(){
+  Promise.all([
+      getMainChartData(), // 准备主屏数据
+      getDeptData(), // 准备部门数据
+  ]).then(res=>{
+    console.group('数据准备结束')
+    app_init = false // 初始化结束
+    store.loading = false // 数据准备结束
+    setTimeout(()=>{ // 执行入场动画的效果
+      proxy.$refs.DangerProjRef.ready() // 初始化项目占比
+    },(total_time-0.2)*1000)
+  })
+}
+
+onMounted(()=>{
+  init()
+  store.startTimeCount() // 开始计时
+})
+
+
 </script>
 
 <template>
   <div class="wrapper">
-    <div class="head"></div>
+    <Loading :delay="loading_delay" :duration="loading_duration" />
+    <div class="head">
+<!--      看板头部-->
+      <nav-head @query-change="getMainChartData"/>
+    </div>
     <div class="content">
       <div class="main-content br-box">
 <!--        主看板-->
-        <main-kanban/>
+        <main-kanban ref="MainChartRef" />
       </div>
       <div class="sub-content">
 <!--        项目热度-->
         <div class="sub-top br-box">
-          <hot-sort/>
+          <hot-sort ref="HotSortRef"/>
         </div>
 <!--        项目占比 -->
         <div class="sub-middle br-box">
-          <proj-percent/>
+          <proj-percent ref="ProjPercentRef" />
         </div>
 <!--        风险项目-->
         <div class="sub-bottom br-box">
-          <danger-proj/>
+          <danger-proj ref="DangerProjRef" />
         </div>
       </div>
     </div>

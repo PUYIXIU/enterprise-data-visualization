@@ -1,7 +1,9 @@
 <script setup>
 import {colorList} from "./mockData.js";
-import {onMounted, ref} from "vue";
-const props = defineProps(['domId','data'])
+import {onMounted, ref,nextTick} from "vue";
+import request from '@/utils/request.js'
+
+const props = defineProps(['domId'])
 
 import 'moment/dist/locale/zh-cn.js'
 import  'dayjs/locale/zh-cn.js'
@@ -9,26 +11,52 @@ import  'dayjs/locale/zh-cn.js'
 import * as vis from "vis-timeline";
 import VisData from 'vis-data/dist/esm.js'
 import dayjs from "dayjs";
+import {filterHourListData} from "@/utils/dataFilter.js";
+import QueryBox from "@/components/QueryBox/index.vue";
+import WindowLoading from "@/components/Loading/WindowLoading.vue";
+import {getpx} from "@/utils/style.js";
+import Empty from "@/components/Loading/Empty.vue";
+import {useLocalDataStore} from "@/storage/index.js";
+
+const store = useLocalDataStore()
+
 const domId = ref('progress-timeline')
 
 const groupData = new VisData.DataSet()
 const itemData = new VisData.DataSet()
+let timeline = null
+let timeLineData = []
+let hourMap = {}
 
 let renderedList = [] //已经渲染的列表
-
+let renderGroupIds = [] // 已经渲染的groupId
 let counter = 0
+let loading = ref(true)
+
+// 清空所有数据
+function dispose(){
+  try{
+    timeline && timeline.destroy()
+  }catch(e){console.log('销毁vis-timeline时报错')}
+  groupData && groupData.clear()
+  itemData && itemData.clear()
+  timeLineData = []
+  renderGroupIds = []
+  hourMap = {}
+}
+
 const progressGroupClassName = 'progress-group' // 进度条分组标识
 const barGroupClassName = 'bar-group' // 柱状图分组标识
 const progressItemClassName = 'progress-item' // 进度条节点标识
 const barItemClassName = 'bar-item' // 柱状图节点标识
-// 为bar类型的组添加DataSet
-function createBarItemData(groupId, params, min, max){
 
+// 为bar类型的组添加DataSet
+function createBarItemData(groupId, params){
   params.hourList.forEach((day,dayIndex)=>{
     let end = dayjs(day[0]).add(1,'day').format('YYYY-MM-DD')
-    let height = (day[1] - min)/(max-min)*100 // 找到最大最小工时，计算百分比
+    let height = Math.min(100,day[1]/params.maxHour*100 + 3) // 根据最大工时，计算百分比
     itemData.add({
-      id:counter++,
+      id:`${groupId}-${params.id}-${day[0]}`,
       className:`${barItemClassName} height-${height} id-${groupId}-${params.id}-${dayIndex}`,
       group:groupId,
       start:day[0],
@@ -36,6 +64,17 @@ function createBarItemData(groupId, params, min, max){
       content:''
     })
   })
+}
+
+// 移除所有bar
+function removeBarItemData(groupId,params){
+  params.hourList.forEach((day,dayIndex)=>{
+    itemData.remove(`${groupId}-${params.id}-${params.id}-${day[0]}`)
+    let id = `${groupId}-${params.id}-${dayIndex}`
+    let index = renderedList.findIndex(i=>i==id)
+    renderedList.splice(index,1)
+  })
+
 }
 
 // 为progress类型的组添加DataSet
@@ -53,10 +92,11 @@ function createProgressItemData(groupId, params){
 
 // 设置bar类型的样式
 function setBarStyle(){
-  const groups = document.querySelectorAll(`.vis-foreground .vis-group.${barGroupClassName}`)
+  const groups = document.querySelectorAll(`.vis-foreground .vis-group.${barGroupClassName}:not(.expand)`)
+
   for(let i =0; i<groups.length;i++){
     let group = groups[i]
-
+    group.classList.add('expand')
     let color = Array.from(group.classList)
         .find(i=>/color/.test(i))
         .split('-')[1]
@@ -65,19 +105,19 @@ function setBarStyle(){
 
     const nodes = group.querySelectorAll(`.${barItemClassName}`)
     if(!nodes.length) break; // 当前元素没渲染出来
+    // let showNodeLength = 0  // 真正进行展示的元素数量
+    // for(let i = 0;i<nodes.length;i++){
+    //   let node = nodes[i]
+    //   let x = parseFloat(node.style.transform.split('(')[1])
+    //   // if(x<-2.73254) break
+    //   if(x>=0) showNodeLength++
+    // }
+    let showNodeLength = nodes.length // 真正进行展示的元素数量
+
     for(let i =0; i<nodes.length;i++){
       let node = nodes[i]
       let id = Array.from(node.classList).
       find(i=>/id-/.test(i))
-      if(renderedList.includes(id)){
-        // 已经绘制，检测是否是最后一个元素
-        if(i<nodes.length-1){ // 不是最后一个元素但有label
-          let label = node.querySelector('.label')
-          label && label.remove()
-        }
-        continue;
-      }
-      renderedList.push(id)
       let height =Number(
           Array.from(node.classList).
           find(i=>/height/.test(i)).
@@ -85,12 +125,20 @@ function setBarStyle(){
       )
       node.style.height = `${height}%`
 
-      if(i == nodes.length-1){ // 最后一个
+      if(renderedList.includes(id)){
+        // 已经绘制，检测是否是最后一个元素
+        if(i<showNodeLength-1){ // 不是最后一个元素但有label
+          let label = node.querySelector('.label')
+          label && label.remove()
+        }
+        continue;
+      }
+      renderedList.push(id)
+      if(i == showNodeLength-1){ // 最后一个
         let info = Array.from(group.classList).find(i=>/person/.test(i)).split('-')
         let name = info[1]
         let hour = info[2]
         let label = getDiv('label')
-
         label.innerHTML = `${name} <p>${hour}<span>h</span></p>`
         node.append(label)
       }
@@ -146,18 +194,87 @@ function getProgressDom(param){
       '--fore-row-1-bg',
       setOpacity(param.color.mainColor,0.8)
   )
+
   foreProgress.style.width = `${param.progress}%` // 实际进度百分比
-  param.children.forEach(person=>{
-    let foreCell = getDiv('fore-cell')
-    foreRow2.append(foreCell)
-    foreCell.style.width = `${person.percent}%` // 工时占比
-    foreCell.style.setProperty(
-        '--fore-cell-bg',
-        setOpacity(person.color,0.9)
-    )
-  })
+  // param.children.forEach(person=>{
+  //   let foreCell = getDiv('fore-cell')
+  //   foreRow2.append(foreCell)
+  //   foreCell.style.width = `${person.percent}%` // 工时占比
+  //   foreCell.style.setProperty(
+  //       '--fore-cell-bg',
+  //       setOpacity(person.color,0.9)
+  //   )
+  // })
 
   return progressWrapper
+}
+
+// 根据任务id请求任务进度人员详情
+const selectTaskProgressStaffDetails = params => request.get('/erp/visualize/selectTaskProgressStaffDetails',{params})
+function getHourListByTaskId(id){
+  if(hourMap[id]) return Promise.resolve(hourMap[id])
+  return selectTaskProgressStaffDetails({taskId:id,filterDay:store.timeRange}).then(res=>{
+    if(window.debugModeEnable){
+
+    }
+    res.data = filterHourListData(res.data)
+    hourMap[id] = res.data
+    if(window.debugModeEnable){
+      console.group('请求任务进度人员详情',id)
+      console.log(res.data)
+      console.groupEnd()
+    }
+    return hourMap[id]
+  })
+}
+
+let barRowHeightRem = 1.5
+// 返回进度条被点击的回调函数
+function progressClick(data){
+  return async (e)=>{
+    loading.value = true
+    nextTick(async ()=>{
+      let index = renderGroupIds.findIndex(i=>i == data.id)
+      let barHeight = getpx(barRowHeightRem)
+      if(index>=0){
+        renderGroupIds.splice(index,1) // 删掉这个id
+        let hourData = hourMap[data.id]
+        hourData.forEach(person=>{
+          groupData.remove(`${data.id}-${person.id}`)
+          removeBarItemData(data.id,person)
+        })
+        setContentHeight(contentHeight - barHeight * hourData.length)
+        timeline.setGroups(groupData)
+        removeProgressForeRow2(data.id)
+        loading.value = false
+        return
+      }
+      let hourData = await getHourListByTaskId(data.id)
+      renderGroupIds.push(data.id)
+      let subColor = data.color.subColor
+      hourData.forEach((person,personIndex)=>{
+        const color = subColor[personIndex % subColor.length]
+        person.color = color
+        person.value = data.value + personIndex + 1
+        const groupOption = {
+          id:`${data.id}-${person.id}`,
+          value:person.value,
+          className:`
+          ${barGroupClassName}
+          person-${person.name}-${person.totalHour}
+          color-${person.color}
+          `,
+          content:``,
+        }
+        groupData.add(groupOption)
+        createBarItemData(groupOption.id, person)
+      })
+      timeline.setGroups(groupData)
+      timeline.on('changed',hourListExpand)
+      refreshProgressStyle(data.id, hourData) // 更新进度条样式
+      setContentHeight(contentHeight + barHeight * hourData.length)
+    })
+  }
 }
 
 // 设置progress类型的样式
@@ -168,116 +285,298 @@ function setProgressStyle(){
     let id =Array.from(node.classList).
     find(i=>/task/.test(i)).
     split('-')[1]
-    let data = props.data.find(i=>i.id == id) // 找到对应数据
+    let data = timeLineData.find(i=>i.id == id) // 找到对应数据
     const nodeContent = node.querySelector('.vis-item-content')
     const content = getProgressDom(data)
     nodeContent.innerHTML = ''
     nodeContent.append(content)
-
+    nodeContent.onclick = progressClick(data)  // 绑定进度条被点击函数
+    nodeContent.onmouseenter = progressHover(data) // 绑定进度条被hover事件
+    nodeContent.onmousemove = progressMove // 进度条随鼠标移动
+    nodeContent.onmouseleave = progressLeave // 进度条随鼠标移动
     const label = getDiv('label')
-    label.innerHTML = `${data.progress} <span>%</span>`
+    label.innerHTML = `${data.erpTaskTotalHours} <span>h</span>`
     node.append(label)
   }
 }
 
+function removeProgressForeRow2(id){
+  let wrapper = document.querySelector(`.${progressItemClassName}.task-${id}`)
+  let foreRow2 = wrapper.querySelector('.fore-row-2') // 目标容器
+  foreRow2.innerHTML = ''
+}
+
+// 更新progress类型的样式
+function refreshProgressStyle(id, params){
+  // progress-item  task-1787287822901403649
+  let wrapper = document.querySelector(`.${progressItemClassName}.task-${id}`)
+  let foreRow2 = wrapper.querySelector('.fore-row-2') // 目标容器
+  params.forEach(person=>{
+      let foreCell = getDiv('fore-cell')
+      foreRow2.append(foreCell)
+      foreCell.style.width = `${person.percent}%` // 工时占比
+      foreCell.style.setProperty(
+          '--fore-cell-bg',
+          setOpacity(person.color,0.9)
+      )
+  })
+}
+
+// 某个工时被点开了
+function hourListExpand(){
+  setBarStyle() // 更新柱状图样式
+  timeline.off('changed',hourListExpand) // 卸载事件
+  loading.value = false
+}
+
+const toolTipData = ref({
+  show:false,
+  predictProgress:0, // 预计进度
+  participantCount:0, // 参与人数
+  progress:0, // 实际进度
+  left:0, // 左侧
+  top:0, // 右侧
+})
+function progressHover(data){
+  return e=>{
+    toolTipData.value.show = true
+    toolTipData.value.predictProgress = data.predictProgress
+    toolTipData.value.participantCount = data.participantCount
+    toolTipData.value.progress = data.progress
+  }
+}
+function progressMove(e){
+  // 任务进度的外层定位容器
+  let wrapper = document.querySelector('#progress-wrapper-dom')
+  let rect = wrapper.getBoundingClientRect()
+  let baseTop = rect.top
+  let baseLeft = rect.left
+  toolTipData.value.top = e.clientY - baseTop
+  toolTipData.value.left = e.x - baseLeft
+}
+function progressLeave(e){
+  toolTipData.value.show = false
+}
+
+let contentHeight = 0 //动态计算高度
 // 绑定事件
 function addEvent(){
   let content = document.querySelector('.vis-timeline')
-  let height = content.style.height; // 原始高度
-  content.style.setProperty('--content-height',height)
+  let originHeight = parseFloat(content.style.height); // 原始高度
+  contentHeight = Math.max( getpx(4) * 5 ,originHeight)
+  content.style.setProperty('--content-height',contentHeight + 'px')
   content.classList.add('fix-height')
 }
 
+function setContentHeight(height){
+  let content = document.querySelector('.vis-timeline')
+  contentHeight = height
+  content.style.setProperty('--content-height',contentHeight + 'px')
+}
+
+let isEmpty = ref(false)
 // 初始化时间轴表格
-function init(){
+function init(src){
+  timeLineData = src
+  if(src.length == 0){
+    isEmpty.value = true
+    loading.value = false
+    return
+  }
+  isEmpty.value = false
   const targetDom = document.getElementById(domId.value)
-  props.data.forEach((task,taskIndex)=>{
+  let baseValue = 1000 // 用于做基类，方便在group基值之间插入新组
+  let min = dayjs() // 最早时间
+  let max = dayjs()  // 最晚时间
+  timeLineData.forEach((task,taskIndex)=>{
     // 添加总进度条
-    const mainColor = colorList[taskIndex%colorList.length]
+    const mainColor = colorList[taskIndex%colorList.length] // 领取颜色
     task.color = mainColor
+    task.value = baseValue * taskIndex
+
+    let groupStart = dayjs(task.startTime)
+    let groupEnd = dayjs(task.endTime)
+
+    if(groupStart.isBefore(min)) min = groupStart
+    if(groupEnd.isAfter(max)) max = groupEnd
+
     const groupOption = {
-      id:counter++,
+      id:task.id,
       className:`${progressGroupClassName}`,
       content:task.taskName,
+      value:task.value
     }
     groupData.add(groupOption)
-    createProgressItemData(groupOption.id, task)
+    createProgressItemData(groupOption.id, task) // 创建任务进度条group
 
-    // 获取所有人员中最大单日工时，最小单日工时
-    let allHourData = task.children.map(i=>i.hourList.map(o=>o[1])).flat().sort()
-    let maxHour = allHourData[allHourData.length-1]
-    let minHour = allHourData[0]
-    // 添加参与人员柱状图
-    task.children.forEach((person,personIndex)=>{
-      const subColor = mainColor.subColor[personIndex % mainColor.subColor.length]
-      person.color = subColor
-      const groupOption = {
-        id:counter++,
-        className:`
-          ${barGroupClassName}
-          person-${person.name}-${person.totalHour}
-          color-${person.color}
-          `,
-        content:``,
-      }
-      groupData.add(groupOption)
-      createBarItemData(groupOption.id, person, minHour, maxHour)
-    })
   })
+  max = max.add(3,'month') // 结尾增加一个月用于展示结尾label
+  let start = min.clone(), end = max.clone()
+  let axisUnit = 'month'
+  let diff = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 365.25)
+  let diffMonth = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 30) // 如果时间范围比一个月还小，时间单位以天获取
+  if(diff>1){ // 相差年限大于1年，显示最近1年
+    start = end.subtract(1,'year')
+  }
+  if(diffMonth<1){
+    axisUnit = 'day'
+  }
+  if(window.debugModeEnable){
+    console.log('相差年数：'+diff)
+    console.log('最早和最晚时间：',min.format('YYYY-MM-DD'),max.format('YYYY-MM-DD'))
+  }
   let options = {
     stack: false, // 堆叠
     onInitialDrawComplete:()=>{  // 绘制结束的回调
       setProgressStyle() // 自定义进度图样式
-      setBarStyle() // 自定义柱状图样式
       setHeadStyle() // 自定义表头样式
       addEvent() // 添加事件
+      loading.value = false
     },
     autoResize:true, // 自动缩放
     locale:'zh-cn',
     selectable:false, // 节点可选
 
-    // zoomMax:1000 * 60 * 60 * 24 * 365, // 最大缩放单位
-    // zoomMin:1000 * 60 * 60 * 24 * 31, // 最小缩放单位
     timeAxis:{
-      scale:'month', // 固定缩放单位月
+      scale:axisUnit, // 固定缩放单位月
     },
     // zoomKey: "ctrlKey",
     zoomKey: "shiftKey",
-    // height: targetDom.clientHeight,
-    start: dayjs().startOf('year').format('YYYY-MM-DD'), // 开始
-    min:dayjs().startOf('year').format('YYYY-MM-DD'), // 最小时间
-    // end: dayjs().endOf('year').month(5).format('YYYY-MM-DD'), // 结束
-    end: dayjs().endOf('year').format('YYYY-MM-DD'), // 结束
-    max: dayjs().endOf('year').format('YYYY-MM-DD'), // 最大时间
+    // start: start.format('YYYY-MM-DD'), // 开始
+    min:min.format('YYYY-MM-DD'), // 最小时间
+    // end: end.format('YYYY-MM-DD'), // 结束
+    max: max.format('YYYY-MM-DD'), // 最大时间
     snap:null, // 吸附
     margin: {
       item: 10, // minimal margin between items
       axis: 50, // minimal margin between items and the axis
     },
     orientation: "top",
+    groupOrder:(a,b)=>a.value - b.value
   }
-  const timeline = new vis.Timeline(targetDom, itemData, groupData, options)
-  // timeline.on('changed',()=>{
-  //   // setBarStyle()
-  //   let content = document.querySelector('.vis-timeline')
-  //   content.style.setProperty('--content-height', '100px')
-  //   // content.style.height = contentHeight
-  // })
+  timeline = new vis.Timeline(targetDom, itemData, groupData, options)
 }
 
 defineExpose({
-  init
+  init,
+  dispose
 })
 
 </script>
 
 <template>
   <div :id="domId" class="timeline-wrapper"></div>
+  <empty :show-div="!loading && isEmpty" />
+  <window-loading class="progress-window-loading" :loading="loading"/>
+  <div id="timeline-tooltip" :style="{
+    '--left':toolTipData.left + 'px',
+    '--top':toolTipData.top + 'px',
+  }" :class="{
+    show:toolTipData.show
+  }">
+    <p>
+      <span>任务成员（共{{toolTipData.participantCount}}人）</span>
+      <span>[ 点击查看详情 ]</span>
+    </p>
+    <p>
+      <span class="tip-icon red"></span>
+      <span class="tip-text red">预计进度 {{toolTipData.predictProgress}}%</span>
+      <span class="tip-icon blue"></span>
+      <span class="tip-text blue">实际进度 {{toolTipData.progress}}%</span>
+    </p>
+  </div>
 </template>
 
 <style scoped lang="scss">
+
+$majar-title-height:1.875rem;
+$minor-title-height:1.625rem;
+$majar-border-bottom-width:0.1875rem;
+$majar-margin-bottom:0.3125rem;
+$draw-padding-top:1.5rem;
+$text-height:1.13rem;
+#timeline-tooltip{
+  pointer-events: none;
+  position:absolute;
+  z-index:99;
+  top:calc(
+      var(--top)
+  );
+  left:var(--left);
+  opacity: 0;transition-property: opacit;transition-timing-function: ease-in-out;
+  transition-duration: 0.2s;
+  transform:translateX(-50%) translateY(-100%);
+  width: fit-content;
+  height: 3.44rem;
+  padding:0.5rem;
+  box-sizing: border-box;
+  background: #FFFFFF;
+  box-shadow: 0rem 0.25rem 1.25rem 0rem rgba(149,172,231,0.25);
+  border-radius: 0.63rem 0.63rem 0.63rem 0.63rem;
+  &.show{
+    opacity: 1;
+  }
+  p{
+    white-space: nowrap;
+    &:nth-child(1){
+      color: rgba(28, 28, 28, 0.7);
+      font-size: 0.75rem;
+      margin-bottom:0.25rem;
+      //display: flex;
+      //justify-content: space-between;
+      span:last-child{
+        opacity: 0.7;
+      }
+    }
+    &:nth-child(2){
+      font-family: SourceHanSansCN-Medium;
+      display: flex;
+      align-items: center;
+      span{
+        margin-right: 0.25rem;
+        &:last-child{margin-right: 0rem}
+      }
+      .tip-icon{
+        display: inline-block;
+        width: 0.69rem;
+        height: 0.69rem;
+        background: linear-gradient( 180deg, #DDE7FF 0%, #487DFE 100%);
+        border-radius: 50%;
+        &.red{
+          background: linear-gradient( 180deg, #FFD4D8 0%, #FF505D 100%);
+        }
+      }
+      .tip-text{
+        font-size: 0.88rem;
+        background:linear-gradient(90deg,#7AA1FEcc 0%, #487DFEcc 50%, #6E64F6 100%);
+        background-clip: text;
+        color:transparent;
+        &.red{
+          background:linear-gradient(90deg, rgba(254, 122, 133, 0.8) 0%, rgba(254, 72, 72, 0.8) 50%, #f66464 100%);
+          background-clip: text;
+          color:transparent;
+        }
+      }
+    }
+  }
+}
+
+.progress-window-loading{
+  border-radius: 1.25rem;
+}
+</style>
+
+<style scoped lang="scss">
 @import '@/assets/styles/global.scss';
-$progress-height:1.31rem; // 进度条高度
+$progress-group-height:4rem; // 进度条高度
+$progress-item-height:1.31rem; // 进度条高度
+
+$majar-title-height:1.875rem;
+$minor-title-height:1.625rem;
+$majar-border-bottom-width:0.1875rem;
+$majar-margin-bottom:0.3125rem;
+$left-width:9.6625rem; // 左侧狼的宽度
+
 .timeline-wrapper{
   width:100%;
   height:100%;
@@ -293,8 +592,17 @@ $progress-height:1.31rem; // 进度条高度
   font-family: SourceHanSansCN-Medium;
   font-size: 1rem;
   color:#001133cc;
+  .vis-inner{
+    width:$left-width;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+  }
   &.progress-group{
-    height:$progress-height !important;
+    height:$progress-group-height !important;
+    display: flex;
+    align-items: center;
     margin-top:1px;
   }
   &.bar-group{
@@ -308,13 +616,14 @@ $progress-height:1.31rem; // 进度条高度
   border-bottom: none ;
   &.progress-group{
     margin-top:1px;
-    height:$progress-height !important;
+    height:$progress-group-height !important;
   }
   &.bar-group{
     --bar-top-color:#FB9B61;
     --bar-bottom-color:#FB9B6122;
     height:1rem !important;
     margin-top:0.75rem;
+    transform:translateY(calc(($progress-item-height - $progress-group-height) / 2));
     .group-label{
       height: 100%;
       display: flex;
@@ -359,10 +668,11 @@ $progress-height:1.31rem; // 进度条高度
   }
   // 进度条
   &.progress-item{
+    cursor:pointer;
     //background-color: red !important;
-    top:0.33rem !important;
-    height:100%;
-    bottom:0.33rem;
+    top:calc(($progress-group-height - $progress-item-height) / 2) !important;
+    height:$progress-item-height;
+    bottom:calc(($progress-group-height - $progress-item-height) / 2) !important;
     background-color: transparent;
     .label{
       color: rgba(29,29,29,0.7);
@@ -372,6 +682,7 @@ $progress-height:1.31rem; // 进度条高度
       top:0;
       right:-0.7rem;
       transform:translateX(100%);
+      white-space: nowrap;
       span{
         font-size: 0.75rem;
       }
@@ -450,23 +761,16 @@ $progress-height:1.31rem; // 进度条高度
 }
 
 
-$majar-title-height:1.875rem;
-$minor-title-height:1.625rem;
-$majar-border-bottom-width:0.1875rem;
-$majar-margin-bottom:0.3125rem;
-$left-width:9.6625rem; // 左侧狼的宽度
-
 // 主标题 显示年
 ::v-deep(.vis-major){
-  border-bottom:$majar-border-bottom-width solid #847CF0;
   width: 100%;
   padding:0px;
-  height:$majar-title-height;
+  height:$minor-title-height;
   z-index:2;
   div{
     height:100%;
     text-align: center;
-    line-height:$majar-title-height;
+    line-height:$minor-title-height;
     font-family: SourceHanSansCN-Medium;
     color: rgba(18, 27, 56, 0.82);
     font-size: 1rem;
@@ -476,15 +780,20 @@ $left-width:9.6625rem; // 左侧狼的宽度
 $minor-title-width:3.8125rem;
 // 副标题 显示月
 ::v-deep(.vis-text.vis-minor){
+  box-sizing: border-box;
+  border-top:$majar-border-bottom-width solid #ffffff;
   background-color: #ffffff;
-  height:$majar-title-height;
+  height:calc($majar-title-height + 3px);
+  box-shadow:0px -3px 0px 0px #847CF0;
   line-height:$minor-title-height;
   overflow: visible ;
   text-align: center;
   padding:0px;
   padding-left:1.875rem;
   display: flex;
-  margin-top:calc($majar-margin-bottom + $majar-border-bottom-width);
+  //margin-top:calc($majar-margin-bottom + $majar-border-bottom-width);
+  margin-right:-1px;
+  margin-top:3px;
   font-family: D-DINExp;
   color:#001133;
   font-size: 0.88rem;
@@ -499,24 +808,12 @@ $minor-title-width:3.8125rem;
     background-image: $split-icon;
     background-repeat: no-repeat;
     background-position: center;
-    //background:linear-gradient(0deg , #EFEEFF 0%, #EFEEFF 40%, transparent 40%, transparent 60%, #EFEEFF 60%, #EFEEFF 100%),
-    //linear-gradient(
-    //        90deg,
-    //        #EFEEFF 0%, #EFEEFF 25%,
-    //        #C9CADD 25%, #C9CADD 26%, // 1
-    //        #EFEEFF 26%, #EFEEFF 40.5%,
-    //        #C9CADD 40.5%, #C9CADD 41.5%, //2
-    //        #EFEEFF 41.5%, #EFEEFF 59.5%,
-    //        #C9CADD 59.5%, #C9CADD 60.5%,  //3
-    //        #EFEEFF 60.5%, #EFEEFF 75%,
-    //        #C9CADD 75%, #C9CADD 76%, //4
-    //        #EFEEFF 76%, #EFEEFF 100%
-    //)
   }
 }
 
 // 主表体 absolute定位
 ::v-deep(.vis-center){
+  z-index:2;
   left:$left-width !important;
   border:none;
   top:calc(
@@ -568,7 +865,7 @@ $minor-title-width:3.8125rem;
       $majar-title-height +
       $minor-title-height +
       $majar-border-bottom-width +
-      $majar-margin-bottom
+      $majar-margin-bottom - 1px
   ) !important;
   .vis-time-axis{
     height:100% !important;
@@ -590,27 +887,28 @@ $minor-title-width:3.8125rem;
     box-shadow: 0px 6px 10px rgb(238 235 243 / 60%);
     position:fixed;
     //top:0;
-    margin-top:-1px;
     box-sizing: border-box;
     width:$left-width;
-    height:calc(
-        $minor-title-height +
-        $majar-border-bottom-width +
-        $majar-margin-bottom + $majar-title-height - 1px
-    );
+    //height:calc(
+    //    $minor-title-height +
+    //    $majar-border-bottom-width +
+    //    $majar-margin-bottom + $majar-title-height
+    //);
     .head-title{
       background: #ffffff;
-      border-top:$majar-border-bottom-width solid #847CF0;
+      //border-top:$majar-border-bottom-width solid #847CF0;
       margin-top:calc($majar-title-height - $majar-border-bottom-width);
       .head-text{
+        border-top:$majar-border-bottom-width solid #ffffff;
+        box-shadow:0px -3px 0px 0px #847CF0;
         background: #ebeafb;
         height:$majar-title-height;
         line-height:$minor-title-height;
         margin-top:$majar-margin-bottom;
         padding-left:2.8125rem;
-        font-size: 1rem;
+        font-size: 0.88rem;
         color: #001133;
-        font-family: 时尚中黑简体;
+        font-family: SourceHanSansCN-Normal;
       }
     }
   }
@@ -622,5 +920,9 @@ $minor-title-width:3.8125rem;
 
 ::v-deep(.vis-time-axis .vis-grid.vis-vertical){
   border-left:2px  solid rgba(215, 217, 224, 0.64) !important;
+}
+
+::v-deep(.vis-foreground){
+  box-shadow:inset 6px 0px 10px rgb(238 235 243 / 60%);
 }
 </style>

@@ -1,0 +1,43 @@
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "map": {
+        "erpTaskHours": "28.94",
+        "erpTaskName": "企业大屏开发前端"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "28.40",
+        "erpTaskName": "企业大屏开发后台"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "9.76",
+        "erpTaskName": "大屏项目跟进"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "7.01",
+        "erpTaskName": "修复缺陷"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "1.65",
+        "erpTaskName": "系统功能测试"
+      }
+    },
+    {
+      "map": {
+        "erpTaskHours": "1.23",
+        "erpTaskName": "大屏开发跟进"
+      }
+    }
+  ],
+  "rows": null
+}

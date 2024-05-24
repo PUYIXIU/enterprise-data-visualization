@@ -1,0 +1,142 @@
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "map": {
+        "predict": "100",
+        "progress": "1",
+        "difference": "99",
+        "projectName": "山西太原三岗系统对接",
+        "erpProjectCode": "君迁子"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "4",
+        "difference": "96",
+        "projectName": "其他",
+        "erpProjectCode": "龙胆花"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "5",
+        "difference": "95",
+        "projectName": "化工阀门整改",
+        "erpProjectCode": "枣"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "6",
+        "difference": "94",
+        "projectName": "定制风险识别软件",
+        "erpProjectCode": "茶花"
+      }
+    },
+    {
+      "map": {
+        "predict": "95.25",
+        "progress": "2",
+        "difference": "93.25",
+        "projectName": "健鼎（无锡）一般行业",
+        "erpProjectCode": "直社红枣"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "8",
+        "difference": "92",
+        "projectName": "北京应急管理展",
+        "erpProjectCode": "华北耧斗菜"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "新干县定制胺基化2.0开发",
+        "erpProjectCode": "浦北黄皮"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "日常课程中心需求",
+        "erpProjectCode": "褒河蜜橘"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "室内隐患排查安全培训装置",
+        "erpProjectCode": "薄荷"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "1.隐患排查",
+        "erpProjectCode": "木通"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "加氢工艺1.6",
+        "erpProjectCode": "红花刺槐"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "三岗课程升级-煤矿题库解析、检查、修改、配音",
+        "erpProjectCode": "光皮树"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "危化1.6-胺基化工艺",
+        "erpProjectCode": "玉树珊瑚"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "课程升级视频制作",
+        "erpProjectCode": "野芦苇"
+      }
+    },
+    {
+      "map": {
+        "predict": "100",
+        "progress": "10",
+        "difference": "90",
+        "projectName": "煤气作业3.0方案论证",
+        "erpProjectCode": "海棠"
+      }
+    }
+  ],
+  "rows": null
+}

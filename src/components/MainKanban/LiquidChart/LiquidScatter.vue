@@ -1,14 +1,15 @@
 <script setup>
-import {onMounted, nextTick, onBeforeUnmount} from "vue";
+import {onMounted, nextTick, onBeforeUnmount, watch} from "vue";
 import * as echarts from 'echarts'
 import 'echarts-liquidfill'
-import {getHSL, getpx} from "@/utils/style.js";
-import {liquidColorList} from "@/components/MainKanban/LiquidChart/colorConfig.js";
 import {useLocalDataStore} from "@/storage/index.js";
+import {getLiquidOptions, resetLabel} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
+import {getpx} from "@/utils/style.js";
 
-const props = defineProps(["data","domId"])
+const props = defineProps(["domId",'grid'])
 const store = useLocalDataStore()
 const emit = defineEmits(['renderPie','updatePie'])
+let data = []
 let chart
 let option = {
   tooltip:{
@@ -25,16 +26,10 @@ const SeriesOptionTemp = {
   data: [0],
   center:['50%','50%'], // 中心
   radius:'17%', // 半径
-  // silent:true,
   itemStyle:{
     color:'rgba(52,38,246,0.75)',
-    opacity:0.2,
+    opacity:0.15,
   },
-  // emphasis:{
-  //   itemStyle:{
-  //     opacity:1,
-  //   },
-  // },
   amplitude:10, // 水波曲度
   direction:'right', // 水波方向
   phase:0,
@@ -58,8 +53,8 @@ const SeriesOptionTemp = {
         color:'#fff',
         fontSize:12,
         fontWeight:'bold',
-        textShadowColor:'rgba(0,0,0,0.75)',
-        textShadowBlur:3,
+        textShadowColor:'rgba(0,0,0,0.3)',
+        textShadowBlur:5,
         textShadowOffsetY:1,
         lineHeight:18,
         fontFamily:'SourceHanSansCN-Heavy',
@@ -67,7 +62,7 @@ const SeriesOptionTemp = {
       subtitle:{
         color:'#fff',
         fontSize:10,
-        textShadowColor:'rgba(0,0,0,0.5)',
+        textShadowColor:'rgba(0,0,0,0.3)',
         textShadowBlur:5,
         textShadowOffsetY:2,
         lineHeight:18,
@@ -76,25 +71,33 @@ const SeriesOptionTemp = {
       percent:{
         color:'#fff',
         fontSize:8,
-        textShadowColor:'rgba(0,0,0,0.5)',
+        textShadowColor:'rgba(0,0,0,0.3)',
         textShadowBlur:5,
         textShadowOffsetY:2,
         fontFamily:'SourceHanSansCN-Light',
+      },
+      right:{
+        color:'#00000000',
+        height:20,
+        backgroundColor:{
+          image:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNSAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9Ikh1Z2UtaWNvbi9hcnJvd3Mvb3V0bGluZS9hcnJvdy1yaWdodCI+CjxwYXRoIGlkPSJWZWN0b3IgMTkwIiBkPSJNMTQuMzczIDE2TDE4LjM3MyAxMk0xOC4zNzMgMTJMMTQuMzczIDhNMTguMzczIDEyTDYuMzczMDUgMTIiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K'
+        }
       }
     }
   },
+  silent:true,
   animationDuration: 0,
   animationDurationUpdate: 1000,
   animationEasingUpdate: 'cubicOut',
+  blendMode:'lighter',
 }
-
 
 function resize(){
   chart && chart.resize()
 }
 
 // 图表内尺寸自适应
-function updateChart(){
+function updateChartSize(){
   if(!chart) return
   getOption()
   chart.setOption(option,{notMerge:false})
@@ -102,6 +105,7 @@ function updateChart(){
   if(currentSeriesIndex !== undefined && currentSeriesIndex >=0){
     let base_series = option.series[currentSeriesIndex*2] // 指定series
     let series = option.series[currentSeriesIndex*2+1] // 指定series
+    getCurrentPathRect() // 重新计算包围盒
     emit('updatePie', currentSeriesIndex,  [base_series,series], currentRect)
   }
 }
@@ -109,34 +113,36 @@ function updateChart(){
 // 初始化
 function initChart(){
   const targetDom = document.getElementById(props.domId)
-  chart = echarts.init(targetDom,'shine',{
-    renderer:'svg'
-  })
-  getOption()
-  chart.setOption(option)
-
+  chart = echarts.init(targetDom,'shine',{renderer:'svg'})
   window.addEventListener('resize',resize)
   const svg = document.querySelector(`#${props.domId} svg`)
   svg.addEventListener('mousemove',liquidHover)
   svg.addEventListener('click',liquidSelect)
 
+}
+
+// 更新
+function updateChart(src){
+  data = src
+  if(!chart) return
+  chart.clear()
+  const svg = document.querySelector(`#${props.domId} svg`)
+  getOption()
+  chart.setOption(option,{notMerge:false})
   svgEventHandle(svg)
 }
 
 // 对svg事件进行处理 波浪和光晕不可点击
 function svgEventHandle(svg){
   const allG = svg.querySelector('g').querySelectorAll('g')
-  allG.forEach(g=>{
-    g.style.pointerEvents = 'none'
-  })
+  allG.forEach(g=>g.style.pointerEvents = 'none')
 }
 
-
-let lastSeriesIndex = -1
 let currentSeriesIndex = -1 // 当前系列索引
 let currentRect = undefined // 当前包围盒
+let currentPathIndex = undefined // 当前计算包围盒的path，用于在resize时更新包围盒的尺寸
 function liquidSelect(e){
-  store.currentProjectId = currentSeriesIndex
+  store.currentProjectIndex = currentSeriesIndex
   if(currentSeriesIndex !== undefined){
     let base_series = option.series[currentSeriesIndex*2] // 指定series
     let series = option.series[currentSeriesIndex*2+1] // 指定series
@@ -144,12 +150,40 @@ function liquidSelect(e){
   }
 }
 
+watch(()=>store.selectProjId,(nv,ov)=>{
+  if(nv == undefined || store.showType == 0) return // 仅对表格点击有效
+  // 找到currentSeriesIndex， 和它的包围盒
+  currentSeriesIndex = option.series.findIndex(o=>o.uuid == nv)/2
+  if(currentSeriesIndex>-1){
+    // 找到目标sereis
+    let base_series = option.series[currentSeriesIndex*2] // 指定series
+    let series = option.series[currentSeriesIndex*2+1] // 指定series
+
+    // 找到目标包围盒
+    const svg_g = document.querySelector(`#${props.domId} svg g`)
+    const svg_children = Array.from(svg_g.children)
+    let path = svg_children[currentSeriesIndex * domNum] // 目标series的范围圆
+    let rect = path.getBoundingClientRect() // 范围圆的包围盒子
+    currentRect = rect
+
+    emit('renderPie', currentSeriesIndex,  [base_series,series], currentRect)
+  }
+})
+
+// 刷新当前目标的包围盒
+function getCurrentPathRect(){
+  const svg_g = document.querySelector(`#${props.domId} svg g`)
+  const svg_children = Array.from(svg_g.children)
+  let path = svg_children[currentPathIndex] // 目标series的范围圆
+  currentRect = path.getBoundingClientRect() // 范围圆的包围盒子
+}
+
+const domNum = 21; // 一个svg包含21个标签
 // 水球悬浮
 function liquidHover(e){
   const svg = document.querySelector(`#${props.domId} svg`)
   const svg_g = document.querySelector(`#${props.domId} svg g`)
   const svg_children = Array.from(svg_g.children)
-  const domNum = 16; // 一个svg包含16个标签
   let index = svg_children.indexOf(e.target)
   if(index<0 && ['path','g'].includes(e.target.tagName)){
     let parent = e.target.parentNode
@@ -162,11 +196,13 @@ function liquidHover(e){
 
   currentSeriesIndex = undefined
   currentRect = undefined
+  currentPathIndex = undefined
   svg.style.cursor = 'default'
   if(index>=0){ // svg dom判断点击到了东西
     let seriesIndex = Math.floor(index/domNum)
     let path = svg_children[seriesIndex * domNum] // 目标series的范围圆
     let rect = path.getBoundingClientRect() // 范围圆的包围盒子
+
     let x = e.x , y = e.y;
     if(x>=rect.left && x<=rect.right && y>=rect.top && y<=rect.bottom){ // 目标在包围盒子内
       let radius = rect.width/2 // 包围圆半径
@@ -177,74 +213,28 @@ function liquidHover(e){
         svg.style.cursor = 'pointer'
         currentSeriesIndex = seriesIndex // 当前激活水球
         currentRect = rect // 当前包围盒
+        currentPathIndex = seriesIndex * domNum // 当前包围盒依赖的path在children中的index
       }
     }
   }
-  // lastSeriesIndex = currentSeriesIndex<0?seriesIndex:currentSeriesIndex // 上一个水球
 }
 
 function getOption(){
-  option.series = []
-  props.data.sort((a,b)=>b.totalHour - a.totalHour)
-  props.data.forEach((node,index)=>{
-    let seriesOption = JSON.parse(JSON.stringify(SeriesOptionTemp))
-    seriesOption.label.formatter =
-        `{title|${node.totalHour}h}\n{subtitle|${node.name}}\n{subtitle|${node.progress}}{percent|%}`
-    /** 计算坐标位置 */
-    seriesOption.center = node.center
-
-    /** 计算半径 */
-   // 半径范围 15%-45% 为0不展示
-    const maxR = 50, minR = 10
-    seriesOption.radius = `${(maxR - minR)*node.sizeValue + minR}%`
-
-    /** 计算字体 */
-    // 标题字体范围：30-12
-    // 副标题字体范围：22-10
-    // 百分号字体范围： 12-8
-    // lineHeight范围 40-18
-    const maxT = getpx(1.875), minT = getpx(0.75)
-    const maxS = getpx(1.375), minS = getpx(0.5)
-    const maxP = getpx(0.75), minP = getpx(0.5)
-    const maxL = getpx(2.5), minL = getpx(1.125)
-    seriesOption.label.rich.title.fontSize = (maxT - minT)*node.sizeValue + minT
-    seriesOption.label.rich.subtitle.fontSize = (maxS - minS)*node.sizeValue + minS
-    seriesOption.label.rich.percent.fontSize = (maxP - minP)*node.sizeValue + minP
-
-    seriesOption.label.rich.title.lineHeight = (maxL - minL)*node.sizeValue + minL
-    seriesOption.label.rich.subtitle.lineHeight = (maxL - minL)*node.sizeValue + minL
-
-    /** 水波进度 */
-    seriesOption.data = [node.waveValue]
-    seriesOption.silent = true
-
-    /** 波浪颜色 */
-    const {color,h_add,s_add,l_add} = liquidColorList[node.type]
-    seriesOption.itemStyle.color = getHSL(color, 100,{h_add,s_add,l_add})
-    seriesOption.backgroundStyle.shadowColor = getHSL(color, 100)
-    seriesOption.backgroundStyle.color = getHSL(color, 20)
-
-    // 基底蒙版
-    const baseOption = JSON.parse(JSON.stringify(seriesOption))
-    baseOption.name = 'base'
-    baseOption.backgroundStyle.color = getHSL(color, 20,{h_add,s_add,l_add})
-    baseOption.backgroundStyle.shadowColor =  getHSL(color, 100,{h_add,s_add,l_add})
-    baseOption.backgroundStyle.shadowOffsetX = 0
-    baseOption.backgroundStyle.shadowOffsetY = 0
-    baseOption.backgroundStyle.shadowBlur = getpx(1)
-    baseOption.label = {show:false}
-    baseOption.data = [node.waveValue]
-    baseOption.silent = true
-    // 根据排列顺序渲染层级
-    seriesOption.z = index
-    baseOption.z = index
-    option.series.push(baseOption)
-    option.series.push(seriesOption)
-  })
+  const targetDom = document.getElementById(props.domId)
+  option.series = getLiquidOptions(data,SeriesOptionTemp,targetDom,props.grid)
 }
+
+// 切换模式
+watch(()=>store.visitMode,(nv,ov)=>{
+  if(nv==ov) return
+  option.series = resetLabel(data, option.series)
+  chart.setOption(option,{notMerge:false})
+  console.log(option)
+})
 
 defineExpose({
   initChart,
+  updateChartSize,
   updateChart
 })
 onBeforeUnmount(()=>{
@@ -260,8 +250,10 @@ onBeforeUnmount(()=>{
 <style scoped lang="scss">
 .liquid-chart{
   position:absolute;
-  top:0;
-  left:0;
+  //top:1rem;
+  //left:1.875rem;
+  //right:0.9375rem;
+  //bottom:2.8125rem;
   z-index:3;
   filter:saturate(1.4) contrast(1.2);
   cursor: pointer;

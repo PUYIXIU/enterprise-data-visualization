@@ -1,0 +1,182 @@
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "map": {
+        "employeeName": "刘启栋",
+        "projectHour": "4131.13",
+        "totalHour": "391.1"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "秦晓光",
+        "projectHour": "4131.13",
+        "totalHour": "278.9"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "李兆永",
+        "projectHour": "4131.13",
+        "totalHour": "257.1"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "李彬",
+        "projectHour": "4131.13",
+        "totalHour": "249.8"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "耿梦超",
+        "projectHour": "4131.13",
+        "totalHour": "235.2"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "余仙符",
+        "projectHour": "4131.13",
+        "totalHour": "215.3"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "刘闯",
+        "projectHour": "4131.13",
+        "totalHour": "186.7"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "董锦",
+        "projectHour": "4131.13",
+        "totalHour": "162.5"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "王振宇",
+        "projectHour": "4131.13",
+        "totalHour": "130.6"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "张强",
+        "projectHour": "4131.13",
+        "totalHour": "130.2"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "徐宇航",
+        "projectHour": "4131.13",
+        "totalHour": "123.8"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "刘洋",
+        "projectHour": "4131.13",
+        "totalHour": "105.6"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "纪龙",
+        "projectHour": "4131.13",
+        "totalHour": "105.3"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "刘滕",
+        "projectHour": "4131.13",
+        "totalHour": "75.4"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "丁坤",
+        "projectHour": "4131.13",
+        "totalHour": "74.8"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "韩蜜",
+        "projectHour": "4131.13",
+        "totalHour": "41.9"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "杨帆",
+        "projectHour": "4131.13",
+        "totalHour": "38.9"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "陈军强",
+        "projectHour": "4131.13",
+        "totalHour": "37.9"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "陈东方",
+        "projectHour": "4131.13",
+        "totalHour": "26.2"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "巩雪航",
+        "projectHour": "4131.13",
+        "totalHour": "21.2"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "胡鑫",
+        "projectHour": "4131.13",
+        "totalHour": "17.7"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "张震",
+        "projectHour": "4131.13",
+        "totalHour": "7.4"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "经梦成",
+        "projectHour": "4131.13",
+        "totalHour": "7.2"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "陆游",
+        "projectHour": "4131.13",
+        "totalHour": "5.1"
+      }
+    },
+    {
+      "map": {
+        "employeeName": "李行健",
+        "projectHour": "4131.13",
+        "totalHour": "4.5"
+      }
+    }
+  ],
+  "rows": null
+}

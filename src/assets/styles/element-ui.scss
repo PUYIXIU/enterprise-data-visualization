@@ -20,6 +20,11 @@
       &.DIN{
         font-family: D-DINExp !important;
       }
+      &.align-left{
+        .cell{
+          text-align: left;
+        }
+      }
       .cell{
         text-align: center;
       }

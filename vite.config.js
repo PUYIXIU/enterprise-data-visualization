@@ -4,10 +4,13 @@ import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/dist/vite'
 import Components from 'unplugin-vue-components/dist/vite'
 import {ElementPlusResolver} from "unplugin-vue-components/dist/resolvers";
+import dayjs from "dayjs";
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode, command})=>{
   const env = loadEnv(mode,process.cwd())
+  const currentTime = dayjs().format('YYYY-MM-DD')
+  // const outputName =
   return {
     // base:env.VITE_APP_CONTEXT_PATH,
     base:'./',
@@ -38,6 +41,16 @@ export default defineConfig(({mode, command})=>{
       Components({
         resolvers: [ElementPlusResolver()]
       })
-    ]
+    ],
+
+    // 打包配置
+    build:{
+      rollupOptions:{
+        output:{
+          dir:`dist/OfficeKanBan${currentTime}`,
+
+        }
+      }
+    }
   }
 })

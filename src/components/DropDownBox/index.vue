@@ -1,6 +1,6 @@
 <script setup>
 import gsap from 'gsap'
-import {watch,onMounted,onBeforeUnmount} from 'vue'
+import {watch,onMounted,onBeforeUnmount,reactive} from 'vue'
 const props = defineProps(['visibleBox','height','domId','btnId'])
 const emit = defineEmits(['blur'])
 const collapseVars = {
@@ -8,7 +8,7 @@ const collapseVars = {
   opacity:0,
   y:-10
 }
-const expandVars = {
+const expandVars ={
   height:`${props.height}rem`,
   opacity:1,
   y:0
@@ -29,30 +29,22 @@ function collapse(){
 
 function change(){
   if(props.visibleBox){
-    expand()
+    expand() // 展开
   }else{
-    collapse()
+    collapse() // 关闭
   }
 }
 
-watch(()=>props.visibleBox, (nv,ov)=>{
-  change()
-})
+watch(()=>props.visibleBox, (nv,ov)=>change())
+watch(()=>props.height, (nv,ov)=>expandVars.height = `${props.height}rem`)
 
+// 检查是否点击了指定dom以外的部分
 function checkClick(e){
   if(!props.visibleBox) return
   const target = document.querySelector(`#${props.domId}`)
   const btn =  document.querySelector(`#${props.btnId}`)
-  // 点击按钮
-  if(e.target == btn || e.target.parentElement == btn){
-    return
-  }
-  if(target.contains(e.target)){
-    return
-  }
-  if(e.target !== target){
-    emit('blur')
-  }
+  if(target.contains(e.target) || btn.contains(e.target)) return // 不退出
+  emit('blur') // 退出
 }
 
 onMounted(()=>{

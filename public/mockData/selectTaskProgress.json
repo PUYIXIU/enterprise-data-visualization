@@ -1,0 +1,67 @@
+{
+  "msg": "操作成功",
+  "dateTime": "2024-05-22 17:19:02",
+  "code": 200,
+  "data": [
+    {
+      "id": "1792471309614776321",
+      "taskName": "大屏开发跟进",
+      "startTime": "2024-05-20",
+      "endTime": "2024-05-26",
+      "progress": "30",
+      "predictProgress": 42.87,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.23
+    },
+    {
+      "id": "1789168526811684866",
+      "taskName": "系统功能测试",
+      "startTime": "2024-05-11",
+      "endTime": "2024-05-31",
+      "progress": "10",
+      "predictProgress": 57.12,
+      "participantCount": 1,
+      "erpTaskTotalHours": 1.65
+    },
+    {
+      "id": "1784034065329557506",
+      "taskName": "企业大屏开发后台",
+      "startTime": "2024-04-27",
+      "endTime": "2024-06-30",
+      "progress": "67",
+      "predictProgress": 40.04,
+      "participantCount": 1,
+      "erpTaskTotalHours": 28.40
+    },
+    {
+      "id": "1783783441664970754",
+      "taskName": "大屏项目跟进",
+      "startTime": "2024-04-26",
+      "endTime": "2024-05-17",
+      "progress": "30",
+      "predictProgress": 100,
+      "participantCount": 1,
+      "erpTaskTotalHours": 9.76
+    },
+    {
+      "id": "1783674436250636290",
+      "taskName": "企业大屏开发前端",
+      "startTime": "2024-04-26",
+      "endTime": "2024-05-31",
+      "progress": "48",
+      "predictProgress": 75.06,
+      "participantCount": 1,
+      "erpTaskTotalHours": 28.94
+    },
+    {
+      "id": "1774246181954174978",
+      "taskName": "修复缺陷",
+      "startTime": "2024-03-31",
+      "endTime": "2024-12-31",
+      "progress": "43",
+      "predictProgress": 19.08,
+      "participantCount": 1,
+      "erpTaskTotalHours": 7.01
+    }
+  ]
+}

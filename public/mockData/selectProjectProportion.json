@@ -1,0 +1,64 @@
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "map": {
+        "totalNumber": "578",
+        "projectName": "消防业务",
+        "percent": "13.0",
+        "taskNum": "75"
+      }
+    },
+    {
+      "map": {
+        "projectName": "实操业务",
+        "percent": "10.0",
+        "taskNum": "58"
+      }
+    },
+    {
+      "map": {
+        "projectName": "单品系列",
+        "percent": "19.6",
+        "taskNum": "113"
+      }
+    },
+    {
+      "map": {
+        "projectName": "展馆业务",
+        "percent": "11.2",
+        "taskNum": "65"
+      }
+    },
+    {
+      "map": {
+        "projectName": "业务系统",
+        "percent": "8.8",
+        "taskNum": "51"
+      }
+    },
+    {
+      "map": {
+        "projectName": "化工业务",
+        "percent": "13.5",
+        "taskNum": "78"
+      }
+    },
+    {
+      "map": {
+        "projectName": "链工宝",
+        "percent": "19.6",
+        "taskNum": "113"
+      }
+    },
+    {
+      "map": {
+        "projectName": "课程内容",
+        "percent": "4.2",
+        "taskNum": "24"
+      }
+    }
+  ],
+  "rows": null
+}

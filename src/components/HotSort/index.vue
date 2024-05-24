@@ -1,120 +1,131 @@
 <script setup>
-import {ref, reactive,getCurrentInstance,watch} from 'vue'
+import {ref, reactive,getCurrentInstance,watch,nextTick} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import QueryBox from '@/components/QueryBox'
 import {mockData} from './mockData.js'
+import gsap from 'gsap'
+import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
+import WindowLoading from "@/components/Loading/WindowLoading.vue";
+import Empty from "@/components/Loading/Empty.vue";
 const {proxy} = getCurrentInstance()
-const btnList = ref([
-  {
-    name:'近7天',
-    class:'expand',
-    deactiveIconStyle:{
-      transform:'rotateZ(-180deg)'
-    },
-    id:'hot-time-select-btn',
-    onclick:()=>{
-      proxy.$refs.TimeRangeQueryRef.expand()
-    },
-    active:false,
-
-  },  {
-    name:'综合',
-    class:'expand',
-    id:'hot-depart-select-btn',
-    deactiveIconStyle:{
-      transform:'rotateZ(-180deg)'
-    },
-    onclick:()=>{
-      proxy.$refs.DepartSelectQueryRef.expand()
-    },
-    active:false
-  },
-])
-
+const store = useLocalDataStore()
 const colorList = [
-    '#FF505D',
-    '#A26CE6',
-    '#6459F4',
+  '#FF505D',
+  '#A26CE6',
+  '#6459F4',
 ]
 
-const timeRangeOptions = [
-  {value:'近7天',label:'近7天'},
-  {value:'近15天',label:'近15天'},
-  {value:'近1个月',label:'近1个月'},
-  {value:'近3个月',label:'近3个月'},
-  {value:'近6个月',label:'近6个月'},
-  {value:'近1年',label:'近1年'},
-  {value:'近2年',label:'近2年'},
-  {value:'近3年',label:'近3年'},
-  {value:'近4年',label:'近4年'},
-]
+const data = ref([])
 
-const departmentOptions = [
-  {value:'综合',label:'综合'},
-  {value:'工时',label:'工时'},
-  {value:'任务数',label:'任务数'},
-  {value:'人数',label:'人数'},
-  {value:'进度',label:'进度'},
-]
-
-const queryParams = reactive({
-  timeRange:'近7天',
-  department:'综合'
-})
-
-function getChangeFun(index){
-  return function(visible){
-    btnList.value[index].active = visible
+const loading = ref(true)
+function dataReady(src){
+  // 数据变化
+  if(src.length>=5){
+    let patch = src.slice(0,5)
+    data.value = src.concat(patch)
+  }else{
+    data.value = src
   }
+  return nextTick(()=>loading.value = false)
 }
 
-watch(()=>queryParams.timeRange,(nv,ov)=>{
-  if(nv!==ov){
-    btnList.value[0].name=nv
-    btnList.value[0].deactiveName=nv
-  }
-})
-watch(()=>queryParams.department,(nv,ov)=>{
-  if(nv!==ov){
-    btnList.value[1].name=nv
-    btnList.value[1].deactiveName=nv
-  }
-})
-const data = ref(mockData)
+function startLoading(){
+  loading.value = true
+}
 
+let tween
+// loading = false代表数据加载结束
+watch(loading,(nv,ov)=>{
+  let dom = document.querySelector('#hot-kanban')
+  if(nv == false){
+    dom.scrollTop = 0
+    let scroll_h = dom.scrollHeight
+    let dom_h = dom.clientHeight
+    let offset = scroll_h - dom_h
+    let delay = 3
+    let duration = 30
+    if(offset>0){
+      let initTweenOption = {
+        scrollTop:offset,
+        duration:duration,
+        ease:'none',
+      }
+      tween = gsap.to(dom,{
+        ...initTweenOption,
+        delay:delay,
+      })
+      dom.onmouseenter = e =>{
+        tween.pause()  // 动画暂停
+        dom.onscroll = e =>dom.scrollTop == offset && (dom.scrollTop = 0) // 开始监听用户滚动事件
+      }
+      dom.onmouseleave = e => {
+        let current_offset =  offset - dom.scrollTop
+        let radio = current_offset / offset * duration
+        tween = gsap.to(dom,{ // 重新开启动画
+          scrollTop:offset,
+          duration:radio,
+          ease:'none',
+          onComplete:()=>{
+            dom.scrollTop = 0
+            tween = gsap.to(dom,initTweenOption)
+            tween.play()
+            tween.repeat(-1)
+          }
+        })
+        tween.play()
+      }
+      tween.repeat(-1)
+    }
+  }else{
+    tween && tween.kill()
+    tween = null
+    dom.onmouseenter = undefined
+    dom.onmouseleave = undefined
+    dom.onscroll = undefined
+  }
+})
+
+defineExpose({
+  dataReady,
+  startLoading
+})
 </script>
 
 <template>
   <div class="kanban-wrapper">
-    <content-header title="项目热度" :btn-list="btnList" />
+    <content-header title="项目热度" :btn-list="[]" />
 
-    <query-box
-        ref="TimeRangeQueryRef"
-        class="query-box"
-        :btn-id="btnList[0].id" dom-id="time-range-dom-id"
-        :options="timeRangeOptions"
-        :height="(1.13+0.5)*Math.ceil(timeRangeOptions.length/2) + 0.5*2"
-        @change="(()=>getChangeFun(0))()"
-        v-model:value="queryParams.timeRange" />
+<!--    <query-box-->
+<!--        ref="TimeRangeQueryRef"-->
+<!--        class="query-box"-->
+<!--        :btn-id="btnList[0].id" dom-id="time-range-dom-id"-->
+<!--        :options="filterDayOptions"-->
+<!--        :height="(1.13+0.5)*Math.ceil(filterDayOptions.length/2) + 0.5*2"-->
+<!--        @change="(()=>getChangeFun(0))()"-->
+<!--        v-model:value="queryParams.filterDay" />-->
 
-    <query-box
-        ref="DepartSelectQueryRef"
-        class="query-box"
-        :btn-id="btnList[1].id" dom-id="depart-range-dom-id"
-        :options="departmentOptions"
-        @change="(()=>getChangeFun(1))()"
-        :height="(1.13+0.5)*Math.ceil(departmentOptions.length/2) + 0.5*2"
-        v-model:value="queryParams.department" />
-    <div class="kanban-content">
-      <div class="kanban-item" v-for="(item, index) in data"
+<!--    <query-box-->
+<!--        ref="DepartSelectQueryRef"-->
+<!--        class="query-box"-->
+<!--        :btn-id="btnList[1].id" dom-id="depart-range-dom-id"-->
+<!--        :options="filterTypeOptions"-->
+<!--        @change="(()=>getChangeFun(1))()"-->
+<!--        :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"-->
+<!--        v-model:value="queryParams.filterType" />-->
+    <window-loading :loading="loading"/>
+    <empty :show-div="!loading && data.length == 0" />
+    <div class="kanban-content" id="hot-kanban">
+      <div class="kanban-item" :class="{'ready':!store.loading}" v-for="(item, index) in data"
            :style="{
-              '--color':colorList[index]||'#B3B5BB',
+              '--color':colorList[item.index-1]||'#B3B5BB',
               '--index':index,
           }">
-        <div class="index num">{{index + 1}}</div>
+        <div class="index num">{{item.index}}</div>
         <div class="split-line"></div>
         <div class="info-box">
-          <div class="proj-name">{{item.projectName}}</div>
+          <div class="proj-name">
+            {{[item.projectName,item.code][store.visitMode]}}
+          </div>
           <div class="commander-name">{{item.commander}}</div>
         </div>
         <div class="grade num">{{item.grade}}</div>
@@ -135,19 +146,29 @@ const data = ref(mockData)
   max-height: calc(22rem - $content-header-h - 1.5rem * 2 - 0.6rem);
 }
 .kanban-content{
-  padding-top:1.19rem;
+  cursor: pointer;
+  $item-h:2.5rem;
+  $item-mb:0.9rem;
+  $size:5;
+  margin-top:1.19rem;
+  height:calc( ($item-h + $item-mb) * 5 - $item-mb);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  position:relative;
+  &::-webkit-scrollbar{
+    width: 0;
+  }
   .num{ // 数字类型
     font-family: D-DINExp;
     font-size: 1.5rem;
   }
-
   .kanban-item{
     --color:#B3B5BB;
     color: #001133;
     display: flex;
-    margin-bottom:0.9rem;
+    margin-bottom:$item-mb;
     align-items: center;
-    height: 2.5rem;
+    height: $item-h;
     position:relative;
     &:before{
       content:'123';
@@ -156,18 +177,16 @@ const data = ref(mockData)
       top:0;
       width:100%;
       height:100%;
+      transition-property: width;
+      transition-delay: calc(var(--index) * 0.1s);
+      transition-duration: 1s;
       color:transparent;
       z-index:1;
       background: #ffffff;
-      animation:slide-in 1s linear forwards;
-      animation-delay: calc(var(--index) * 0.1s);
-      @keyframes slide-in  {
-        to{
-          width:0%;
-        }
-      }
     }
-
+    &.ready:before{
+      width:0%;
+    }
     &:last-child{margin-bottom: 0;}
     .index{
       height: 2.13rem;

@@ -11,20 +11,24 @@ const colors = {
     orangeRed:['#FFDCDE','#F57C84'],
     blueGreen:['#DEFFF9','#15E7C1'],
     orange:['#FFDBCF','#F08A6A'],
+    grey:['#eeeeee','#989898'],
 }
 
 export const predictType = {
     '高':colors.lightRed,
     '中':colors.lightBlue,
     '低':colors.lightYellow,
+    '无':colors.grey,
 }
 export const productType = {
     '消防业务':colors.violet,
     '单品系列':colors.purple,
-    '业务系列':colors.lightGreen,
+    '业务系统':colors.lightGreen,
     '链工宝':colors.berryRed,
     '实操业务':colors.waterBlue,
+    '实操系统':colors.waterBlue,
     '展馆业务':colors.orangeRed,
     '化工业务':colors.blueGreen,
     '课程内容':colors.orange,
+    '无':colors.grey,
 }

@@ -9,7 +9,7 @@ export const mockData = {
 
     realStartTime:'2023.02.01', // 实际开始时间
     realEndTime:'2023.10.18', // 实际结束时间
-    realProgress:38, //实际当前进度
+    realProgress:50, //实际当前进度
 
     currentTime:'2024.4.22', // 当前时间
 

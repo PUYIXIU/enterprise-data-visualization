@@ -9,10 +9,12 @@ import {resize} from "@/utils/style.js";
 
 resize().then(res=>{
     const app = createApp(App)
-    app.use(router)
+    // app.use(router)
     const pinia = createPinia()
     app.use(pinia)
     app.use(ElementPlus)
     app.mount('#app')
 })
 window.addEventListener('resize',resize)
+window.mockMode = false; // 开启测试模式
+window.debugModeEnable = false; // 开启控制台调试模式

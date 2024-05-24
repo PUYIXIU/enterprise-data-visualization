@@ -28,11 +28,14 @@ let option = {
 function resize(){
   chart && chart.resize();
 }
-function initChart(){
+function initChart(){ // 初始化表格
   chart = echarts.init(document.getElementById(props.domId))
-  getOption()
-  chart.setOption(option)
   window.addEventListener('resize',resize)
+}
+
+function updateChart(){ // 更新表格
+  getOption()
+  chart.setOption(option,{notMerge:false})
 }
 
 function getOption(){
@@ -51,7 +54,8 @@ function getOption(){
 }
 
 defineExpose({
-  initChart
+  initChart,
+  updateChart
 })
 onBeforeUnmount(()=>{
   window.removeEventListener('resize',resize)
@@ -100,6 +104,10 @@ onBeforeUnmount(()=>{
   justify-content: center;
   color:#001133;
   .num{
+    max-width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: 1.5rem;
     font-family: D-DINExp;
   }

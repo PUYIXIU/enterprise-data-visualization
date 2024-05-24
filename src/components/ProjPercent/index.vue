@@ -1,12 +1,23 @@
 <script setup>
-import {ref, getCurrentInstance, onMounted, reactive, watch} from 'vue'
+import {ref, getCurrentInstance, onMounted, reactive, watch, computed,nextTick} from 'vue'
 import ContentHeader from '@/components/ContentHeader'
 import QueryBox from '@/components/QueryBox'
 import RingPie from './RingPie.vue'
 import {mockData} from "@/components/ProjPercent/mockData.js";
 import {ringPieColorList} from "@/components/ProjPercent/colorConfig.js";
+import {useLocalDataStore} from "@/storage/index.js";
+import request from "@/utils/request.js";
+import {filterProgressData} from "@/utils/dataFilter.js";
 
+const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
+
+const data = ref(mockData)
+
+const queryParams = reactive({
+  department:undefined // 0表示综合
+})
+
 const btnList = ref([
   {
     name:'所有部门',
@@ -21,37 +32,45 @@ const btnList = ref([
     }
   },
 ])
-const data = ref(mockData)
 
-
-const departmentOptions = [
-  {value:'所有部门',label:'所有部门'},
-  {value:'综合部',label:'综合部'},
-  {value:'商务部',label:'商务部'},
-  {value:'财务部',label:'财务部'},
-  {value:'工业设计部',label:'工业设计部'},
-  {value:'多媒体事业部',label:'多媒体事业部'},
-  {value:'产品测试部',label:'产品测试部'},
-  {value:'软件开发部',label:'软件开发部'},
-  {value:'AI部',label:'AI部'},
-]
-
-const queryParams = reactive({
-  department:'所有部门'
-})
 function getChangeFun(index){
   return function(visible){
     btnList.value[index].active = visible
   }
 }
-watch(()=>queryParams.department,(nv,ov)=>{
+const selectProjectProportion = params => request.get('/erp/visualize/selectProjectProportion', {params}) // 请求项目占比数据
+// 获取项目占比数据
+function getProjPercentData(){
+  return selectProjectProportion({deptId:queryParams.department}).then(res=>{
+    data.value = filterProgressData(res.data)
+    if(window.debugModeEnable){
+      console.group('项目占比数据')
+      console.log(data.value)
+      console.groupEnd()
+    }
+    nextTick(()=>{
+      proxy.$refs.RingPieRef.updateChart()
+    })
+  })
+}
+
+// 项目部门变化/定时器被触发 请求数据
+watch(()=>[queryParams.department, store.timeTrigger],(nv,ov)=>{
   if(nv!==ov){
-    btnList.value[0].name=nv
-    btnList.value[0].deactiveName=nv
+    getProjPercentData()
+    let label = store.deptList.find(o=>o.value == queryParams.department).label
+    btnList.value[0].name = btnList.value[0].deactiveName = label
   }
 })
-onMounted(()=>{
+
+
+function init(){
   proxy.$refs.RingPieRef.initChart()
+  queryParams.department = store.deptList[0].value
+}
+
+defineExpose({
+  init
 })
 
 </script>
@@ -63,8 +82,8 @@ onMounted(()=>{
         ref="ProjPercentQueryRef"
         class="query-box"
         :btn-id="btnList[0].id" dom-id="proj-percent-dom-id"
-        :options="departmentOptions"
-        :height="(1.13+0.5)*Math.ceil(departmentOptions.length/2) + 0.5*2"
+        :options="store.deptList"
+        :height="(1.13+0.5)*Math.ceil(store.deptList.length/2)+0.5*2"
         @change="(()=>getChangeFun(0))()"
         v-model:value="queryParams.department" />
 
@@ -99,7 +118,8 @@ $padding-bottom:0.88rem;
 
 .query-box{
   top:calc($content-header-h + $padding-top + 0.6rem);
-  width:10.5rem;
+  width:13rem;
+  right:0;
   max-height: calc(22rem - $content-header-h - $padding-top - $padding-bottom - 0.6rem);
 }
 .kanban-content{
@@ -113,7 +133,7 @@ $padding-bottom:0.88rem;
 }
 
 
-$item-width:6.5rem;
+$item-width:6.7rem;
 $item-mr:2.75rem;
 .tooltip-box{
   margin-left: 2.25rem;
@@ -128,7 +148,7 @@ $item-mr:2.75rem;
     display: flex;
     //margin-right:$item-mr;
     color: #001133;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     height:2.19rem;
     align-items: center;
     margin-bottom:0.75rem;
@@ -149,7 +169,7 @@ $item-mr:2.75rem;
       text-align: right;
       .num{
         font-family: D-DINExp-Bold;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
       }
       .sign{
         font-family: D-DINExp;}
