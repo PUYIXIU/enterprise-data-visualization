@@ -8,3 +8,11 @@ export function getBaseURL(){
         return '/prod-api'
     }
 }
+export function getEnvURL(){
+    if(import.meta.env.VITE_APP_ENV === 'development'){
+        return 'http://10.5.6.88:8088'
+    }else{
+        // 生产环境
+        return 'http://47.120.64.178:8100'
+    }
+}

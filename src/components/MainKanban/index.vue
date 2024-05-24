@@ -163,6 +163,11 @@ watch(queryParams,(nv,ov)=>{
   }
 },{deep:true})
 
+watch(()=>store.showType,(nv,ov)=>{
+  let label = showTypeDict.find(o=>o.value==nv).label
+  btnList.value[6].name = btnList.value[6].deactiveName = label
+})
+
 watch(()=>store.mapMode,(nv,ov)=>{
   // proxy.$refs.QueryBoxRef.filterData()
   filterData(queryParams.value)

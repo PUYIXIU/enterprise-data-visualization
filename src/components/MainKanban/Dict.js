@@ -26,10 +26,10 @@ export const statusDict = [
 export const productLineDict = [
     {value:'全部',label:'全部'},
     {value:'消防业务',label:'消防业务'},
-    {value:'实操业务',label:'实操业务'},
+    {value:'实操系统',label:'实操系统'},
     {value:'单品系列',label:'单品系列'},
     {value:'展馆业务',label:'展馆业务'},
-    {value:'业务系列',label:'业务系列'},
+    {value:'业务系统',label:'业务系统'},
     {value:'化工业务',label:'化工业务'},
     {value:'链工宝',label:'链工宝'},
     {value:'课程内容',label:'课程内容'},

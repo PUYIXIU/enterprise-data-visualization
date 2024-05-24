@@ -1,5 +1,5 @@
 import axios from "axios";
-import {getBaseURL} from "@/utils/config.js";
+import {getBaseURL, getEnvURL} from "@/utils/config.js";
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
@@ -18,7 +18,7 @@ service.interceptors.request.use(
             if(window.mockMode){ // 测试模式开启
                 let target = config.url.split('/').slice(-1)
                 let fileName = target+'.json'
-                config.url = `http://10.5.6.88:8088/mockData/${fileName}`
+                config.url = `${getEnvURL()}/mockData/${fileName}`
                 return config
             }
 

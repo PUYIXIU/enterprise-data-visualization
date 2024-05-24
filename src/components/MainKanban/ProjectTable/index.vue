@@ -1,6 +1,5 @@
 <script setup>
-import {ref,computed,reactive} from 'vue'
-import {mockData} from './mockData.js'
+import {ref,computed} from 'vue'
 import {getpx} from "@/utils/style.js";
 import {predictType, productType} from "@/components/MainKanban/ProjectTable/dataType.js";
 import {useLocalDataStore} from "@/storage/index.js";
