@@ -48,11 +48,11 @@ const SeriesOptionTemp = {
   label:{
     position:['50%','50%'],
     formatter:null,
+    overflow:'truncate',
     rich:{
       title:{
         color:'#fff',
         fontSize:12,
-        fontWeight:'bold',
         textShadowColor:'rgba(0,0,0,0.3)',
         textShadowBlur:5,
         textShadowOffsetY:1,
@@ -66,7 +66,7 @@ const SeriesOptionTemp = {
         textShadowBlur:5,
         textShadowOffsetY:2,
         lineHeight:18,
-        fontFamily:'SourceHanSansCN-Normal',
+        fontFamily:'SourceHanSansCN-Light',
       },
       percent:{
         color:'#fff',

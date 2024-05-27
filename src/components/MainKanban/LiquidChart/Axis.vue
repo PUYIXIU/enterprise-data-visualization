@@ -187,7 +187,7 @@ onBeforeUnmount(()=>{
   <span class="axis-name x" :style="{
   '--bottom':grid.bottom + 'px',
   '--right':grid.right + 'px',
-}">项目任务数量</span>
+}">项目提交次数</span>
   <!-- y轴名称 -->
   <span class="axis-name y" :style="{
   '--top':grid.top + 'px',

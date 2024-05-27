@@ -123,7 +123,7 @@ defineExpose({
 <template>
   <div class="chart-wrapper">
     <div class="nav-head">
-      <div class="tip-mes" :class="{fade:pieRendering}" >【圆形面积大小代表工时数量】</div>
+      <div class="tip-mes" :class="{fade:pieRendering}" >【圆形大小代表热度高低】</div>
       <div class="tooltip-box" style="opacity: 0;">
         <p v-for="item in navList">
           <i :style="{'--color':item.color}"></i>

@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
+import 'element-plus/theme-chalk/el-message.css'
 import '@/assets/styles/index.scss'
 import 'vis-timeline/dist/vis-timeline-graph2d.min.css'
 import App from './App.vue'

@@ -33,6 +33,10 @@ function startLoading(){
   loading.value = true
 }
 
+function endLoading(){
+  loading.value = false
+}
+
 let tween
 // loading = false代表数据加载结束
 watch(loading,(nv,ov)=>{
@@ -87,7 +91,8 @@ watch(loading,(nv,ov)=>{
 
 defineExpose({
   dataReady,
-  startLoading
+  startLoading,
+  endLoading
 })
 </script>
 

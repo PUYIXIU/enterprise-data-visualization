@@ -257,8 +257,9 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
         let topOption = copy(optionTemp)
         topOption.label.formatter = getFormatter(node)
         topOption.center = node.center // 中心坐标
-        topOption.radius = `${node.mapRadius * (1 - grid.top - grid.bottom)*0.95}%`  // 半径
-
+        let perRadius = node.mapRadius * (1 - grid.top - grid.bottom) //*0.95
+        topOption.radius = `${perRadius}%`  // 半径
+        topOption.label.width = perRadius * content_h / 100 // 让数据换行
         getRich(node.mapEffect, topOption.label.rich)
         topOption.data = [node.wave/100]
 
@@ -374,11 +375,11 @@ export function getPieOptions(data, {liquid,pie:pieColor,config}, pieOptionTemp,
 
 
 export function getFormatter(node){
-     return `{title|${node.radius}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}`
+     return `{title|${node.y}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}`
 }
 
 export function getPieFormatter(node){
-    return `{title|${node.radius}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}\n{subtitle|${node.commander}}`
+    return `{title|${node.y}h}\n\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}\n\n{subtitle|${node.commander}}`
 }
 
 export function resetLabel(data,series){

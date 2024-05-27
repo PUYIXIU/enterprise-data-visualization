@@ -175,14 +175,14 @@ function getLiquidOption(){
   // label字体变化 添加项目负责人字样
   let option = liquidFillSeriesOption[1]
   let {data} = props
-  console.log(liquidFillSeriesOption)
   option.label.formatter = getPieFormatter(data)
-
+  option.label.width = canvasSize[1]*0.2
+  option.label.overflow = 'break'
   // 此处是为了防止画布平移距离过大，导致的阴影出界
   option.backgroundStyle.shadowBlur = 10
   option.backgroundStyle.shadowOffsetY = 0
   option.backgroundStyle.shadowOffsetX = 0
-  liquidOption.series = liquidFillSeriesOption
+  liquidOption.series = liquidFillSeriesOption // 20
 }
 
 // 设置饼图的option
