@@ -198,7 +198,7 @@ h3{
   font-weight: 400;
   font-size: 1.4rem;
   font-family: SourceHanSansCN-Regular;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
   padding-left:0.75rem;
 }
 </style>
