@@ -228,7 +228,7 @@ function liquidHover(e){
 
 function getOption(){
   const targetDom = document.getElementById(props.domId)
-  option.series = getLiquidOptions(data,SeriesOptionTemp,targetDom,props.grid)
+  option.series = getLiquidOptions(data,SeriesOptionTemp,targetDom,{...props.grid})
 }
 
 // 切换模式
@@ -236,7 +236,6 @@ watch(()=>store.visitMode,(nv,ov)=>{
   if(nv==ov) return
   option.series = resetLabel(data, option.series)
   chart.setOption(option,{notMerge:false})
-  console.log(option)
 })
 
 defineExpose({

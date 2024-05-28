@@ -25,18 +25,24 @@ const axisRange = ref({
 })
 const pieRendering = ref(false)
 
-function getGrid(){
+function getGrid(range){
+  let leftGap = 1.875
+  let fontSize = 0.84 // 字体大小
+  if(range!==undefined){ // 根据范围计算左侧边缘的距离
+    let maxY = range.y[1]
+    let textLen = maxY.toString().length * fontSize
+    leftGap = Math.max(leftGap, textLen)
+  }
   return { // 坐标系栅格
     top:getpx(1),
     bottom:getpx(2.8125),
     // left:getpx(1.875),
-    left:getpx(3),
+    left:getpx(leftGap),
     right:getpx(0.9375),
   }
 }
-
+//0.05067567567567568px
 onMounted(()=>{
-  grid.value.top += getpx(2.4)
   proxy.$refs.AxisRef.initChart()
   chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
   proxy.$refs.LiquidRef.initChart()
@@ -101,16 +107,17 @@ function dataReady(src){
   let canvasDom = document.querySelector('.canvas')
   let data = getLiquidData(src,canvasDom,grid.value)
   chartData.value = data.data
-  proxy.$refs.AxisRef.updateChart(
-      data.axis_range,
-      data.x_category,
-      data.y_category
-  ).then(res=>{
-    grid.value = getGrid()
-    chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
-    proxy.$refs.LiquidRef.updateChart(chartData.value)
+  grid.value = getGrid(data.axis_range)
+  nextTick(()=>{
+    proxy.$refs.AxisRef.updateChart(
+        data.axis_range,
+        data.x_category,
+        data.y_category
+    ).then(res=>{
+      chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
+      proxy.$refs.LiquidRef.updateChart(chartData.value)
+    })
   })
-
 }
 
 

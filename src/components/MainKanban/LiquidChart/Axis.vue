@@ -1,6 +1,6 @@
 <script setup>
 import * as echarts from 'echarts'
-import {onMounted,onBeforeUnmount,ref} from "vue";
+import {onBeforeUnmount} from "vue";
 import {getpx} from "@/utils/style.js";
 import {useLocalDataStore} from "@/storage/index.js";
 const store = useLocalDataStore()
@@ -112,7 +112,9 @@ function initChart(){
 function getOption(axisRange,x_category,y_category){
   let xAxis = option.xAxis[0]
   let yAxis = option.yAxis[0]
-
+  option.grid = {
+    ...props.grid
+  }
   if(store.mapMode == 0){ // 均匀模式
     xAxis.type = yAxis.type = 'category'
     xAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = true
@@ -150,7 +152,6 @@ function updateChart(axisRange,x_category,y_category){
 
 // 将气泡在坐标系中对应的坐标转换为dom容器下的坐标
 function convertAxisToPixel(data){
-  console.log(option)
   return data.map(node=>{
     let {x,y} = node
     if(store.mapMode == 0){ // 均匀模式
@@ -166,6 +167,7 @@ function convertAxisToPixel(data){
     return node
   })
 }
+
 
 defineExpose({
   convertAxisToPixel,
@@ -193,7 +195,7 @@ onBeforeUnmount(()=>{
   <span class="axis-name y" :style="{
   '--top':grid.top + 'px',
   '--left':grid.left + 'px',
-}">工时</span>
+}" >工时</span>
 </div>
 </template>
 
@@ -216,7 +218,7 @@ $gap:0.5rem;
     right:var(--right);
   }
   &.y{
-    top:calc(var(--top) );
+    top:var(--top);
     left:calc(var(--left) + $gap);
   }
 }
