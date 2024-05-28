@@ -74,7 +74,6 @@ function ready(){
 
 let tween
 watch(loading,(nv,ov)=>{
-  return
   let dom = document.querySelector('#danger-kanban')
   if(nv == false){
     dom.scrollTop = 0

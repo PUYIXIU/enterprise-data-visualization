@@ -568,7 +568,7 @@ $text-height:1.13rem;
 
 <style scoped lang="scss">
 @import '@/assets/styles/global.scss';
-$progress-group-height:3rem; // 进度条高度
+$progress-group-height:2.75rem; // 进度条高度
 $progress-item-height:1.31rem; // 进度条高度
 
 $majar-title-height:1.875rem;

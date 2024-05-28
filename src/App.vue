@@ -148,6 +148,9 @@ onMounted(()=>{
   flex-direction: column;
   position:absolute;
   overflow-x: hidden;
+  &::-webkit-scrollbar{
+    width: 0px;
+  }
 }
 .head{
   background: #fff;

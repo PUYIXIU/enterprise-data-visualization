@@ -9,10 +9,10 @@ import {getHSL, getpx} from "@/utils/style.js";
 // 草绿色 第一名
 const green = {
     // liquid:{color:[101, 75, 63, 50], h_add:0, s_add:0, l_add:0,},
-    liquid:{color:[153, 61, 69, 50], h_add:10, s_add:-20, l_add:-25,},
+    liquid:{color:[153, 61, 69, 50], h_add:10, s_add:-20, l_add:-30,},
     pie:[
-        {color:[153, 61, 69, 50], h_add:0, s_add:0, l_add:-20, alpha:75,},
-        {color:[153, 61, 69, 50], h_add:0, s_add:0, l_add:-20, alpha:75,},
+        {color:[153, 61, 69, 50], h_add:10, s_add:-10, l_add:-30, alpha:75,},
+        {color:[153, 61, 69, 50], h_add:10, s_add:-10, l_add:-30, alpha:75,},
     ]
 }
 
@@ -20,8 +20,8 @@ const green = {
 const violet = {
     liquid:{color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30},
     pie:[
-        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
-        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:100,},
+        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:75,},
+        {color:[267, 71, 66, 40], h_add:25, s_add:20, l_add:-30, alpha:75,},
     ]
 }
 
@@ -29,8 +29,8 @@ const violet = {
 const darkBlue = {
     liquid:{color:[235, 93, 67, 50], h_add:0, s_add:0, l_add:-30,},
     pie:[
-        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
-        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:100,},
+        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:75,},
+        {color:[241, 95, 75, 50], h_add:0, s_add:0, l_add:-30, alpha:75,},
     ]
 }
 
@@ -38,23 +38,23 @@ const darkBlue = {
 const lightBlue = {
     liquid:{color:[218, 97, 70, 50], h_add:0, s_add:0, l_add:-20},
     pie:[
-        {color:[222, 100, 71], h_add:0, s_add:0, l_add:0, alpha:50,},
-        {color:[222, 100, 71], h_add:0, s_add:0, l_add:0, alpha:50,},
+        {color:[222, 100, 71], h_add:0, s_add:0, l_add:-20, alpha:75,},
+        {color:[222, 100, 71], h_add:0, s_add:0, l_add:-20, alpha:75,},
     ]
 }
 
 // 靛青色
 const cyan = {
-    liquid:{color:[179, 49, 54], h_add:0, s_add:20, l_add:-15,},
+    liquid:{color:[179, 49, 54], h_add:0, s_add:20, l_add:-20,},
     pie:[
-        {color:[179, 49, 54], h_add:0, s_add:0, l_add:-20, alpha:50,},
-        {color:[179, 49, 54], h_add:0, s_add:0, l_add:-20, alpha:50,},
+        {color:[179, 49, 54], h_add:0, s_add:20, l_add:-10, alpha:50,},
+        {color:[179, 49, 54], h_add:0, s_add:20, l_add:-10, alpha:50,},
     ]
 }
 
 // 橘红色
 const orange = {
-    liquid:{color:[22, 90, 66], h_add:0, s_add:10, l_add:-5,},
+    liquid:{color:[22, 90, 66], h_add:0, s_add:10, l_add:-10,},
     pie:[
         {color:[22, 78, 49], h_add:0, s_add:10, l_add:-5, alpha:75,},
         {color:[22, 78, 49], h_add:0, s_add:10, l_add:-5, alpha:75,},

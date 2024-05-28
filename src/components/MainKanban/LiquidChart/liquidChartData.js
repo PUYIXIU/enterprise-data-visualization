@@ -365,10 +365,11 @@ export function getPieOptions(data, {liquid,pie:pieColor,config}, pieOptionTemp,
         pieOption.itemStyle.color.x2 = -x/2+0.5
         pieOption.itemStyle.color.y2 = -y/2+0.5
 
+        const {h_add, s_add, l_add} = color
         // 外圈颜色
-        pieOption.itemStyle.color.colorStops[0].color = getHSL(color.color, color.alpha)
+        pieOption.itemStyle.color.colorStops[0].color = getHSL(color.color, color.alpha,{h_add,s_add,l_add})
         // 内圈颜色
-        pieOption.itemStyle.color.colorStops[1].color = getHSL(color.color, 30)
+        pieOption.itemStyle.color.colorStops[1].color = getHSL(color.color, 30,{h_add,s_add,l_add})
 
         options.push(pieOption)
     })
