@@ -269,7 +269,9 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
 
         let baseOption = copy(topOption)
         baseOption.name = 'base'
-        baseOption.label = {show:false}
+        baseOption.label = {
+            show:false,
+        }
         baseOption.backgroundStyle.shadowOffsetX = 0
         baseOption.backgroundStyle.shadowOffsetY = 0
         baseOption.backgroundStyle.shadowBlur = getpx(1)

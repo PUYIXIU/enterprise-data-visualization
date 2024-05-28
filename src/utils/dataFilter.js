@@ -44,6 +44,7 @@ export function filterTableData(src){
 // 过滤出项目热度数据
 export function filterHotData(src){
     return pick(src,[
+        {propName:'projectId', rename:'id'}, // id
         'index', // 索引
         'projectName', // 产品名称
         'commander', // 产品负责人
@@ -90,6 +91,7 @@ export function filterDangerProjData(src){
     src.forEach(({map}, index)=>{
         map.index = index
         result.push(pick(map,[
+            {propName:'projectId', rename:'id'}, // id
             'index', // 索引
             {propName:'projectName', rename:'name'}, // 模块名称
             {propName:'erpProjectCode', rename:'code'}, // 代号

@@ -53,6 +53,7 @@ function resize(){
 // // 监听到有水球被点中了
 watch(()=>store.selectProjId,(nv,ov)=>{
   if(nv == undefined){
+    store.triggerLeaveChart = false // 重置
     pieRendering.value = false
     proxy.$refs.LiquidPieRef.moveOut() // 饼图移出
   }

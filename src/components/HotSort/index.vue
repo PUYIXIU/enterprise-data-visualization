@@ -37,6 +37,11 @@ function endLoading(){
   loading.value = false
 }
 
+function rowClick(params){
+  store.triggerLeaveChart = true
+  store.selectProjId = params.id // 全局选中id.id // 全局选中id
+}
+
 let tween
 // loading = false代表数据加载结束
 watch(loading,(nv,ov)=>{
@@ -117,10 +122,13 @@ defineExpose({
 <!--        @change="(()=>getChangeFun(1))()"-->
 <!--        :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"-->
 <!--        v-model:value="queryParams.filterType" />-->
+
     <window-loading :loading="loading"/>
     <empty :show-div="!loading && data.length == 0" />
     <div class="kanban-content" id="hot-kanban">
-      <div class="kanban-item" :class="{'ready':!store.loading}" v-for="(item, index) in data"
+      <div class="kanban-item"
+           :class="{'ready':!store.loading}" v-for="(item, index) in data"
+           @click="rowClick(item)"
            :style="{
               '--color':colorList[item.index-1]||'#B3B5BB',
               '--index':index,
@@ -175,6 +183,12 @@ defineExpose({
     align-items: center;
     height: $item-h;
     position:relative;
+    transform:translateY(0px);
+    transition-property: transform;
+    transition-duration: 0.1s;
+    &:hover{
+      transform:translateY(-1px);
+    }
     &:before{
       content:'123';
       position:absolute;

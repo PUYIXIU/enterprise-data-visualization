@@ -30,7 +30,7 @@ const SeriesOptionTemp = {
     color:'rgba(52,38,246,0.75)',
     opacity:0.15,
   },
-  amplitude:10, // 水波曲度
+  amplitude:'5%', // 水波曲度
   direction:'right', // 水波方向
   phase:0,
   waveLength:'50%',
@@ -135,7 +135,14 @@ function updateChart(src){
 // 对svg事件进行处理 波浪和光晕不可点击
 function svgEventHandle(svg){
   const allG = svg.querySelector('g').querySelectorAll('g')
-  allG.forEach(g=>g.style.pointerEvents = 'none')
+  allG.forEach(g=> {
+    g.style.pointerEvents = 'none'
+    let gChildren = g.querySelector('g text')
+    console.log(gChildren)
+    if(gChildren){
+      g.style.visibility = 'hidden'
+    }
+  })
 }
 
 let currentSeriesIndex = -1 // 当前系列索引
@@ -151,7 +158,8 @@ function liquidSelect(e){
 }
 
 watch(()=>store.selectProjId,(nv,ov)=>{
-  if(nv == undefined || store.showType == 0) return // 仅对表格点击有效
+  if(nv == undefined) return
+  if( store.showType == 0 && !store.triggerLeaveChart ) return  // 既不是从列表的，也不是表格触发的
   // 找到currentSeriesIndex， 和它的包围盒
   currentSeriesIndex = option.series.findIndex(o=>o.uuid == nv)/2
   if(currentSeriesIndex>-1){
