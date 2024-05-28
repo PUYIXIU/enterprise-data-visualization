@@ -33,4 +33,6 @@ export const productLineDict = [
     {value:'化工业务',label:'化工业务'},
     {value:'链工宝',label:'链工宝'},
     {value:'课程内容',label:'课程内容'},
+    {value:'公司宣传',label:'公司宣传'},
+    {value:'日常管理',label:'日常管理'},
 ]

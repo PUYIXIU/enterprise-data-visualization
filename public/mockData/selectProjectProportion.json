@@ -4,59 +4,72 @@
   "data": [
     {
       "map": {
-        "totalNumber": "578",
         "projectName": "消防业务",
-        "percent": "13.0",
-        "taskNum": "75"
+        "percent": "0.5",
+        "taskNum": "4"
       }
     },
     {
       "map": {
         "projectName": "实操业务",
-        "percent": "10.0",
-        "taskNum": "58"
+        "percent": "14.0",
+        "taskNum": "117"
       }
     },
     {
       "map": {
         "projectName": "单品系列",
-        "percent": "19.6",
-        "taskNum": "113"
+        "percent": "1.4",
+        "taskNum": "12"
       }
     },
     {
       "map": {
         "projectName": "展馆业务",
-        "percent": "11.2",
-        "taskNum": "65"
+        "percent": "6.4",
+        "taskNum": "53"
       }
     },
     {
       "map": {
-        "projectName": "业务系统",
-        "percent": "8.8",
-        "taskNum": "51"
+        "projectName": "业务系列",
+        "percent": "13.1",
+        "taskNum": "109"
       }
     },
     {
       "map": {
         "projectName": "化工业务",
-        "percent": "13.5",
-        "taskNum": "78"
+        "percent": "20.3",
+        "taskNum": "169"
       }
     },
     {
       "map": {
         "projectName": "链工宝",
-        "percent": "19.6",
-        "taskNum": "113"
+        "percent": "15.4",
+        "taskNum": "128"
       }
     },
     {
       "map": {
         "projectName": "课程内容",
-        "percent": "4.2",
+        "percent": "21.1",
+        "taskNum": "176"
+      }
+    },
+    {
+      "map": {
+        "projectName": "公司宣传",
+        "percent": "2.9",
         "taskNum": "24"
+      }
+    },
+    {
+      "map": {
+        "projectName": "单品系列",
+        "percent": "4.9",
+        "taskNum": "41"
       }
     }
   ],

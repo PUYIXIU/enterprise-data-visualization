@@ -75,9 +75,10 @@ onBeforeUnmount(()=>{
 </template>
 
 <style scoped lang="scss">
+@import '@/assets/styles/global.scss';
 .pie-wrapper{
-  width: 9.25rem;
-  height: 9.25rem;
+  width: $ring-pie-w;
+  height: $ring-pie-w;
   position:relative;
   .inner{
     width: 100%;

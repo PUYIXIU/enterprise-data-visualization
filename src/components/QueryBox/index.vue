@@ -7,6 +7,7 @@ const props = defineProps(['btnId','value','domId','options','height'])
 const emit = defineEmits(['update:value', 'change'])
 function expand(){
   visible.value = !visible.value
+  visible.value && (setPosition())
   emit('change', visible.value)
 }
 
@@ -24,9 +25,11 @@ function setPosition(){
   target.style.left = getrem(btn.offsetLeft - target.clientWidth/2) + 'rem'
 }
 
+
 onMounted(()=>{
   setPosition()
 })
+
 </script>
 
 <template>

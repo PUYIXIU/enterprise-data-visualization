@@ -107,7 +107,7 @@ watch(()=>store.visitMode,(nv,ov)=>{
 // 详情界面的时间修改
 watch(()=>store.infoFilterDay,(nv,ov)=>{
   if(nv!==ov){
-    let label = visitModeOptions.find(o=>o.value==nv).label
+    let label = filterDayOptions.find(o=>o.value==nv).label
     btnList.value[3].name = btnList.value[3].deactiveName = label
   }
 })
@@ -120,7 +120,6 @@ watch(()=>store.selectProjId,nv=>{
   btnList.value[i].show = nv !== undefined
   console.log(btnList.value.map(i=>i.show))
 })
-
 
 function getCurrentTime(){
   return dayjs().format('YYYY.MM.DD HH:mm')
