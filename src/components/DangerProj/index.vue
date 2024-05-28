@@ -145,7 +145,7 @@ defineExpose({
       <div class="kanban-item" :class="{'ready':!loading && !store.loading}" v-for="(item, index) in data"
            :style="{
               '--color':colorList[item.index]||'#B3B5BB',
-              '--bg-color':colorList[item.index]?colorList[index]+'33':'#D9D9D933',
+              '--bg-color':colorList[item.index]?colorList[item.index]+'33':'#D9D9D933',
               '--inner-color':colorList[item.index]||'#D9D9D9',
               '--index':item.index,
            }">
