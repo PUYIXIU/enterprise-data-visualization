@@ -130,13 +130,13 @@ onMounted(()=>{
     <p class="tooltip-p">（可点击空白区域退出）</p>
     <div class="drawer-inner full">
       <h3>项目详情</h3>
-      <drawer-box title="项目甘特图" height="11.19rem">
+      <drawer-box class="gant-box" title="项目甘特图" height="9.5rem">
         <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
       </drawer-box>
       <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
         <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
       </drawer-box>
-      <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
+      <drawer-box id="progress-wrapper-dom" title="任务进度" height="29.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
         <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
       </drawer-box>
     </div>
@@ -144,6 +144,7 @@ onMounted(()=>{
 </template>
 
 <style scoped lang="scss">
+@import '@/assets/styles/global.scss';
 .drawer-wrapper{
   &.expand{
     transform: translateX(0%);
@@ -170,9 +171,9 @@ onMounted(()=>{
   right:0.38rem;
   top:4.22rem;
   width: 60rem;
-  height: 58.44rem;
   width: 60rem;
-  height: 58.44rem;
+  //height: 58.44rem;
+  height: $main-kanban-h;
 }
 .drawer-inner{
   overflow: hidden;
@@ -200,5 +201,9 @@ h3{
   font-family: SourceHanSansCN-Regular;
   margin-bottom: 0.75rem;
   padding-left:0.75rem;
+}
+
+.gant-box{
+  padding-top:1rem !important;
 }
 </style>

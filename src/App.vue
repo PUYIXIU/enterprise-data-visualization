@@ -163,7 +163,6 @@ onMounted(()=>{
   .main-content{
     width:86.56rem;
     margin-right:0.75rem;
-    height:100%;
     height:$main-kanban-h;
   }
   // 侧边
