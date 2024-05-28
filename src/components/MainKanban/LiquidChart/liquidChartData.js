@@ -413,9 +413,10 @@ function valueMap(value, [ min, max ],[map_min, map_max], mapType){
         mapValue = (map_max - map_min)*mapEffect + map_min
     }else if(mapType == 'pow'){ // 对数映射
         mapValue = (map_max-map_min) * Math.pow(mapEffect,2) + map_min
-    }else if(mapType == 'log'){ // y=x^(1/3)
+    }else if(mapType == 'log'){ // y=x^2
         let diff = map_max - map_min
-        mapValue = Math.pow(mapEffect, 1/3)*diff + map_min
+        // mapValue = Math.pow(mapEffect, 1/3)*diff + map_min
+        mapValue = Math.pow(mapEffect, 2)*diff + map_min
     }else{ // 二次映射
         let effect = mapType
         mapValue = effect * Math.pow(mapEffect,2) + (map_max - effect - map_min) * mapEffect + map_min

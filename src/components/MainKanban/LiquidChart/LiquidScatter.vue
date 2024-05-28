@@ -138,7 +138,6 @@ function svgEventHandle(svg){
   allG.forEach(g=> {
     g.style.pointerEvents = 'none'
     let gChildren = g.querySelector('g text')
-    console.log(gChildren)
     if(gChildren){
       g.style.visibility = 'hidden'
     }

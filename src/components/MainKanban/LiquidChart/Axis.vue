@@ -150,13 +150,14 @@ function updateChart(axisRange,x_category,y_category){
 
 // 将气泡在坐标系中对应的坐标转换为dom容器下的坐标
 function convertAxisToPixel(data){
+  console.log(option)
   return data.map(node=>{
     let {x,y} = node
     if(store.mapMode == 0){ // 均匀模式
       let xValues =  option.xAxis[0].data
       let yValues =  option.yAxis[0].data
-      x = xValues.findIndex(i=>i==x)
-      y = yValues.findIndex(i=>i==y)
+      x = xValues.findIndex(i=>i===x)
+      y = yValues.findIndex(i=>i===y)
     }
     node.center = chart.convertToPixel(
         {xAxisIndex:0, yAxisIndex:0},
