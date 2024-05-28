@@ -15,6 +15,7 @@ export const useLocalDataStore = defineStore('local',{
         mapMode:0, // 0为均匀模式 1为全局模式
         currentProjectIndex:undefined, // 鼠标hover过的球体的inedx
         selectProjId:undefined, // 选中项目的项目id
+        infoFilterDay:defaultHotParams.filterDay, // 详情页面的筛选时间
 
         showType:0, // 0 图表展示 1 表格展示
         triggerLeaveChart:false, // 从图表之外的地方触发了点击事件

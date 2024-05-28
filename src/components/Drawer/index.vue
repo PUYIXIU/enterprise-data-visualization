@@ -109,11 +109,15 @@ function clickCheck(e){
   const target = document.getElementById(props.domId)
   const r = target.getBoundingClientRect() // 获取包围盒
   const x = e.x, y = e.y;
+  // 鼠标在抽屉内
   if(x >= r.left && x <= r.right){ // 鼠标在x范围内
     if(y>= r.top && y<= r.bottom){ // 鼠标在y范围内
       return
     }
   }
+  // 鼠标在版头内
+  const navHeadDom = document.getElementById("nav-head-dom")
+  if(navHeadDom.contains(e.target)) return
   collapse()
 }
 
@@ -167,7 +171,7 @@ onMounted(()=>{
   transition-timing-function: ease-in-out;
   transform: translateX(100%);
   position:absolute;
-  z-index:999;
+  z-index:998;
   right:0.38rem;
   top:4.22rem;
   width: 60rem;

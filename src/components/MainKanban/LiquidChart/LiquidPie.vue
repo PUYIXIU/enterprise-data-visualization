@@ -47,6 +47,7 @@ function initChart(seriesList, rect){
   // 初始化饼图
   const pieChartDom = document.getElementById(props.pieDomId)
   pieChartDom && (pieChart = echarts.init(pieChartDom,'',{renderer:'svg'}))
+  getCanvasPieCenter()
   getLiquidOption()
   liquidChart.setOption(liquidOption)
   window.addEventListener('resize',resize)
@@ -59,7 +60,6 @@ function initChart(seriesList, rect){
 function updateChart(seriesList, rect){
   if(!liquidChart) return // 更新中心水球图目的：自适应内部文字
   boundRect = rect // 被点击水球的包围盒，用来平移位置
-  let keepCenter = liquidFillSeriesOption[0].center
   liquidFillSeriesOption = seriesList
   getLiquidOption()
   liquidChart.setOption(liquidOption,{notMerge:false})  // 中心水球图更新完毕
@@ -83,12 +83,13 @@ function getCanvasPieCenter(){
   let halfWidth = canvasWidth * 0.3, halfHeight = canvasHeight * 0.5 // 一半的宽高
   center[0] = halfWidth + boundBox.left + grid.left
   center[1] = halfHeight + boundBox.top + grid.top + window.scrollY
+  console.log(grid, center)
 }
 
 
-onMounted(()=>{ // 初始化时就获取画布中心点
-  getCanvasPieCenter()
-})
+// onMounted(()=>{ // 初始化时就获取画布中心点
+//   getCanvasPieCenter()
+// })
 
 // 获取偏移量
 function getRectCenter(){
@@ -107,6 +108,7 @@ function getRectCenter(){
 function moveIn(){
   // 求取整个画布的中心点 rectCenter
   const [dX, dY] = getRectCenter()
+
   gsap.set(`#${props.domId} svg`,{
     transformOrigin:'50% 30%',
   })
@@ -188,7 +190,6 @@ function getLiquidOption(){
 // 设置饼图的option
 function getPieOption(){
   pieOptionTemp.center = [canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + getpx(0.625)]
-  console.log(props.color)
   pieOption.series = getPieOptions(
       props.data.peopleList,
       props.color,

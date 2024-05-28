@@ -1,5 +1,5 @@
 
-const colors = {
+export const colors = {
     lightRed:['#FFD4DF','#FF1C52'],
     lightBlue:['#CFDDFF','#4078FE'],
     lightYellow:['#FFF8D0','#E4C109'],
