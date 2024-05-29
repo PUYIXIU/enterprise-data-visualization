@@ -151,7 +151,7 @@ onMounted(()=>{
       <drawer-box title="任务工时" height="15.69rem">
         <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
       </drawer-box>
-      <drawer-box id="progress-wrapper-dom" title="任务进度" height="29.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
+      <drawer-box id="progress-wrapper-dom" title="任务进度" height="30.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
         <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
       </drawer-box>
     </div>

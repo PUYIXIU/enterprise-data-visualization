@@ -137,11 +137,14 @@ defineExpose({
       '--pre-start': data.preStart_p+ '%',
       '--pre-end': data.preEnd_p+ '%',
       '--current': data.current_p+ '%',
+      '--right-split-x':data.preEnd_p == 100? '-100%':0,
     }">
 <!--      预计行-->
       <div class="predict-tip gant-box-bar">
         <span id="predict-start" class="text">{{data.predictStartTime}}</span>
         <span id="predict-end" class="text">{{data.predictEndTime}}</span>
+        <span id="predict-start-split" class="split"></span>
+        <span id="predict-end-split"class="split"></span>
       </div>
 <!--      实际行-->
       <div class="real-bar gant-box-bar">
@@ -237,6 +240,18 @@ defineExpose({
     }
     #predict-start{left:var(--pre-start);}
     #predict-end{left:var(--pre-end);}
+    .split{
+      height:0.5rem;
+      width:2px;
+      background: #F16A6A;
+      top:1rem;
+      opacity: 0.75;
+    }
+    #predict-start-split{left:var(--pre-start);}
+    #predict-end-split{
+      left:var(--pre-end);
+      transform:translateX(var(--right-split-x));
+    }
   }
   .real-bar{
     display: flex;
