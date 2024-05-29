@@ -189,6 +189,7 @@ onMounted(()=>{
   }
 }
 .nav-head-wrapper{
+
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -28,13 +28,12 @@ function getTipPosition(){
   // 获取到第一个预计时间的右边界
   // 第二个预计时间的左边界
   // 需要计算的内容就在这两个边界之间
-  let startDomDom = document.getElementById('predict-start')
-  let endDomDom = document.getElementById('predict-end')
-  let realDom = document.getElementById('real-bar-fore')
+  let realDom = document.getElementById('real-bar-split')
   let tipDom = document.querySelector('.real-bar-tip')
-  let left = startDomDom.offsetLeft + startDomDom.offsetWidth
-  let right = endDomDom.offsetLeft
-  let splitLeft = realDom.offsetLeft + realDom.offsetWidth
+  let realBarDom = document.querySelector('.real-bar')
+  let left = 0
+  let right = realBarDom.clientWidth
+  let splitLeft = realDom.offsetLeft
   let halfWidth = tipDom.clientWidth / 2
   transformX.value = 0 - halfWidth
   if(splitLeft - halfWidth < left){
@@ -42,6 +41,7 @@ function getTipPosition(){
   }else if (splitLeft + halfWidth > right){
     transformX.value -= ( splitLeft + halfWidth - right)
   }
+
 }
 
 let label_dx = ref(0)
@@ -64,9 +64,35 @@ function getLabelPosition(){
   }
 }
 
+// 计算预计的位置点
+// 1- 预计时间点超出容器边框，收回
+// 2- 预计开始时间长度 超过预计和开始之间的间隔，进行截断
+
+function getPreLabelPosition(){
+  let startDom = document.getElementById('predict-start')
+  let endDom = document.getElementById('predict-end')
+  let wrapperDom = document.querySelector('.predict-tip')
+
+  let startRight = startDom.offsetLeft + startDom.clientWidth // 开始时间右侧
+  let endDomLeft = endDom.offsetLeft
+  let endDomRight = endDom.offsetLeft + endDom.clientWidth
+  let diff = endDomLeft - startRight
+  if(diff<0){
+    startDom.style.width = `${startDom.clientWidth - Math.abs(diff)}px`
+  }else{
+    startDom.style.width = 'fit-content'
+  }
+  let rightExtend = endDomRight - wrapperDom.clientWidth
+  if(rightExtend>0){
+    endDom.style.transform = `translateX(${-rightExtend}px)`
+  }else{
+    endDom.style.transform = `translateX(0px)`
+  }
+}
 function resize(){
   getTipPosition()
   getLabelPosition()
+  getPreLabelPosition()
 }
 
 // 销毁
@@ -84,6 +110,7 @@ function dataReady(src){
   nextTick(()=>{
     getTipPosition()
     getLabelPosition()
+    getPreLabelPosition()
   })
 }
 
@@ -104,9 +131,12 @@ defineExpose({
     </div>
 
     <div class="gant-box" :style="{
-      '--predict':data.predictProgress + '%',
-      '--delay':Math.max(data.delayProgress,0) + '%',
-      '--real': Math.max(Math.min(data.realProgress/100 * (100 - data.delayProgress) ,100),0)+ '%',
+      '--predict':data.progress + '%',
+      '--delay':data.realStart_p + '%',
+      '--real': data.progress+ '%',
+      '--pre-start': data.preStart_p+ '%',
+      '--pre-end': data.preEnd_p+ '%',
+      '--current': data.current_p+ '%',
     }">
 <!--      预计行-->
       <div class="predict-tip gant-box-bar">
@@ -192,11 +222,21 @@ defineExpose({
     &:last-child{margin-bottom: 0}
   }
   .predict-tip{
-    display: flex;
+    //display: flex;
+    //justify-content: space-between;
     margin-bottom: 0.44rem;
     color:#FF505D;
-    justify-content: space-between;
     position:relative;
+    span{
+      display: inline-block;
+      position:absolute;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width:fit-content;
+    }
+    #predict-start{left:var(--pre-start);}
+    #predict-end{left:var(--pre-end);}
   }
   .real-bar{
     display: flex;
@@ -211,7 +251,6 @@ defineExpose({
       display: flex;
       position:absolute;
       height:100%;
-      //width:calc(var(--real) - var(--delay));
       width:var(--real);
       background: linear-gradient( 180deg, #DDE7FF 0%, #487DFE 100%);
       left:var(--delay);
@@ -226,12 +265,12 @@ defineExpose({
       color:#3870F2;
     }
     #real-bar-split{
-      z-index:999;
+      z-index:998;
       pointer-events: none;
       position:absolute;
       height: 1.5rem;
       width:0.13rem;
-      left:calc(var(--real) + var(--delay));
+      left:var(--current);
       top:-50%;
       transform:translateY(20%);
       background: linear-gradient( 180deg, #BAB5FF 0%, #6459F4 100%);
@@ -249,6 +288,14 @@ defineExpose({
         background: #FFFFFF;
         box-shadow: 0rem 0.25rem 1.25rem 0rem rgba(149,172,231,0.25);
         border-radius: 0.63rem 0.63rem 0.63rem 0.63rem;
+        cursor: pointer;
+        pointer-events: all;
+        transition-property: transform;
+        transition-duration: 0.2s;
+        transition-delay: 0.1s;
+        &:hover{
+          transform:translateY(-120%) translateX( var(--dx) );
+        }
         p{
           white-space: nowrap;
           &:nth-child(1){
@@ -287,23 +334,6 @@ defineExpose({
             }
           }
         }
-      }
-    }
-    #predict-bar-split{
-      position:absolute;
-      height: 1.5rem;
-      width:0.13rem;
-      left:var(--predict);
-      top:-50%;
-      transform:translateY(20%);
-      background-color: #FF505D;
-      .tip-text{
-        color:#FF505D;
-        font-size: 0.75rem;
-        position:absolute;
-        top:calc(-100% + (1.5rem - 1.13rem) / 2);
-        white-space: nowrap;
-        transform: translateX(-50%);
       }
     }
   }

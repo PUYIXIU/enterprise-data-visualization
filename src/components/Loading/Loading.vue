@@ -122,7 +122,7 @@ $wrap_h:20rem;
     .t-blur{
       z-index:6;
       position:absolute;
-      font-size: 25px;
+      font-size: 1.75rem;
       color:white;
       filter:blur(1px) ;
       white-space: nowrap;

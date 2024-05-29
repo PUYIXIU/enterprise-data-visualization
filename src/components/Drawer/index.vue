@@ -109,7 +109,6 @@ function expand(projId){
 }
 
 function collapse(){
-  console.log('抽屉合上')
   visible.value = false
   store.currentProjectIndex = undefined
   store.selectProjId = undefined
@@ -149,7 +148,7 @@ onMounted(()=>{
       <drawer-box class="gant-box" title="项目甘特图" height="9.5rem">
         <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
       </drawer-box>
-      <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
+      <drawer-box title="任务工时" height="15.69rem">
         <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
       </drawer-box>
       <drawer-box id="progress-wrapper-dom" title="任务进度" height="29.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">

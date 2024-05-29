@@ -1,4 +1,6 @@
 // 过滤出主图数据
+import dayjs from "dayjs";
+
 export function filterChartData(src){
     return pick(src,[
         // {propName:'participantCount', type:Number,rename:'y'}, // 参与人数-y轴
@@ -143,7 +145,8 @@ export function filterGantData(src){
         'predictEndTime', // 预计结束时间
         {propName:'predictProgress', type:Number,}, // 预计进度
 
-        {propName:'delayProgress', type:Number,}, // 推迟比率
+        // {propName:'delayProgress', type:Number,}, // 推迟比率
+        // {propName:'extendProgress', type:Number,}, // 拓展比率
 
         'realStartTime', // 实际开始时间
         'realEndTime', // 实际结束时间时间
@@ -152,6 +155,27 @@ export function filterGantData(src){
         'currentTime', // 当前时间
         {propName:'totalHour', type:Number,}, // 总工时
     ])
+    // 1-计算起始时间
+    let preStartTime_v = dayjs(result.predictStartTime).valueOf() // 预计开始时间
+    let preEndTime_v = dayjs(result.predictEndTime).valueOf() // 预计结束时间
+    let realStartTime_v = dayjs(result.realStartTime).valueOf() // 实际开始时间
+    let realEndTime_v = dayjs(result.realEndTime?result.realEndTime:result.currentTime).valueOf()     // 没有实际结束时间时，当前时间算作实际结束时间
+    let currentTime_v =  dayjs(result.currentTime).valueOf() // 当前时间
+
+    // 最早开始时间只有可能是预计开始时间和实际开始时间中的一个
+    let minTime = Math.min(preStartTime_v, realStartTime_v)
+    // 最晚时间只有可能是：预计结束时间（未超时）、实际结束时间（超时）、当前时间（超时）
+    let maxTime = Math.max(preEndTime_v,realEndTime_v,currentTime_v)
+    let diff = maxTime - minTime // 时间区间
+    const getRate = params => (params - minTime)/diff * 100
+
+    result.preStart_p = getRate(preStartTime_v)
+    result.preEnd_p = getRate(preEndTime_v)
+    result.realStart_p = getRate(realStartTime_v)
+    result.realEnd_p = getRate(realEndTime_v)
+    result.current_p = getRate(currentTime_v)
+    result.progress = result.realEnd_p - result.realStart_p    // 实际进度
+
     result.hourList = src[0].map.hourList.split(', ').map(str=>{
         let value = str.split('=')
         value[1] *= 1 // 转换为Number类型

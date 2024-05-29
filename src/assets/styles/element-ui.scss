@@ -40,3 +40,17 @@
     }
   }
 }
+
+$button-icon-size:0.85rem;
+.el-button{
+  &.is-circle{
+    padding:0 !important;
+    padding-left:0.5rem !important;
+    width:$button-icon-size !important;
+    height:$button-icon-size !important;
+    i{
+      width:$button-icon-size !important;
+      height:$button-icon-size !important;
+    }
+  }
+}

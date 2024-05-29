@@ -416,17 +416,30 @@ function init(src,filterTime){
     createProgressItemData(groupOption.id, task) // 创建任务进度条group
 
   })
-  max = max.add(3,'month') // 结尾增加一个月用于展示结尾label
   let start = min.clone(), end = max.clone()
   let axisUnit = 'month'
-  let diff = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 365.25)
+  let step = 1
   let diffMonth = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 30) // 如果时间范围比一个月还小，时间单位以天获取
+  let diff = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 365.25)
   if(diff>1){ // 相差年限大于1年，显示最近1年
-    start = end.subtract(1,'year')
+    // start = end.subtract(1,'year')
+    max = max.add(3,'month') // 结尾增加三个月用于展示结尾label
+    step = 3
+  }else{
+    if(diffMonth>1){
+      max = max.add(1,'month') // 结尾增加半个月用于展示结尾label
+      if(diffMonth>6){
+        step = 2
+      }
+    }else{
+      axisUnit = 'day'
+      if(diffMonth>0.5){
+        step = 2
+      }
+      max = max.add(3,'day') // 结尾增加3天用于展示结尾label
+    }
   }
-  if(diffMonth<1){
-    axisUnit = 'day'
-  }
+
   if(window.debugModeEnable){
     console.log('相差年数：'+diff)
     console.log('最早和最晚时间：',min.format('YYYY-MM-DD'),max.format('YYYY-MM-DD'))
@@ -445,6 +458,7 @@ function init(src,filterTime){
 
     timeAxis:{
       scale:axisUnit, // 固定缩放单位月
+      step:step
     },
     // zoomKey: "ctrlKey",
     zoomKey: "shiftKey",

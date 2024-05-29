@@ -18,4 +18,4 @@ resize().then(res=>{
 })
 window.addEventListener('resize',resize)
 window.mockMode = false; // 开启测试模式
-window.debugModeEnable = false; // 开启控制台调试模式
+window.debugModeEnable = true; // 开启控制台调试模式

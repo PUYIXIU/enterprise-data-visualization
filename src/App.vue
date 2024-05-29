@@ -140,10 +140,10 @@ onMounted(()=>{
   background: #e9effa;
   width: 100%;
   height:67.5rem;
-  min-width: 1024px;
-  min-height:768px;
-  max-width: 3840px;
-  max-height:1838px;
+  //min-width: 1024px;
+  //min-height:768px;
+  //max-width: 3840px;
+  //max-height:1838px;
   display: flex;
   flex-direction: column;
   position:absolute;
