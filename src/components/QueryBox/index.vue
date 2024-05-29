@@ -25,11 +25,6 @@ function setPosition(){
   target.style.left = getrem(btn.offsetLeft - target.clientWidth/2) + 'rem'
 }
 
-
-onMounted(()=>{
-  setPosition()
-})
-
 </script>
 
 <template>

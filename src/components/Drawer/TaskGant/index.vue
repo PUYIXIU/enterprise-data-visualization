@@ -294,7 +294,7 @@ defineExpose({
         transition-duration: 0.2s;
         transition-delay: 0.1s;
         &:hover{
-          transform:translateY(-120%) translateX( var(--dx) );
+          transform:translateY(-110%) translateX( var(--dx) );
         }
         p{
           white-space: nowrap;

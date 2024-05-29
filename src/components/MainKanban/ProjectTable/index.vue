@@ -75,7 +75,7 @@ function rowClick(params){
         </template>
       </el-table-column>
       <el-table-column prop="commander" label="产品负责人" show-overflow-tooltip :width="getpx(7)"  header-align="center" class-name="medium"></el-table-column>
-      <el-table-column prop="productLine" label="产品业务线" :width="getpx(8)" header-align="center">
+      <el-table-column prop="productLine" label="产品业务线" :width="getpx(7.8)" header-align="center">
         <template #default="{row}">
         <span class="predict-item" v-if="productType[row.productLine]"
               :style="{
@@ -84,10 +84,10 @@ function rowClick(params){
         }">{{row.productLine}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="responsiblePersonName" label="分管负责人" show-overflow-tooltip header-align="center" class-name="medium"></el-table-column>
-      <el-table-column prop="status" label="状态" show-overflow-tooltip header-align="center" class-name="lighter" :width="getpx(6)" ></el-table-column>
-      <el-table-column prop="erpProjectStartDate" label="开始时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
-      <el-table-column prop="erpProjectEndDate" label="结束时间" header-align="center" class-name="DIN" :width="getpx(7)" ></el-table-column>
+      <el-table-column prop="responsiblePersonName" label="分管负责人" show-overflow-tooltip header-align="center" class-name="medium "></el-table-column>
+      <el-table-column prop="status" label="状态" show-overflow-tooltip header-align="center" class-name="lighter" :width="getpx(5.5)" ></el-table-column>
+      <el-table-column prop="erpProjectStartDate" label="开始时间" header-align="center" class-name="DIN" :width="getpx(7.5)" ></el-table-column>
+      <el-table-column prop="erpProjectEndDate" label="结束时间" header-align="center" class-name="DIN" :width="getpx(7.5)" ></el-table-column>
       <el-table-column prop="daysOpen" label="已开启天数" header-align="center" class-name="DIN" :width="getpx(6)" >
         <template #header>
           <p class="header-p" @click="changeSortProp('daysOpen')">
