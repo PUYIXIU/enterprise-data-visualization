@@ -102,11 +102,13 @@ function resize(){
 }
 
 function initChart(data){
+  if(!chart){ // 初次创建
+    chart = echarts.init(document.getElementById(props.domId))
+    window.addEventListener('resize',resize)
+  }
   dataLength = data.length
-  chart = echarts.init(document.getElementById(props.domId))
   getOption(data)
-  chart.setOption(option)
-  window.addEventListener('resize',resize)
+  chart.setOption(option,{notMerge:true})
 }
 
 function getOption(data){
@@ -125,9 +127,7 @@ function getOption(data){
     option.xAxis[0].axisLabel.width = width * 0.8
     option.dataZoom[0].disabled = true
   }
-
   series.data = data
-
 }
 
 // 销毁表格

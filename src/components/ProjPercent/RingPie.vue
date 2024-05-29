@@ -21,7 +21,7 @@ let option = {
     label:{show:false},
     labelLine:{show:false},
     itemStyle:{
-      opacity:0.4,
+      opacity:0.5,
     }
   }],
 }

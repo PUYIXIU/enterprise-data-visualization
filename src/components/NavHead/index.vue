@@ -86,6 +86,7 @@ watch(()=>store.timeTrigger,()=>{ // 定时请求数据
 watch(()=>queryParams.filterDay,(nv,ov)=>{
   if(nv!==ov){
     store.timeRange = nv // 时间长度修改
+    store.infoFilterDay = nv // 局部时间长度修改
     let label = filterDayOptions.find(o=>o.value==nv).label
     btnList.value[1].name = btnList.value[1].deactiveName = label
     btnList.value[3].name = btnList.value[3].deactiveName = label
@@ -118,7 +119,6 @@ watch(()=>store.selectProjId,nv=>{
     btnList.value[i].show = nv == undefined
   }
   btnList.value[i].show = nv !== undefined
-  console.log(btnList.value.map(i=>i.show))
 })
 
 function getCurrentTime(){

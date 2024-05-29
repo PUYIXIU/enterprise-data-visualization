@@ -71,11 +71,15 @@ function resize(){
 
 // 销毁
 function dispose(){
+  init = true
   window.removeEventListener('resize',resize)
 }
-
+let init = true // 是否为初始化
 function dataReady(src){
-  window.addEventListener('resize',resize)
+  if(init){
+    init = false
+    window.addEventListener('resize',resize)
+  }
   data.value = src
   nextTick(()=>{
     getTipPosition()

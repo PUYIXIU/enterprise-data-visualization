@@ -23,7 +23,6 @@ let liquidOption = { // 水球option
 let center = [0,0] // 画布中心 平移用
 let rectCenter = [0,0]// 水球图中心 平移用
 let canvasSize = [0,0] // 画布尺寸 缩放用
-let targetRadius = 50 // 目标半径 缩放用
 function resize(){
   liquidChart && liquidChart.resize()
   pieChart && pieChart.resize()
@@ -56,6 +55,18 @@ function initChart(seriesList, rect){
   },0)
 }
 
+// 只更新饼图
+function updatePieChartOnly(){
+  getPieOption()
+  pieChart && pieChart.setOption(pieOption,{notMerge:false})
+}
+
+// 只更新水球图上的数据
+function updateLiquidChartOnly(){
+  getLiquidOption()
+  liquidChart && liquidChart.setOption(liquidOption,{notMerge:false})
+}
+
 // 更新饼图
 function updateChart(seriesList, rect){
   if(!liquidChart) return // 更新中心水球图目的：自适应内部文字
@@ -67,9 +78,6 @@ function updateChart(seriesList, rect){
   moveIn() // 更新水球中点
   getPieOption()
   pieChart.setOption(pieOption)
-  // 修改整个图表的中心位置
-
-
 }
 
 // 获取画布饼图展示的中心点 [30%, 50%]
@@ -83,13 +91,7 @@ function getCanvasPieCenter(){
   let halfWidth = canvasWidth * 0.3, halfHeight = canvasHeight * 0.5 // 一半的宽高
   center[0] = halfWidth + boundBox.left + grid.left
   center[1] = halfHeight + boundBox.top + grid.top + window.scrollY
-  console.log(grid, center)
 }
-
-
-// onMounted(()=>{ // 初始化时就获取画布中心点
-//   getCanvasPieCenter()
-// })
 
 // 获取偏移量
 function getRectCenter(){
@@ -176,6 +178,7 @@ function moveOut(){
 function getLiquidOption(){
   // label字体变化 添加项目负责人字样
   let option = liquidFillSeriesOption[1]
+  let option2 = liquidFillSeriesOption[0]
   let {data} = props
   option.label.formatter = getPieFormatter(data)
   option.label.width = canvasSize[1]*0.2
@@ -185,6 +188,8 @@ function getLiquidOption(){
   option.backgroundStyle.shadowOffsetY = 0
   option.backgroundStyle.shadowOffsetX = 0
   liquidOption.series = liquidFillSeriesOption // 20
+
+  option.data = option2.data = [data.wave/100] // 更新进度
 }
 
 // 设置饼图的option
@@ -202,7 +207,9 @@ function getPieOption(){
 defineExpose({
   initChart,
   updateChart,
-  moveOut
+  moveOut,
+  updatePieChartOnly, // 只更新饼图的数据
+  updateLiquidChartOnly, // 只更新水球图的数据
 })
 </script>
 

@@ -225,7 +225,7 @@ $box-ml:2rem;
         width:0.5rem;height:0.5rem;
         background-color: var(--color);
         margin-right: 0.25rem;
-        opacity: 0.9;
+        opacity: 0.5;
       }
       .tooltip-info{
         width:4rem;

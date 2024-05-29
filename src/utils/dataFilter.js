@@ -1,13 +1,14 @@
 // 过滤出主图数据
 export function filterChartData(src){
     return pick(src,[
+        // {propName:'participantCount', type:Number,rename:'y'}, // 参与人数-y轴
+        // {propName:'taskCount', type:Number,rename:'x'}, // 任务数-x轴
+        // {propName:'laborHours', type:Number,rename:'radius'}, // 工时-半径
+
         {propName:'index', rename:'no'}, // 排名 用于区分颜色
         {propName:'projectId', rename:'id'}, // id
         {propName:'projectName', rename:'name'}, // 项目名
         {propName:'status', rename:'type'}, // 项目状态-类型
-        // {propName:'participantCount', type:Number,rename:'y'}, // 参与人数-y轴
-        // {propName:'taskCount', type:Number,rename:'x'}, // 任务数-x轴
-        // {propName:'laborHours', type:Number,rename:'radius'}, // 工时-半径
 
         {propName:'grade', type:Number,rename:'radius'}, // 项目热度-半径
         {propName:'taskSubmissionCount', type:Number,rename:'x'}, // 项目提交次数-x轴
@@ -16,6 +17,15 @@ export function filterChartData(src){
         {propName:'preProjectRate', type:Number}, // 查询时间段中最早时间点时，项目的进度
         'commander', // 产品负责人
         {propName:'erpProjectCode', rename:'code'}, // 代号
+    ])
+}
+
+// 过滤出水球图更新时需要的数据 需要更新的只有进度
+export function filterLiquidUpdateData(src){
+    return pick(src,[
+        {propName:'laborHours', type:Number,isInt:true,rename:'y'}, // 工时-y轴
+        {propName:'projectRate', type:Number,rename:'wave'}, // 进度-水面
+        {propName:'preProjectRate', type:Number}, // 查询时间段中最早时间点时，项目的进度
     ])
 }
 

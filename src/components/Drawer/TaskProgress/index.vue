@@ -21,6 +21,7 @@ import {useLocalDataStore} from "@/storage/index.js";
 const store = useLocalDataStore()
 
 const domId = ref('progress-timeline')
+let contentHeight = 0 //动态计算高度
 
 const groupData = new VisData.DataSet()
 const itemData = new VisData.DataSet()
@@ -32,6 +33,8 @@ let renderedList = [] //已经渲染的列表
 let renderGroupIds = [] // 已经渲染的groupId
 let counter = 0
 let loading = ref(true)
+let isEmpty = ref(false)
+let filterDay = null // 接口筛选的时间
 
 // 清空所有数据
 function dispose(){
@@ -43,6 +46,10 @@ function dispose(){
   timeLineData = []
   renderGroupIds = []
   hourMap = {}
+  counter = 0 // id计数器
+  contentHeight = 0 // 容器高度需要重新计算
+  isEmpty.value = false // 是否为空重新计算
+  filterDay = null
 }
 
 const progressGroupClassName = 'progress-group' // 进度条分组标识
@@ -213,7 +220,7 @@ function getProgressDom(param){
 const selectTaskProgressStaffDetails = params => request.get('/erp/visualize/selectTaskProgressStaffDetails',{params})
 function getHourListByTaskId(id){
   if(hourMap[id]) return Promise.resolve(hourMap[id])
-  return selectTaskProgressStaffDetails({taskId:id,filterDay:store.timeRange}).then(res=>{
+  return selectTaskProgressStaffDetails({taskId:id,filterDay:filterDay}).then(res=>{
     if(window.debugModeEnable){
 
     }
@@ -358,7 +365,6 @@ function progressLeave(e){
   toolTipData.value.show = false
 }
 
-let contentHeight = 0 //动态计算高度
 // 绑定事件
 function addEvent(){
   let content = document.querySelector('.vis-timeline')
@@ -373,10 +379,10 @@ function setContentHeight(height){
   contentHeight = height
   content.style.setProperty('--content-height',contentHeight + 'px')
 }
-
-let isEmpty = ref(false)
 // 初始化时间轴表格
-function init(src){
+function init(src,filterTime){
+  dispose()
+  filterDay = filterTime
   timeLineData = src
   if(src.length == 0){
     isEmpty.value = true

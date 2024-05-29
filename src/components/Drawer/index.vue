@@ -12,6 +12,7 @@ import {MockProgressTimelineData as TaskProgressMockData} from './TaskProgress/m
 import {MockProgressTimelineData} from "@/components/Drawer/TaskProgress/mockData.js";
 import {useLocalDataStore} from "@/storage/index.js";
 import {filterBarData, filterGantData, filterTimelineData} from "@/utils/dataFilter.js";
+import {ElMessage} from "element-plus";
 const props = defineProps(['domId'])
 
 const store = useLocalDataStore()
@@ -29,11 +30,17 @@ watch(()=>store.selectProjId,(nv,ov)=>{
   })
 })
 
+// 监听当前详情选中的时间范围
+watch(()=>store.infoFilterDay,(nv,ov)=>{
+  if(store.selectProjId == undefined || nv == ov ) return // 没有选中id返回
+  initAll(store.selectProjId, true)
+})
+
 // 获取柱状图数据
 const selectProjectBarChartDetails = params => request.get('/erp/visualize/selectProjectBarChartDetails',{params})
-function getTaskHourBarData(projId){
+function getTaskHourBarData(projId, filterTime){
   // 获取柱状图数据，传项目id 和时间长度
-  return selectProjectBarChartDetails({erpProjectId:projId, filterDay:store.timeRange}).then(res=>{
+  return selectProjectBarChartDetails({erpProjectId:projId, filterDay:filterTime}).then(res=>{
     res.data = filterBarData(res.data)
     proxy.$refs.TaskHourBarRef.initChart(res.data)
     if(window.debugModeEnable){
@@ -61,8 +68,8 @@ function getTaskGantData(projId){
 // 获取任务进度数据
 const selectTaskProgress = params => request.get('/erp/visualize/selectTaskProgress',{params})
 
-function getTaskProgressData(projId){
-  return selectTaskProgress({erpProjectId:projId, filterDay:store.timeRange}).then(res=>{
+function getTaskProgressData(projId, filterTime){
+  return selectTaskProgress({erpProjectId:projId, filterDay:filterTime}).then(res=>{
     if(window.debugModeEnable){
       console.group('请求任务进度数据:',projId)
       console.log(res)
@@ -73,15 +80,22 @@ function getTaskProgressData(projId){
   })
 }
 
-// 初始化所有数据
-function initAll(projId){
+// 初始化所有数据 projId 项目id， isPartly 是否是局部时间过滤
+function initAll(projId, isPartly=false){
   store.loading = true
+  let filterTime = isPartly?store.infoFilterDay:store.timeRange
   Promise.all([
-    getTaskHourBarData(projId),
-    getTaskGantData(projId),
-    getTaskProgressData(projId),
+    getTaskHourBarData(projId, filterTime),
+    isPartly?Promise.resolve():getTaskGantData(projId), // 项目gant图数据，局部刷新时不请求
+    getTaskProgressData(projId, filterTime),
   ]).then(res=>{
-    proxy.$refs.TaskProgressRef.init(res[2])
+    proxy.$refs.TaskProgressRef.init(res[2],filterTime)
+    store.loading = false
+  }).catch(err=>{
+    ElMessage({
+      type: 'error',
+      message: err.message
+    })
     store.loading = false
   })
 }
@@ -120,8 +134,6 @@ function clickCheck(e){
   if(navHeadDom.contains(e.target)) return
   collapse()
 }
-
-
 
 onMounted(()=>{
   // expand(123)
