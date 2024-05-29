@@ -235,7 +235,7 @@ function getHourListByTaskId(id){
   })
 }
 
-let barRowHeightRem = 1.5
+let barRowHeightRem = 2
 // 返回进度条被点击的回调函数
 function progressClick(data){
   return async (e)=>{
