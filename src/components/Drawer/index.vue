@@ -8,7 +8,7 @@ import {ref, onMounted, getCurrentInstance, watch, onBeforeUnmount,nextTick} fro
 import request from '@/utils/request.js'
 import {mockData as taskHourBarMockData} from './TaskHourBar/mockData.js'
 import {mockData as taskGantMockData} from './TaskGant/mockData.js'
-import {MockProgressTimelineData as TaskProgressMockData} from './TaskProgress/mockData.js'
+import {colorMap, MockProgressTimelineData as TaskProgressMockData} from './TaskProgress/mockData.js'
 import {MockProgressTimelineData} from "@/components/Drawer/TaskProgress/mockData.js";
 import {useLocalDataStore} from "@/storage/index.js";
 import {filterBarData, filterGantData, filterTimelineData} from "@/utils/dataFilter.js";
@@ -152,6 +152,17 @@ onMounted(()=>{
         <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
       </drawer-box>
       <drawer-box id="progress-wrapper-dom" title="任务进度" height="30.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
+        <div class="progress-tooltip-box">
+          <p class="tool-tip-item"
+             v-for="([key,value]) in Object.entries(colorMap)"
+             :style="{
+               '--color':value.mainColor,
+               '--color1':value.mainColor+'77',
+             }">
+            <span class="tool-tip-icon"></span>
+            <span class="tool-tip-text">{{key}}</span>
+          </p>
+        </div>
         <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
       </drawer-box>
     </div>
@@ -220,5 +231,32 @@ h3{
 
 .gant-box{
   padding-top:1rem !important;
+}
+
+$tip-size:0.75rem;
+.progress-tooltip-box{
+  position:absolute;
+  z-index:998;
+  display: flex;
+  transform:translateY(-100%);
+  right:1.5rem;
+  .tool-tip-item{
+    display: flex;
+    align-items: center;
+    font-size: $tip-size;
+    margin-left:2rem;
+    span{display: inline-block}
+    .tool-tip-icon{
+      background: linear-gradient(-45deg, var(--color), var(--color1));
+      width:$tip-size;
+      height:$tip-size;
+      margin-right:0.25rem;
+      border-radius: 30%;
+    }
+    .tool-tip-text{
+      color:var(--color);
+      font-family: SourceHanSansCN-Normal;
+    }
+  }
 }
 </style>

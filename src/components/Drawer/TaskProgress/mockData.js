@@ -34,26 +34,62 @@ export const colorList = [
     {
         mainColor:'#5788FE',
         subColor:[
-            '#FB9B61',
-            '#FF6C78',
+            // '#FB9B61',
+            // '#FF6C78',
+            '#ff4141',
+            '#DC2F02',
+            '#E85D04',
+            '#F48C06',
+            '#FAA307',
+            '#FFBA08',
+            '#335c67',
+            '#fff3b0',
+            '#e09f3e',
+            '#9e2a2b',
         ]
     },
     {
         mainColor:'#f97374',
         subColor:[
-            '#f99a60',
-            '#d62b39',
+            // '#f99a60',
+            // '#d62b39',
+            '#E9D8A6',
+            '#ceb0ff',
+            '#a774ff',
+            '#e07eff',
+            '#6a3270',
+            '#6a8bfd',
+            '#4162d3',
+            '#00d4ff',
+            '#8ffaff',
+            '#0effa6',
         ]
     },
     {
-        mainColor:'#79bff2',
+        mainColor:'#39d0b4',
         subColor:[
-            '#608bf9',
-            '#2b79d6',
+            // '#608bf9',
+            // '#2b79d6',
+            '#005F73',
+            '#0A9396',
+            '#94D2BD',
+            '#E9D8A6',
+            '#EE9B00',
+            '#CA6702',
+            '#BB3E03',
+            '#AE2012',
+            '#9B2226',
+            '#6a040f',
         ]
     },
 ]
 
+
+export const colorMap = {
+    '已完成':colorList[0],
+    '已逾期':colorList[1],
+    '进行中':colorList[2],
+}
 
 export const MockProgressTimelineData = [
     {

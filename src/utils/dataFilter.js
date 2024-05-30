@@ -197,6 +197,7 @@ export function filterTimelineData(src){
             'participantCount', // 参与人数
             'predictProgress', // 预计进度
             'erpTaskTotalHours', // 总工时
+            {propName:'erpTaskStatus',  rename:'type'}, // 任务状态
         ]))
     })
     result = result.sort((a,b)=>{

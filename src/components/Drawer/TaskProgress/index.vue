@@ -1,6 +1,6 @@
 <script setup>
-import {colorList} from "./mockData.js";
-import {onMounted, ref,nextTick} from "vue";
+import {colorList, colorMap} from "./mockData.js";
+import { ref,nextTick} from "vue";
 import request from '@/utils/request.js'
 
 const props = defineProps(['domId'])
@@ -12,7 +12,6 @@ import * as vis from "vis-timeline";
 import VisData from 'vis-data/dist/esm.js'
 import dayjs from "dayjs";
 import {filterHourListData} from "@/utils/dataFilter.js";
-import QueryBox from "@/components/QueryBox/index.vue";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
 import {getpx} from "@/utils/style.js";
 import Empty from "@/components/Loading/Empty.vue";
@@ -278,7 +277,7 @@ function progressClick(data){
       })
       timeline.setGroups(groupData)
       timeline.on('changed',hourListExpand)
-      refreshProgressStyle(data.id, hourData) // 更新进度条样式
+      refreshProgressStyle(data, hourData) // 更新进度条样式
       setContentHeight(contentHeight + barHeight * hourData.length)
     })
   }
@@ -314,17 +313,20 @@ function removeProgressForeRow2(id){
 }
 
 // 更新progress类型的样式
-function refreshProgressStyle(id, params){
+function refreshProgressStyle(data, params){
   // progress-item  task-1787287822901403649
-  let wrapper = document.querySelector(`.${progressItemClassName}.task-${id}`)
+  let wrapper = document.querySelector(`.${progressItemClassName}.task-${data.id}`)
   let foreRow2 = wrapper.querySelector('.fore-row-2') // 目标容器
+  console.log('被点击的progress数据：',data)
   params.forEach(person=>{
+      // erpTaskTotalHours
+      person.percent = person.totalHour / data.erpTaskTotalHours * 100
       let foreCell = getDiv('fore-cell')
       foreRow2.append(foreCell)
       foreCell.style.width = `${person.percent}%` // 工时占比
       foreCell.style.setProperty(
           '--fore-cell-bg',
-          setOpacity(person.color,0.9)
+          setOpacity(person.color,0.5)
       )
   })
 }
@@ -396,7 +398,9 @@ function init(src,filterTime){
   let max = dayjs()  // 最晚时间
   timeLineData.forEach((task,taskIndex)=>{
     // 添加总进度条
-    const mainColor = colorList[taskIndex%colorList.length] // 领取颜色
+    // const mainColor = colorList[taskIndex%colorList.length] // 领取颜色
+    const mainColor = colorMap[task.type] // 领取颜色
+
     task.color = mainColor
     task.value = baseValue * taskIndex
 
@@ -767,6 +771,7 @@ $left-width:9.6625rem; // 左侧狼的宽度
             width: 100%;
             height:30%;
             display: flex;
+            filter:contrast(2);
 
             .fore-cell{
               --fore-cell-bg: #D82B39;

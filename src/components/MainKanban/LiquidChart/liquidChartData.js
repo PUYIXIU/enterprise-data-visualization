@@ -72,8 +72,6 @@ export function getLiquidData(
     } = getAxisRange(data)
     let content_w = dom.clientWidth - grid.left - grid.right  // 容器宽度
     let content_h = dom.clientHeight - grid.top - grid.bottom // 容器高度
-    // let content_w = dom.clientWidth  // 容器宽度
-    // let content_h = dom.clientHeight // 容器高度
     // type=value时坐标系的单位长度
     let x_unit = content_w/max_x // x轴单位长度（px）
     let y_unit = content_h/max_y // y轴单位长度（px）
@@ -172,56 +170,62 @@ export function getLiquidData(
             y_unit = content_h / y_num // y单位
         }
         refreshUnit()
-        data.forEach((node,index)=>{
-            let r2px = node.mapRadius/2/100*content_h // 半径px大小
+        function countAxisRange(){
+            data.forEach((node,index)=>{
+                let r2px = node.mapRadius/2/100*content_h // 半径px大小
 
-            let x_index = x_category.findIndex(i=>i == node.x)*2+1 // x轴索引位置
-            let y_index = y_category.findIndex(i=>i == node.y)*2+1 // y轴索引位置
+                let x_index = x_category.findIndex(i=>i == node.x)*2+1 // x轴索引位置
+                let y_index = y_category.findIndex(i=>i == node.y)*2+1 // y轴索引位置
 
-            let x = x_index * x_unit // 数据x中心点
-            let y = (y_num - y_index)*y_unit // 数据y中心点
-            let left = x - r2px
-            let right = x + r2px
-            let top = y - r2px
-            let bottom = y + r2px
-            if(left<0){ // 左侧超过
-                let n = x_num
-                let left_add = Math.ceil(((x_index - 0) * content_w -r2px*n)/(r2px - content_w)/2)
-                for(let i =0, pre= x_category[0];i<left_add;i++) {
-                    let temp = ''
-                    if(typeof pre == 'number' && (--pre)>=0)temp = pre
-                    x_category.unshift(temp)
+                let x = x_index * x_unit // 数据x中心点
+                let y = (y_num - y_index)*y_unit // 数据y中心点
+                let left = x - r2px
+                let right = x + r2px
+                let top = y - r2px
+                let bottom = y + r2px
+                if(left<0){ // 左侧超过
+                    let n = x_num
+                    let left_add = Math.ceil(((x_index - 0) * content_w -r2px*n)/(r2px - content_w)/2)
+                    for(let i =0, pre= x_category[0];i<left_add;i++) {
+                        let temp = ''
+                        if(typeof pre == 'number' && (--pre)>=0)temp = pre
+                        x_category.unshift(temp)
+                    }
+                    refreshUnit()
                 }
-                refreshUnit()
-            }
-            if(right>content_w){ // 右侧超过
-                let n = x_num
-                let right_add = Math.ceil((content_w * n - (x_index - 0) * content_w - r2px*n) / (r2px - content_w)/2)
-                for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(++pre)
-                refreshUnit()
-            }
-            if(top<0){ // 上侧超过
-                let n = y_num
-                let top_add = Math.ceil(
-                    (r2px*n - content_h*y_num + content_h * y_index) / (content_h - r2px)/2
-                )
-                for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(++pre)
-                refreshUnit()
-            }
-            if(bottom>content_h){ // 下侧超过
-                let n = y_num
-                let bottom_add = Math.ceil(
-                    ((content_h*y_num - content_h*y_index)/(content_h-r2px) - n)/2
-                )
-                let last= x_category[0]
-                for(let i =0, pre= y_category[0];i<bottom_add;i++) {
-                    let temp = ''
-                    if(typeof pre == 'number' && (--pre)>=0)temp = pre
-                    y_category.unshift(temp)
+                if(right>content_w){ // 右侧超过
+                    let n = x_num
+                    let right_add = Math.ceil((content_w * n - (x_index - 0) * content_w - r2px*n) / (r2px - content_w)/2)
+                    for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(++pre)
+                    refreshUnit()
                 }
-                refreshUnit()
-            }
-        })
+                if(top<0){ // 上侧超过
+                    let n = y_num
+                    let top_add = Math.ceil(
+                        (r2px*n - content_h*y_num + content_h * y_index) / (content_h - r2px)/2
+                    )
+                    for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(++pre)
+                    refreshUnit()
+                    console.log('top_add:',top_add)
+                }
+                if(bottom>content_h){ // 下侧超过
+                    let n = y_num
+                    let bottom_add = Math.ceil(
+                        ((content_h*y_num - content_h*y_index)/(content_h-r2px) - n)/2
+                    )
+                    let last= x_category[0]
+                    for(let i =0, pre= y_category[0];i<bottom_add;i++) {
+                        let temp = ''
+                        if(typeof pre == 'number' && (--pre)>=0)temp = pre
+                        y_category.unshift(temp)
+                    }
+                    refreshUnit()
+                    console.log('bottom_add:',bottom_add)
+                }
+            })
+        }
+        countAxisRange()
+        countAxisRange() // 第二次计算，防止第一次因为动态计算导致的坐标系溢出问题
     }
     return {
         data,
