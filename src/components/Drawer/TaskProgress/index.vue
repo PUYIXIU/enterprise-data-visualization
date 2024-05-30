@@ -97,9 +97,9 @@ function createProgressItemData(groupId, params){
 }
 
 // 设置bar类型的样式
-function setBarStyle(){
+function setBarStyle(update=false){
   const groups = document.querySelectorAll(`.vis-foreground .vis-group.${barGroupClassName}:not(.expand)`)
-
+  debugger
   for(let i =0; i<groups.length;i++){
     let group = groups[i]
     group.classList.add('expand')
@@ -108,7 +108,7 @@ function setBarStyle(){
         .split('-')[1]
     group.style.setProperty('--bar-top-color',setOpacity(color,0.9))
     group.style.setProperty('--bar-bottom-color',setOpacity(color,0.1))
-
+    if(update) continue
     const nodes = group.querySelectorAll(`.${barItemClassName}`)
     if(!nodes.length) break; // 当前元素没渲染出来
     // let showNodeLength = 0  // 真正进行展示的元素数量
@@ -251,6 +251,8 @@ function progressClick(data){
         })
         setContentHeight(contentHeight - barHeight * hourData.length)
         timeline.setGroups(groupData)
+        // 重新刷新颜色
+        setBarStyle(true)
         removeProgressForeRow2(data.id)
         loading.value = false
         return
