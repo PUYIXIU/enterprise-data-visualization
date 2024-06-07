@@ -62,7 +62,7 @@ function rowClick(params){
 <template>
   <div class="table-wrapper" >
 
-    <el-table :data="sortTableData" :height="'100%'" @row-click="rowClick">
+    <el-table :data="sortTableData" :height="'100%'" @row-click="rowClick" >
       <el-table-column v-if="store.visitMode == 0" prop="projectName" label="项目名称" :width="getpx(9)" show-overflow-tooltip header-align="center"  class-name="align-left"></el-table-column>
       <el-table-column v-if="store.visitMode == 1" prop="erpProjectCode" label="代号" show-overflow-tooltip header-align="center" :width="getpx(7)"></el-table-column>
       <el-table-column prop="priority" label="优先级" header-align="center" :width="getpx(6)" >
@@ -104,16 +104,16 @@ function rowClick(params){
           </p>
         </template>
       </el-table-column>
-      <el-table-column prop="projectRate" label="项目进度" header-align="center" class-name="DIN" >
+      <el-table-column prop="projectRate" label="项目进度" header-align="center" class-name="DIN" column-key="'projectRate" :key="'projectRate'">
         <template #header>
           <p class="header-p" @click="changeSortProp('projectRate')">
             <span>项目进度</span>
             <i class="head-icon" :class="[status[sort.projectRate]]"></i>
           </p>
         </template>
-        <template #default="{row}">
+        <template #default="{row}" >
           <div class="progress-box" :style="{'--progress':row.projectRate+'%'}">
-            <p class="text">{{row.projectRate}}%</p>
+            <p class="text progress-text">{{row.projectRate}}%</p>
             <p class="progress-bar"><span> 1</span></p>
           </div>
         </template>
@@ -190,7 +190,7 @@ $padding-top:1.5rem;
 }
 
 // 进度条
-.progress-box{
+::v-deep(.progress-box){
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -222,9 +222,6 @@ $padding-top:1.5rem;
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;
-  .text{
-    //margin-right: 0.44rem;
-  }
   .hot-div{
     .hot-p{
       white-space: nowrap;

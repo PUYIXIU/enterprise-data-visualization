@@ -30,7 +30,7 @@ export default defineConfig(({mode, command})=>{
       }
     },
     server:{
-      port:8088,
+      port:8089,
       host:true,
     },
     plugins:[

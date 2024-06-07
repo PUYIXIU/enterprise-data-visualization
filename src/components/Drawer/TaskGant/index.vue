@@ -283,10 +283,11 @@ defineExpose({
       z-index:998;
       pointer-events: none;
       position:absolute;
-      height: 1.5rem;
+      //height: 1.5rem;
+      height: 2.5rem;
+      bottom:25%;
       width:0.13rem;
       left:var(--current);
-      top:-50%;
       transform:translateY(20%);
       background: linear-gradient( 180deg, #BAB5FF 0%, #6459F4 100%);
       .real-bar-tip{
@@ -295,7 +296,7 @@ defineExpose({
         position:absolute;
         top:calc(-50% - (1.5rem - 1.13rem) / 2 );
         left:0%;
-        transform:translateY(-80%) translateX( var(--dx) );
+        transform:translateY(-75%) translateX( var(--dx) );
         width: fit-content;
         height: 3.44rem;
         padding:0.5rem;
@@ -308,9 +309,9 @@ defineExpose({
         transition-property: transform;
         transition-duration: 0.2s;
         transition-delay: 0.1s;
-        &:hover{
-          transform:translateY(-110%) translateX( var(--dx) );
-        }
+        //&:hover{
+        //  transform:translateY(-110%) translateX( var(--dx) );
+        //}
         p{
           white-space: nowrap;
           &:nth-child(1){

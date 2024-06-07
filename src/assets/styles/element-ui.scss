@@ -55,3 +55,32 @@ $button-icon-size:0.85rem;
     }
   }
 }
+
+.progress-box{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .text{
+    color:#799EFF;
+  }
+  .progress-bar{
+    width:5.13rem;
+    height:0.25rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: #DFE5F6;
+    position:relative;
+    span{
+      border-radius: 0.75rem;
+      position:absolute;
+      left:0;
+      top:0;
+      color:transparent;
+      display: inline-block;
+      height:100%;
+      width:var(--progress);
+      background-color: #3f77fccc;
+    }
+  }
+}

@@ -170,6 +170,79 @@ export function getLiquidData(
             y_unit = content_h / y_num // y单位
         }
         refreshUnit()
+        let evenOk = false
+        let evenTime = 0
+        // 均匀映射，不重叠
+        function evenMap(){
+            evenOk = true
+            evenTime++
+            const getRadius = (node)=>node.mapRadius/2/100*content_h // 获取半径
+            const getXYIndex = (node)=>[ // 获取xy的索引
+                x_category.findIndex(i=>i === node.x)*2+1,
+                y_category.findIndex(i=>i === node.y)*2+1,
+            ]
+            const getXY = (node,x_index,y_index)=>[
+                x_index * x_unit,
+                (y_num - y_index)*y_unit, //
+            ]
+            const dis_gap =0; // 允许的交叉距离
+            const gap_per = 0.1
+            for(let i =0;i<data.length-1;i++){
+                for(let j = i+1;j <data.length;j++){
+                    if(i == j) return
+                    // 计算球i和球j之间的距离，是否大于两者之间的半径之和
+                    let node_i = data[i], node_j = data[j]
+                    let radius_i = getRadius(node_i), radius_j = getRadius(node_j);
+                    let [x_index_i,y_index_i] = getXYIndex(node_i), [x_index_j, y_index_j] = getXYIndex(node_j);
+                    let [x_i,y_i] = getXY(node_i, x_index_i, y_index_i), [x_j, y_j] = getXY(node_j, x_index_j, y_index_j)
+                    let distant = Math.sqrt(
+                        Math.pow(x_j - x_i, 2)+Math.pow(y_j - y_i,2)
+                    )
+                    let targetDistant = radius_i + radius_j - dis_gap
+                    let diff = targetDistant - distant
+                    // 当重叠程度高达一定值时，才进行调整
+
+                    if(distant<targetDistant && distant>0 && diff/targetDistant>gap_per) { // 检测出来有重叠现象
+                        evenOk = false
+                        // console.log(`节点${i}【${node_i.name}】和节点${j}【${node_j.name}】之间的距离小于目标值：${targetDistant}，实际为${distant}`)
+
+                        let cos = Math.abs(x_j - x_i) / distant
+                        let sin = Math.abs(y_i - y_j) / distant
+                        let target_y = targetDistant * sin, target_x = targetDistant * cos
+                        let y_add = 0
+                        let x_add = 0
+                        let start_y_index = Math.min(y_index_i, y_index_j), end_y_index = Math.max(y_index_i, y_index_j)
+                        let start_x_index = Math.min(x_index_i, x_index_j), end_x_index = Math.max(x_index_i, x_index_j)
+                        let start_y = Math.min(y_i, y_j), end_y = Math.max(y_i, y_j)
+                        let start_x = Math.min(x_i, x_j), end_x = Math.max(x_i, x_j)
+
+                        const tc_y = target_y/content_h
+                        const tc_x = target_x/content_w
+                        y_add = Math.ceil(Math.abs((end_y_index*2 - start_y_index*2 - tc_y*y_num) / (tc_y-1 )/2))
+                        x_add = Math.ceil(Math.abs((end_x_index*2 - start_x_index*2 - tc_x*x_num) / (tc_x-1 )/2))
+                        // debugger
+
+                        let new_y_num = y_num + y_add*2
+                        let new_y_unit = content_h / new_y_num
+                        let new_end_y_index = end_y_index + y_add
+                        let new_diff_y = (new_end_y_index - start_y_index)*2*new_y_unit
+
+                        for (let y = 0; y < y_add; y++){
+                            y_category.splice((start_y_index-1)/2+1, 0, ' ')
+                        } // 添加空项
+                        for (let x= 0; x < x_add; x++) {
+                            x_category.splice((start_x_index-1)/2+1, 0, ' ') // 添加空项
+                        }
+                        refreshUnit()
+                    }
+                }
+            }
+        }
+        while(evenOk == false && evenTime<20){
+            evenMap()
+        }
+        console.log(`为了均匀分散映射的次数：${evenTime}，最终x轴总坐标数：${x_category.length}，y轴总坐标数：${y_category.length}`)
+        // 计算坐标系
         function countAxisRange(){
             data.forEach((node,index)=>{
                 let r2px = node.mapRadius/2/100*content_h // 半径px大小
@@ -189,14 +262,16 @@ export function getLiquidData(
                     for(let i =0, pre= x_category[0];i<left_add;i++) {
                         let temp = ''
                         if(typeof pre == 'number' && (--pre)>=0)temp = pre
-                        x_category.unshift(temp)
+                        // x_category.unshift(temp)
+                        x_category.unshift(' ')
                     }
                     refreshUnit()
                 }
                 if(right>content_w){ // 右侧超过
                     let n = x_num
                     let right_add = Math.ceil((content_w * n - (x_index - 0) * content_w - r2px*n) / (r2px - content_w)/2)
-                    for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(++pre)
+                    // for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(++pre)
+                    for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(' ')
                     refreshUnit()
                 }
                 if(top<0){ // 上侧超过
@@ -204,7 +279,8 @@ export function getLiquidData(
                     let top_add = Math.ceil(
                         (r2px*n - content_h*y_num + content_h * y_index) / (content_h - r2px)/2
                     )
-                    for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(++pre)
+                    // for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(++pre)
+                    for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(' ')
                     refreshUnit()
                     console.log('top_add:',top_add)
                 }
@@ -217,7 +293,8 @@ export function getLiquidData(
                     for(let i =0, pre= y_category[0];i<bottom_add;i++) {
                         let temp = ''
                         if(typeof pre == 'number' && (--pre)>=0)temp = pre
-                        y_category.unshift(temp)
+                        // y_category.unshift(temp)
+                        y_category.unshift(' ')
                     }
                     refreshUnit()
                     console.log('bottom_add:',bottom_add)
