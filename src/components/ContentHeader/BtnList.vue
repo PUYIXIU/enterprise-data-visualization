@@ -1,19 +1,23 @@
 <script setup>
 const props = defineProps(['btnList'])
+import {computed} from "vue";
 
 function btnClick(btn){
   // 有2种状态切换的按钮
   if(!btn.deactiveName) btn.deactiveName = btn.name
   btn.onclick()
 }
+
+const showBtnList = computed(()=>{
+  return props.btnList.filter(i=>i.show == undefined || i.show)
+})
 </script>
 
 <template>
   <div class="tool-box">
-    <p class="tool-btn" v-for="(btn,i) in btnList" :key="i"
+    <p class="tool-btn" v-for="(btn,i) in showBtnList" :key="i"
        @click="btnClick(btn)"
        :id="btn.id || ''"
-       v-show="btn.show == undefined || btn.show"
     >
       <span>{{btn.active?btn.deactiveName:btn.name}}</span>
       <i :class="btn.class" :style="btn.active?btn.deactiveIconStyle:{}"></i>
@@ -55,5 +59,6 @@ function btnClick(btn){
       &.expand{mask-image: $bottom-arrow-icon;}
     }
   }
+
 }
 </style>

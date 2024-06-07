@@ -43,6 +43,7 @@ function checkClick(e){
   if(!props.visibleBox) return
   const target = document.querySelector(`#${props.domId}`)
   const btn =  document.querySelector(`#${props.btnId}`)
+  if(!btn) return
   if(target.contains(e.target) || btn.contains(e.target)) return // 不退出
   emit('blur') // 退出
 }

@@ -5,7 +5,7 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
 const service = axios.create({
     baseURL:getBaseURL(),
-    timeout:20000,
+    timeout:20000, // 10s超时
 })
 
 // 请求拦截器

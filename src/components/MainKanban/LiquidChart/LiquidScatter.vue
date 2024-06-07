@@ -30,7 +30,7 @@ const SeriesOptionTemp = {
     color:'rgba(52,38,246,0.75)',
     opacity:0.15,
   },
-  amplitude:10, // 水波曲度
+  amplitude:'5%', // 水波曲度
   direction:'right', // 水波方向
   phase:0,
   waveLength:'50%',
@@ -48,11 +48,11 @@ const SeriesOptionTemp = {
   label:{
     position:['50%','50%'],
     formatter:null,
+    overflow:'truncate',
     rich:{
       title:{
         color:'#fff',
         fontSize:12,
-        fontWeight:'bold',
         textShadowColor:'rgba(0,0,0,0.3)',
         textShadowBlur:5,
         textShadowOffsetY:1,
@@ -66,7 +66,7 @@ const SeriesOptionTemp = {
         textShadowBlur:5,
         textShadowOffsetY:2,
         lineHeight:18,
-        fontFamily:'SourceHanSansCN-Normal',
+        fontFamily:'SourceHanSansCN-Light',
       },
       percent:{
         color:'#fff',
@@ -135,7 +135,13 @@ function updateChart(src){
 // 对svg事件进行处理 波浪和光晕不可点击
 function svgEventHandle(svg){
   const allG = svg.querySelector('g').querySelectorAll('g')
-  allG.forEach(g=>g.style.pointerEvents = 'none')
+  allG.forEach(g=> {
+    g.style.pointerEvents = 'none'
+    let gChildren = g.querySelector('g text')
+    if(gChildren){
+      g.style.visibility = 'hidden'
+    }
+  })
 }
 
 let currentSeriesIndex = -1 // 当前系列索引
@@ -151,7 +157,8 @@ function liquidSelect(e){
 }
 
 watch(()=>store.selectProjId,(nv,ov)=>{
-  if(nv == undefined || store.showType == 0) return // 仅对表格点击有效
+  if(nv == undefined) return
+  if( store.showType == 0 && !store.triggerLeaveChart ) return  // 既不是从列表的，也不是表格触发的
   // 找到currentSeriesIndex， 和它的包围盒
   currentSeriesIndex = option.series.findIndex(o=>o.uuid == nv)/2
   if(currentSeriesIndex>-1){
@@ -221,7 +228,7 @@ function liquidHover(e){
 
 function getOption(){
   const targetDom = document.getElementById(props.domId)
-  option.series = getLiquidOptions(data,SeriesOptionTemp,targetDom,props.grid)
+  option.series = getLiquidOptions(data,SeriesOptionTemp,targetDom,{...props.grid})
 }
 
 // 切换模式
@@ -229,7 +236,6 @@ watch(()=>store.visitMode,(nv,ov)=>{
   if(nv==ov) return
   option.series = resetLabel(data, option.series)
   chart.setOption(option,{notMerge:false})
-  console.log(option)
 })
 
 defineExpose({

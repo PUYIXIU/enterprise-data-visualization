@@ -122,7 +122,10 @@ watch(loading,(nv,ov)=>{
     dom.onscroll = undefined
   }
 })
-
+function rowClick(params){
+  store.triggerLeaveChart = true
+  store.selectProjId = params.id // 全局选中id.id // 全局选中id
+}
 defineExpose({
   init,ready
 })
@@ -142,10 +145,13 @@ defineExpose({
     <window-loading :loading="loading && store.loading"/>
     <empty :show-div="!loading && data.length == 0" />
     <div class="kanban-content" id="danger-kanban">
-      <div class="kanban-item" :class="{'ready':!loading && !store.loading}" v-for="(item, index) in data"
+      <div class="kanban-item"
+           :class="{'ready':!loading && !store.loading}"
+           @click="rowClick(item)"
+           v-for="(item, index) in data"
            :style="{
               '--color':colorList[item.index]||'#B3B5BB',
-              '--bg-color':colorList[item.index]?colorList[index]+'33':'#D9D9D933',
+              '--bg-color':colorList[item.index]?colorList[item.index]+'33':'#D9D9D933',
               '--inner-color':colorList[item.index]||'#D9D9D9',
               '--index':item.index,
            }">
@@ -200,6 +206,12 @@ defineExpose({
     color:#001133;
     margin-bottom:1.13rem;
     position:relative;
+    transform:translateY(0px);
+    transition-property: transform;
+    transition-duration: 0.1s;
+    &:hover{
+      transform:translateY(-1px);
+    }
     &:before{
       content:'123';
       position:absolute;

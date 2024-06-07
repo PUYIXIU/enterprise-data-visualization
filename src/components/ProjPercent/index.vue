@@ -39,9 +39,24 @@ function getChangeFun(index){
   }
 }
 const selectProjectProportion = params => request.get('/erp/visualize/selectProjectProportion', {params}) // 请求项目占比数据
+
+let timer
+// 设置定时器
+function setTimer(){
+  timer && clearInterval(timer)
+  timer = null
+  let interval = 5 * 1000 // 3s
+  timer = setInterval(()=>{
+    let current = currentPage.value + 1
+    currentPage.value = current % pageData.value.length
+  },interval)
+}
+
 // 获取项目占比数据
 function getProjPercentData(){
   return selectProjectProportion({deptId:queryParams.department}).then(res=>{
+    setTimer()
+    currentPage.value = 0 // 复位
     data.value = filterProgressData(res.data)
     if(window.debugModeEnable){
       console.group('项目占比数据')
@@ -53,6 +68,7 @@ function getProjPercentData(){
     })
   })
 }
+
 
 // 项目部门变化/定时器被触发 请求数据
 watch(()=>[queryParams.department, store.timeTrigger],(nv,ov)=>{
@@ -68,7 +84,21 @@ function init(){
   proxy.$refs.RingPieRef.initChart()
   queryParams.department = store.deptList[0].value
 }
-
+let pageSize = 6 // 一页的个数
+let currentPage = ref(0) // 当前页数
+const pageData = computed(()=>{
+  let result = [];
+  for(let i = 0; i<data.value.length;i+=pageSize){
+    let slice = data.value.slice(i,i+pageSize)
+    result.push(slice)
+  }
+  return result
+})
+// 切换页面
+function changePage(add){
+  currentPage.value+=add
+  setTimer()
+}
 defineExpose({
   init
 })
@@ -90,17 +120,32 @@ defineExpose({
     <div class="kanban-content">
       <RingPie ref="RingPieRef" dom-id="ring-pie-id" :data="data" />
       <div class="tooltip-box">
-        <div class="tooltip-item" v-for="(item,index) in data" :style="{'--color':ringPieColorList[index]||'#B3B5BB'}">
-          <div class="tooltip-icon"></div>
-          <div class="tooltip-info">
-            <div>{{item.name}}</div>
-            <p>（{{item.taskNum}}）</p>
-          </div>
-          <div class="tooltip-num">
-            <span class="num">{{String(item.percent).padStart(2,'0')}}</span>
-            <span class="sign">%</span>
+<!--        分页展示-->
+        <div class="tooltip-inner" :style="{
+          '--page':currentPage
+        }">
+          <div class="tooltip-page" v-for="(page,pageIndex) in pageData">
+            <div class="tooltip-item" v-for="(item,index) in page" :style="{'--color':ringPieColorList[pageIndex*pageSize+index]||'#B3B5BB'}">
+              <div class="tooltip-icon"></div>
+              <div class="tooltip-info">
+                <div>{{item.name}}</div>
+                <p>（{{item.taskNum}}）</p>
+              </div>
+              <div class="tooltip-num">
+                <span class="num">{{String(item.percent).padStart(2,'0')}}</span>
+                <span class="sign">%</span>
+              </div>
+            </div>
           </div>
         </div>
+        <p class="page-box">
+          <span class="left" :class="{
+            disabled:currentPage == 0
+          }" @click="changePage(-1)"></span>
+          <span class="right" :class="{
+            disabled:currentPage == pageData.length-1
+          }" @click="changePage(1)"></span>
+        </p>
       </div>
     </div>
   </div>
@@ -133,47 +178,100 @@ $padding-bottom:0.88rem;
 }
 
 
-$item-width:6.7rem;
+$item-width:7rem;
+$item-h:2.19rem;
 $item-mr:2.75rem;
+$item-mb:1.5rem;
+$page-mr:2.75rem;
+$box-ml:2rem;
 .tooltip-box{
-  margin-left: 2.25rem;
-  display: flex;
-  flex:1;
+  position:relative;
+  width:calc(100% - $ring-pie-w - $box-ml);
+  margin-left: $box-ml;
   height:100%;
-  flex-flow:row wrap;
-  justify-content: space-between;
-  .tooltip-item{
-    --color:#B3B5BB;
-    width:$item-width;
+  overflow: hidden;
+  .tooltip-inner{
+    height:100%;
+    width:calc(200% + $page-mr);
     display: flex;
-    //margin-right:$item-mr;
-    color: #001133;
-    font-size: 0.65rem;
-    height:2.19rem;
-    align-items: center;
-    margin-bottom:0.75rem;
-    &:nth-child(2n){margin-right: 0}
+    flex-wrap: nowrap;
+    transition-property: transform;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+    --x:calc( var(--page) * (50% + $page-mr) );
+    transform:translateX( calc( var(--page) * (50% + $page-mr * 0.5) * (-1) ) );
+  }
+  .tooltip-page{
+    display: flex;
+    flex:1;
+    flex-flow:row wrap;
+    justify-content: space-between;
+    align-content: flex-start;
+    margin-right: $page-mr;
+    &:last-child{margin-right: 0}
+    .tooltip-item{
+      --color:#B3B5BB;
+      width:$item-width;
+      display: flex;
+      //margin-right:$item-mr;
+      color: #001133;
+      font-size: 0.75rem;
+      height:$item-h;
+      align-items: center;
+      margin-bottom:$item-mb;
+      &:nth-child(2n){margin-right: 0}
 
-    .tooltip-icon{
-      width:0.5rem;height:0.5rem;
-      background-color: var(--color);
-      margin-right: 0.25rem;
-      opacity: 0.9;
-    }
-    .tooltip-info{
-      width:3rem;
-      font-family: SourceHanSansCN-Normal;
-    }
-    .tooltip-num{
-      flex:1;
-      text-align: right;
-      .num{
-        font-family: D-DINExp-Bold;
-        font-size: 1.3rem;
+      .tooltip-icon{
+        width:0.5rem;height:0.5rem;
+        background-color: var(--color);
+        margin-right: 0.25rem;
+        opacity: 0.5;
       }
-      .sign{
-        font-family: D-DINExp;}
+      .tooltip-info{
+        width:4rem;
+        font-family: SourceHanSansCN-Normal;
+      }
+      .tooltip-num{
+        flex:1;
+        text-align: right;
+        .num{
+          font-family: D-DINExp-Bold;
+          font-size: 1.3rem;
+        }
+        .sign{
+          font-family: D-DINExp;}
+      }
     }
+  }
+}
+.page-box{
+  width:2rem;
+  height:1.5rem;
+  position:absolute;
+  bottom:0;
+  right:0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  span{
+    background: #dbe5ff;
+    display: inline-block;
+    width:0.75rem;
+    height:0.75rem;
+    cursor: pointer;
+    &:hover{
+      background: #bed1ff;
+    }
+    &.disabled{
+      pointer-events: none;
+      background: #eaeaea !important;
+    }
+  }
+  .left{
+    clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
+  }
+  .right{
+    clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
   }
 }
 </style>

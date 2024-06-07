@@ -1,12 +1,13 @@
 <script setup>
 import * as echarts from 'echarts'
-import {onMounted,onBeforeUnmount,ref} from "vue";
+import {onBeforeUnmount} from "vue";
 import {getpx} from "@/utils/style.js";
 import {useLocalDataStore} from "@/storage/index.js";
 const store = useLocalDataStore()
 const props = defineProps(['domId','grid'])
 const emit = defineEmits(['resize'])
 let chart
+let lastIndex = -1
 let option = {
       grid:{
         ...props.grid
@@ -38,7 +39,7 @@ let option = {
 
           showMaxLabel:false,
           color:'#001133',
-          fontFamily:'SourceHanSansCN-Medium'
+          fontFamily:'SourceHanSansCN-Medium',
         }
       }],
       yAxis:[{
@@ -107,12 +108,14 @@ function initChart(){
   window.addEventListener('resize',resize)
 }
 
-
-
+let splitNumber_x = 15 // 总共有15个穿插
+let splitNumber_y = 15 // 总共有15个穿插
 function getOption(axisRange,x_category,y_category){
   let xAxis = option.xAxis[0]
   let yAxis = option.yAxis[0]
-
+  option.grid = {
+    ...props.grid
+  }
   if(store.mapMode == 0){ // 均匀模式
     xAxis.type = yAxis.type = 'category'
     xAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = true
@@ -121,6 +124,28 @@ function getOption(axisRange,x_category,y_category){
     xAxis.max = yAxis.max = xAxis.min = yAxis.min = undefined
     xAxis.data.length == 0 && (xAxis.data = new Array(20).fill(' '))
     yAxis.data.length == 0 && (yAxis.data = new Array(20).fill(' '))
+
+    let x_split = Math.floor(x_category.length / splitNumber_x) // x轴最大割分数量
+    let x_split_gap = Math.ceil(x_split*0.3)
+    let y_split = Math.floor(y_category.length / splitNumber_y) // x轴最大割分数量
+    let y_split_gap = Math.ceil(y_split*0.3)
+
+    let last_x = -1, last_y = -1
+    xAxis.axisLabel.interval = (index,value)=>{
+      if(value!==' ' && (last_x+x_split_gap<=index || last_x<0)){
+        last_x = index
+        return true
+      }
+      return false
+    }
+    yAxis.axisLabel.interval = (index,value)=>{
+      if(value!==' ' && (last_y+y_split_gap<=index || last_y<0)){
+        last_y = index
+        return true
+      }
+      return false
+    }
+
   }else{ // 全局模式
     xAxis.type = yAxis.type = 'value'
     xAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = yAxis.axisLabel.showMaxLabel = false
@@ -134,9 +159,12 @@ function getOption(axisRange,x_category,y_category){
     xAxis.max == 0 && (xAxis.max = 20)
     yAxis.max == 0 && (yAxis.max = 20)
 
+    yAxis.axisLine.onZero =  false
+    xAxis.axisLabel.interval = undefined
+    yAxis.axisLabel.interval = undefined
+
   }
 }
-
 // 更新图表
 function updateChart(axisRange,x_category,y_category){
   return new Promise((resolve,reject)=>{
@@ -155,8 +183,8 @@ function convertAxisToPixel(data){
     if(store.mapMode == 0){ // 均匀模式
       let xValues =  option.xAxis[0].data
       let yValues =  option.yAxis[0].data
-      x = xValues.findIndex(i=>i==x)
-      y = yValues.findIndex(i=>i==y)
+      x = xValues.findIndex(i=>i===x)
+      y = yValues.findIndex(i=>i===y)
     }
     node.center = chart.convertToPixel(
         {xAxisIndex:0, yAxisIndex:0},
@@ -165,6 +193,7 @@ function convertAxisToPixel(data){
     return node
   })
 }
+
 
 defineExpose({
   convertAxisToPixel,
@@ -187,12 +216,12 @@ onBeforeUnmount(()=>{
   <span class="axis-name x" :style="{
   '--bottom':grid.bottom + 'px',
   '--right':grid.right + 'px',
-}">项目任务数量</span>
+}">项目提交次数</span>
   <!-- y轴名称 -->
   <span class="axis-name y" :style="{
   '--top':grid.top + 'px',
   '--left':grid.left + 'px',
-}">参与人数</span>
+}" >工时</span>
 </div>
 </template>
 
@@ -203,7 +232,7 @@ onBeforeUnmount(()=>{
   top:0;
   left:0;
 }
-$gap:0rem;
+$gap:0.5rem;
 .axis-name{
   position:absolute;
   z-index:2;
@@ -215,7 +244,7 @@ $gap:0rem;
     right:var(--right);
   }
   &.y{
-    top:calc(var(--top) + $gap);
+    top:var(--top);
     left:calc(var(--left) + $gap);
   }
 }

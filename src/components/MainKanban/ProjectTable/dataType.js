@@ -1,5 +1,5 @@
 
-const colors = {
+export const colors = {
     lightRed:['#FFD4DF','#FF1C52'],
     lightBlue:['#CFDDFF','#4078FE'],
     lightYellow:['#FFF8D0','#E4C109'],
@@ -11,6 +11,8 @@ const colors = {
     orangeRed:['#FFDCDE','#F57C84'],
     blueGreen:['#DEFFF9','#15E7C1'],
     orange:['#FFDBCF','#F08A6A'],
+    brown:['#f6e8dd','#d0baa0'],
+    darkGreen:['#ebf8ea','#a6da9e'],
     grey:['#eeeeee','#989898'],
 }
 
@@ -30,5 +32,7 @@ export const productType = {
     '展馆业务':colors.orangeRed,
     '化工业务':colors.blueGreen,
     '课程内容':colors.orange,
+    '公司宣传':colors.brown,
+    '日常管理':colors.darkGreen,
     '无':colors.grey,
 }

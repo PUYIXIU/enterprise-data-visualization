@@ -1,17 +1,33 @@
 // 过滤出主图数据
+import dayjs from "dayjs";
+
 export function filterChartData(src){
     return pick(src,[
+        // {propName:'participantCount', type:Number,rename:'y'}, // 参与人数-y轴
+        // {propName:'taskCount', type:Number,rename:'x'}, // 任务数-x轴
+        // {propName:'laborHours', type:Number,rename:'radius'}, // 工时-半径
+
         {propName:'index', rename:'no'}, // 排名 用于区分颜色
         {propName:'projectId', rename:'id'}, // id
         {propName:'projectName', rename:'name'}, // 项目名
         {propName:'status', rename:'type'}, // 项目状态-类型
-        {propName:'taskCount', type:Number,rename:'x'}, // 任务数-x轴
-        {propName:'participantCount', type:Number,rename:'y'}, // 参与人数-y轴
+
+        {propName:'grade', type:Number,rename:'radius'}, // 项目热度-半径
+        {propName:'taskSubmissionCount', type:Number,rename:'x'}, // 项目提交次数-x轴
+        {propName:'laborHours', type:Number,isInt:true,rename:'y'}, // 工时-y轴
         {propName:'projectRate', type:Number,rename:'wave'}, // 进度-水面
-        {propName:'laborHours', type:Number,rename:'radius'}, // 工时-半径
         {propName:'preProjectRate', type:Number}, // 查询时间段中最早时间点时，项目的进度
         'commander', // 产品负责人
         {propName:'erpProjectCode', rename:'code'}, // 代号
+    ])
+}
+
+// 过滤出水球图更新时需要的数据 需要更新的只有进度
+export function filterLiquidUpdateData(src){
+    return pick(src,[
+        {propName:'laborHours', type:Number,isInt:true,rename:'y'}, // 工时-y轴
+        {propName:'projectRate', type:Number,rename:'wave'}, // 进度-水面
+        {propName:'preProjectRate', type:Number}, // 查询时间段中最早时间点时，项目的进度
     ])
 }
 
@@ -40,6 +56,7 @@ export function filterTableData(src){
 // 过滤出项目热度数据
 export function filterHotData(src){
     return pick(src,[
+        {propName:'projectId', rename:'id'}, // id
         'index', // 索引
         'projectName', // 产品名称
         'commander', // 产品负责人
@@ -86,6 +103,7 @@ export function filterDangerProjData(src){
     src.forEach(({map}, index)=>{
         map.index = index
         result.push(pick(map,[
+            {propName:'projectId', rename:'id'}, // id
             'index', // 索引
             {propName:'projectName', rename:'name'}, // 模块名称
             {propName:'erpProjectCode', rename:'code'}, // 代号
@@ -127,7 +145,8 @@ export function filterGantData(src){
         'predictEndTime', // 预计结束时间
         {propName:'predictProgress', type:Number,}, // 预计进度
 
-        {propName:'delayProgress', type:Number,}, // 推迟比率
+        // {propName:'delayProgress', type:Number,}, // 推迟比率
+        // {propName:'extendProgress', type:Number,}, // 拓展比率
 
         'realStartTime', // 实际开始时间
         'realEndTime', // 实际结束时间时间
@@ -136,6 +155,27 @@ export function filterGantData(src){
         'currentTime', // 当前时间
         {propName:'totalHour', type:Number,}, // 总工时
     ])
+    // 1-计算起始时间
+    let preStartTime_v = dayjs(result.predictStartTime).valueOf() // 预计开始时间
+    let preEndTime_v = dayjs(result.predictEndTime).valueOf() // 预计结束时间
+    let realStartTime_v = dayjs(result.realStartTime).valueOf() // 实际开始时间
+    let realEndTime_v = dayjs(result.realEndTime?result.realEndTime:result.currentTime).valueOf()     // 没有实际结束时间时，当前时间算作实际结束时间
+    let currentTime_v =  dayjs(result.currentTime).valueOf() // 当前时间
+
+    // 最早开始时间只有可能是预计开始时间和实际开始时间中的一个
+    let minTime = Math.min(preStartTime_v, realStartTime_v)
+    // 最晚时间只有可能是：预计结束时间（未超时）、实际结束时间（超时）、当前时间（超时）
+    let maxTime = Math.max(preEndTime_v,realEndTime_v,currentTime_v)
+    let diff = maxTime - minTime // 时间区间
+    const getRate = params => (params - minTime)/diff * 100
+
+    result.preStart_p = getRate(preStartTime_v)
+    result.preEnd_p = getRate(preEndTime_v)
+    result.realStart_p = getRate(realStartTime_v)
+    result.realEnd_p = getRate(realEndTime_v)
+    result.current_p = getRate(currentTime_v)
+    result.progress = result.realEnd_p - result.realStart_p    // 实际进度
+
     result.hourList = src[0].map.hourList.split(', ').map(str=>{
         let value = str.split('=')
         value[1] *= 1 // 转换为Number类型
@@ -157,6 +197,7 @@ export function filterTimelineData(src){
             'participantCount', // 参与人数
             'predictProgress', // 预计进度
             'erpTaskTotalHours', // 总工时
+            {propName:'erpTaskStatus',  rename:'type'}, // 任务状态
         ]))
     })
     result = result.sort((a,b)=>{
@@ -206,6 +247,9 @@ export function pick(obj, option){
                 case Number: // 强制转换数字类型
                     if(!isNaN(Number(obj[propName]))){
                         copy[name] = obj[propName]*1;
+                        if(prop.isInt){ // 指定是整数
+                            copy[name] = parseInt(copy[name])
+                        }
                     }else{
                         copy[name] = 0;
                     }

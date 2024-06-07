@@ -58,6 +58,17 @@ const btnList = ref([
     },
     active:false
   },
+  {
+    name:filterDayOptions.find(o=>o.value==queryParams.filterDay).label,
+    class:'expand',
+    deactiveIconStyle:{transform:'rotateZ(-180deg)'},
+    id:'info-hot-time-select-btn',
+    onclick:()=>{
+      proxy.$refs.InfoTimeRangeQueryRef.expand()
+    },
+    active:false,
+    show:false,
+  },
 ])
 function getChangeFun(index){
   return function(visible){
@@ -75,8 +86,10 @@ watch(()=>store.timeTrigger,()=>{ // 定时请求数据
 watch(()=>queryParams.filterDay,(nv,ov)=>{
   if(nv!==ov){
     store.timeRange = nv // 时间长度修改
+    store.infoFilterDay = nv // 局部时间长度修改
     let label = filterDayOptions.find(o=>o.value==nv).label
     btnList.value[1].name = btnList.value[1].deactiveName = label
+    btnList.value[3].name = btnList.value[3].deactiveName = label
   }
 })
 watch(()=>queryParams.filterType,(nv,ov)=>{
@@ -91,6 +104,21 @@ watch(()=>store.visitMode,(nv,ov)=>{
     let label = visitModeOptions.find(o=>o.value==nv).label
     btnList.value[0].name = btnList.value[0].deactiveName = label
   }
+})
+// 详情界面的时间修改
+watch(()=>store.infoFilterDay,(nv,ov)=>{
+  if(nv!==ov){
+    let label = filterDayOptions.find(o=>o.value==nv).label
+    btnList.value[3].name = btnList.value[3].deactiveName = label
+  }
+})
+// 当跳转页面详情页时，按钮状态修改
+watch(()=>store.selectProjId,nv=>{
+  let i = 0
+  for(i = 0;i<3;i++){
+    btnList.value[i].show = nv == undefined
+  }
+  btnList.value[i].show = nv !== undefined
 })
 
 function getCurrentTime(){
@@ -108,7 +136,7 @@ onMounted(()=>{
 </script>
 
 <template>
-  <div class="nav-head-wrapper full">
+  <div class="nav-head-wrapper full" id="nav-head-dom">
     <p class="time-box">{{time}}</p>
     <h1>广联研发进度监控大屏</h1>
     <div class="query-box-wrapper">
@@ -138,6 +166,14 @@ onMounted(()=>{
           @change="(()=>getChangeFun(2))()"
           :height="(1.13+0.5)*Math.ceil(filterTypeOptions.length/2) + 0.5*2"
           v-model:value="queryParams.filterType" />
+      <query-box
+          ref="InfoTimeRangeQueryRef"
+          class="query-box"
+          :btn-id="btnList[3].id" dom-id="info-time-range-dom-id"
+          :options="filterDayOptions"
+          :height="(1.13+0.5)*Math.ceil(filterDayOptions.length/2) + 0.5*2"
+          @change="(()=>getChangeFun(3))()"
+          v-model:value="store.infoFilterDay" />
     </div>
   </div>
 </template>
@@ -153,6 +189,7 @@ onMounted(()=>{
   }
 }
 .nav-head-wrapper{
+
   display: flex;
   justify-content: space-between;
   align-items: center;

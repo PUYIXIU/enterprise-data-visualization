@@ -1,17 +1,14 @@
 <script setup>
-import {ref,onBeforeMount,getCurrentInstance,onMounted,watch,nextTick} from 'vue'
+import {ref,getCurrentInstance,onMounted,watch,nextTick} from 'vue'
 import Axis from './Axis.vue'
 import LiquidScatter from './LiquidScatter.vue'
 import LiquidPie from './LiquidPie.vue'
-
-import {mock_liquidData,mock_dataTypeDict} from "@/mock/liquidScatterData.js"; // 模拟数据
-import {mockPeopleList} from '@/mock/liquidPieData.js'
-import {getToolTips, liquidColorMap} from './colorConfig.js'
-import {getHSL, getpx} from "@/utils/style.js";
+import {getToolTips} from './colorConfig.js'
+import {getpx} from "@/utils/style.js";
 import {useLocalDataStore} from "@/storage/index.js";
 import {copy, getLiquidData, handlePieData} from "@/components/MainKanban/LiquidChart/liquidChartData.js";
 import request from "@/utils/request.js";
-import {filterPieData} from "@/utils/dataFilter.js";
+import {filterLiquidUpdateData, filterPieData} from "@/utils/dataFilter.js";
 const { proxy } = getCurrentInstance()
 const store = useLocalDataStore()
 const chartData = ref([]) // 水球数据
@@ -25,17 +22,24 @@ const axisRange = ref({
 })
 const pieRendering = ref(false)
 
-function getGrid(){
+function getGrid(range){
+  let leftGap = 1.875
+  let fontSize = 0.84 // 字体大小
+  if(range!==undefined){ // 根据范围计算左侧边缘的距离
+    let maxY = range.y[1]
+    let textLen = maxY.toString().length * fontSize
+    leftGap = Math.max(leftGap, textLen)
+  }
   return { // 坐标系栅格
     top:getpx(1),
     bottom:getpx(2.8125),
-    left:getpx(1.875),
+    // left:getpx(1.875),
+    left:getpx(leftGap),
     right:getpx(0.9375),
   }
 }
 
 onMounted(()=>{
-  grid.value.top += getpx(2.4)
   proxy.$refs.AxisRef.initChart()
   chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
   proxy.$refs.LiquidRef.initChart()
@@ -49,14 +53,39 @@ function resize(){
   proxy.$refs.LiquidRef.updateChartSize() // 更新散点图尺寸
 }
 
-// // 监听到有水球被点中了
+// 监听到有水球被点中了
 watch(()=>store.selectProjId,(nv,ov)=>{
-  if(nv == undefined){
+  if(nv == undefined){ // 退出选中状态
+    liquidPieData.value = null // 重置当前选中数据
+    store.triggerLeaveChart = false // 重置
     pieRendering.value = false
     proxy.$refs.LiquidPieRef.moveOut() // 饼图移出
+    store.infoFilterDay = store.timeRange // 重置局部时长
   }
 })
 
+// 监听到局部筛选时间段被修改了
+watch(()=>store.infoFilterDay, (nv,ov)=>{
+  if(liquidPieData.value == null || nv == ov) return
+  updatePieChartOnly() // 更新饼图数据
+  updateProjectData(liquidPieData.value,store.infoFilterDay) // 更新水球数据
+})
+
+// 局部更新水球的进度接口
+const selectWaterBalloonDescription = params=>request.get('/erp/visualize/selectWaterBalloonDescription',{params})
+// 获取更新的水球进度
+function updateProjectData(projData, timeRange){
+    return selectWaterBalloonDescription({erpProjectId:projData.id, filterDay:timeRange}).then(res=>{
+      if(res.data.length<=0) return
+      let newProgressData = filterLiquidUpdateData(res.data[0].map)
+      liquidPieData.value.y = newProgressData.y // 工时
+      liquidPieData.value.wave = newProgressData.wave // 进度
+      liquidPieData.value.preProjectRate = newProgressData.preProjectRate // 前一阶段的进度
+      nextTick(()=>{
+        proxy.$refs.LiquidPieRef.updateLiquidChartOnly()
+      })
+    })
+}
 
 // 更新饼图
 function updatePie(taskId, seriesList, rect){
@@ -65,10 +94,10 @@ function updatePie(taskId, seriesList, rect){
 
 const selectProjectDetails = params=>request.get('/erp/visualize/selectProjectDetails',{params})
 
-// 获取饼图数据
-function getPieData(projData){
+// 获取饼图数据  时间可以是全局筛选时间，也可以是内部筛选时间
+function getPieData(projData, timeRange = store.timeRange){
   // 传项目id 和 时间长度
-  return selectProjectDetails({erpProjectId:projData.id, filterDay:store.timeRange}).then(res=>{
+  return selectProjectDetails({erpProjectId:projData.id, filterDay:timeRange}).then(res=>{
     res.data = filterPieData(res.data) // 过滤接口数据
     projData.peopleList = handlePieData(res.data) // 处理数据
     if(window.debugModeEnable){
@@ -82,14 +111,23 @@ function getPieData(projData){
 
 // 渲染水球
 function renderLiquidPie(index, seriesList, rect){
-  let selectProj = chartData.value[index] // 被选中的数据
-  liquidPieColorConfig.value = selectProj.color
-  store.selectProjId = selectProj.id // 全局选中id
-  getPieData(selectProj).then(res=>{
+  let currentSelectProj = copy(chartData.value[index]) // 被选中的数据
+  liquidPieColorConfig.value = currentSelectProj.color
+  store.selectProjId = currentSelectProj.id // 全局选中id
+  getPieData(currentSelectProj).then(res=>{
     liquidPieData.value = res
     pieRendering.value = true
     nextTick(()=>{
       proxy.$refs.LiquidPieRef.initChart(copy(seriesList), rect)
+    })
+  })
+}
+// 只更新饼图
+function updatePieChartOnly(){
+  getPieData(liquidPieData.value, store.infoFilterDay).then(res=>{
+    liquidPieData.value = res
+    nextTick(()=>{
+      proxy.$refs.LiquidPieRef.updatePieChartOnly()
     })
   })
 }
@@ -99,16 +137,17 @@ function dataReady(src){
   let canvasDom = document.querySelector('.canvas')
   let data = getLiquidData(src,canvasDom,grid.value)
   chartData.value = data.data
-  proxy.$refs.AxisRef.updateChart(
-      data.axis_range,
-      data.x_category,
-      data.y_category
-  ).then(res=>{
-    grid.value = getGrid()
-    chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
-    proxy.$refs.LiquidRef.updateChart(chartData.value)
+  grid.value = getGrid(data.axis_range)
+  nextTick(()=>{
+    proxy.$refs.AxisRef.updateChart(
+        data.axis_range,
+        data.x_category,
+        data.y_category
+    ).then(res=>{
+      chartData.value = proxy.$refs.AxisRef.convertAxisToPixel(chartData.value) // 计算坐标
+      proxy.$refs.LiquidRef.updateChart(chartData.value)
+    })
   })
-
 }
 
 
@@ -122,7 +161,7 @@ defineExpose({
 <template>
   <div class="chart-wrapper">
     <div class="nav-head">
-      <div class="tip-mes" :class="{fade:pieRendering}" >【圆形面积大小代表工时数量】</div>
+      <div class="tip-mes" :class="{fade:pieRendering}" >【圆形大小代表热度高低】</div>
       <div class="tooltip-box" style="opacity: 0;">
         <p v-for="item in navList">
           <i :style="{'--color':item.color}"></i>

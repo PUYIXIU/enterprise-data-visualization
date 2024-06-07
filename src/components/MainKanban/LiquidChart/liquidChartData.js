@@ -29,19 +29,20 @@ function getMapType(data){
     let effect = standard_var/ave
 
     let SDR = effect > 0.25 // true表示数据相差大，false表示数据相差小
-
-    console.log(`标准差：${standard_var}，标准差大于指定值：${SDR}，数据偏向：${dir}`)
+    let type
     if(SDR){ // 数据离散大 无需映射或者二次函数映射
-        if(dir == 0) return 'linear'  // 线性映射
-        else return x2effect // 二次映射 ax^2 +(1-a)x
+        if(dir == 0) type =  'linear'  // 线性映射
+        else type = x2effect // 二次映射 ax^2 +(1-a)x
     }else{ // 数据相差小 需要进行指数映射或者对数因社会
         if(dir == 1){ // 数据偏小指数映射
-            return 'pow'
+            type = 'pow'
         }else { // 数据偏大或者过于均匀（对数映射似乎会导致数据普遍偏大？）
-            return 'log'
+            type = 'log'
             // return 'linear' // 线性映射
         }
     }
+    console.log(`标准差：${standard_var}，标准差大于指定值：${SDR}，数据偏向：${dir}，映射方式：${type}`)
+    return type
 }
 
 /**
@@ -71,8 +72,6 @@ export function getLiquidData(
     } = getAxisRange(data)
     let content_w = dom.clientWidth - grid.left - grid.right  // 容器宽度
     let content_h = dom.clientHeight - grid.top - grid.bottom // 容器高度
-    // let content_w = dom.clientWidth  // 容器宽度
-    // let content_h = dom.clientHeight // 容器高度
     // type=value时坐标系的单位长度
     let x_unit = content_w/max_x // x轴单位长度（px）
     let y_unit = content_h/max_y // y轴单位长度（px）
@@ -171,56 +170,139 @@ export function getLiquidData(
             y_unit = content_h / y_num // y单位
         }
         refreshUnit()
-        data.forEach((node,index)=>{
-            let r2px = node.mapRadius/2/100*content_h // 半径px大小
+        let evenOk = false
+        let evenTime = 0
+        // 均匀映射，不重叠
+        function evenMap(){
+            evenOk = true
+            evenTime++
+            const getRadius = (node)=>node.mapRadius/2/100*content_h // 获取半径
+            const getXYIndex = (node)=>[ // 获取xy的索引
+                x_category.findIndex(i=>i === node.x)*2+1,
+                y_category.findIndex(i=>i === node.y)*2+1,
+            ]
+            const getXY = (node,x_index,y_index)=>[
+                x_index * x_unit,
+                (y_num - y_index)*y_unit, //
+            ]
+            const dis_gap =0; // 允许的交叉距离
+            const gap_per = 0.1
+            for(let i =0;i<data.length-1;i++){
+                for(let j = i+1;j <data.length;j++){
+                    if(i == j) return
+                    // 计算球i和球j之间的距离，是否大于两者之间的半径之和
+                    let node_i = data[i], node_j = data[j]
+                    let radius_i = getRadius(node_i), radius_j = getRadius(node_j);
+                    let [x_index_i,y_index_i] = getXYIndex(node_i), [x_index_j, y_index_j] = getXYIndex(node_j);
+                    let [x_i,y_i] = getXY(node_i, x_index_i, y_index_i), [x_j, y_j] = getXY(node_j, x_index_j, y_index_j)
+                    let distant = Math.sqrt(
+                        Math.pow(x_j - x_i, 2)+Math.pow(y_j - y_i,2)
+                    )
+                    let targetDistant = radius_i + radius_j - dis_gap
+                    let diff = targetDistant - distant
+                    // 当重叠程度高达一定值时，才进行调整
 
-            let x_index = x_category.findIndex(i=>i == node.x)*2+1 // x轴索引位置
-            let y_index = y_category.findIndex(i=>i == node.y)*2+1 // y轴索引位置
+                    if(distant<targetDistant && distant>0 && diff/targetDistant>gap_per) { // 检测出来有重叠现象
+                        evenOk = false
+                        // console.log(`节点${i}【${node_i.name}】和节点${j}【${node_j.name}】之间的距离小于目标值：${targetDistant}，实际为${distant}`)
 
-            let x = x_index * x_unit // 数据x中心点
-            let y = (y_num - y_index)*y_unit // 数据y中心点
-            let left = x - r2px
-            let right = x + r2px
-            let top = y - r2px
-            let bottom = y + r2px
-            if(left<0){ // 左侧超过
-                let n = x_num
-                let left_add = Math.ceil(((x_index - 0) * content_w -r2px*n)/(r2px - content_w)/2)
-                for(let i =0, pre= x_category[0];i<left_add;i++) {
-                    let temp = ''
-                    if(typeof pre == 'number' && (--pre)>=0)temp = pre
-                    x_category.unshift(temp)
+                        let cos = Math.abs(x_j - x_i) / distant
+                        let sin = Math.abs(y_i - y_j) / distant
+                        let target_y = targetDistant * sin, target_x = targetDistant * cos
+                        let y_add = 0
+                        let x_add = 0
+                        let start_y_index = Math.min(y_index_i, y_index_j), end_y_index = Math.max(y_index_i, y_index_j)
+                        let start_x_index = Math.min(x_index_i, x_index_j), end_x_index = Math.max(x_index_i, x_index_j)
+                        let start_y = Math.min(y_i, y_j), end_y = Math.max(y_i, y_j)
+                        let start_x = Math.min(x_i, x_j), end_x = Math.max(x_i, x_j)
+
+                        const tc_y = target_y/content_h
+                        const tc_x = target_x/content_w
+                        y_add = Math.ceil(Math.abs((end_y_index*2 - start_y_index*2 - tc_y*y_num) / (tc_y-1 )/2))
+                        x_add = Math.ceil(Math.abs((end_x_index*2 - start_x_index*2 - tc_x*x_num) / (tc_x-1 )/2))
+                        // debugger
+
+                        let new_y_num = y_num + y_add*2
+                        let new_y_unit = content_h / new_y_num
+                        let new_end_y_index = end_y_index + y_add
+                        let new_diff_y = (new_end_y_index - start_y_index)*2*new_y_unit
+
+                        for (let y = 0; y < y_add; y++){
+                            y_category.splice((start_y_index-1)/2+1, 0, ' ')
+                        } // 添加空项
+                        for (let x= 0; x < x_add; x++) {
+                            x_category.splice((start_x_index-1)/2+1, 0, ' ') // 添加空项
+                        }
+                        refreshUnit()
+                    }
                 }
-                refreshUnit()
             }
-            if(right>content_w){ // 右侧超过
-                let n = x_num
-                let right_add = Math.ceil((content_w * n - (x_index - 0) * content_w - r2px*n) / (r2px - content_w)/2)
-                for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(++pre)
-                refreshUnit()
-            }
-            if(top<0){ // 上侧超过
-                let n = y_num
-                let top_add = Math.ceil(
-                    (r2px*n - content_h*y_num + content_h * y_index) / (content_h - r2px)/2
-                )
-                for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(++pre)
-                refreshUnit()
-            }
-            if(bottom>content_h){ // 下侧超过
-                let n = y_num
-                let bottom_add = Math.ceil(
-                    ((content_h*y_num - content_h*y_index)/(content_h-r2px) - n)/2
-                )
-                let last= x_category[0]
-                for(let i =0, pre= y_category[0];i<bottom_add;i++) {
-                    let temp = ''
-                    if(typeof pre == 'number' && (--pre)>=0)temp = pre
-                    y_category.unshift(temp)
+        }
+        while(evenOk == false && evenTime<20){
+            evenMap()
+        }
+        console.log(`为了均匀分散映射的次数：${evenTime}，最终x轴总坐标数：${x_category.length}，y轴总坐标数：${y_category.length}`)
+        // 计算坐标系
+        function countAxisRange(){
+            data.forEach((node,index)=>{
+                let r2px = node.mapRadius/2/100*content_h // 半径px大小
+
+                let x_index = x_category.findIndex(i=>i == node.x)*2+1 // x轴索引位置
+                let y_index = y_category.findIndex(i=>i == node.y)*2+1 // y轴索引位置
+
+                let x = x_index * x_unit // 数据x中心点
+                let y = (y_num - y_index)*y_unit // 数据y中心点
+                let left = x - r2px
+                let right = x + r2px
+                let top = y - r2px
+                let bottom = y + r2px
+                if(left<0){ // 左侧超过
+                    let n = x_num
+                    let left_add = Math.ceil(((x_index - 0) * content_w -r2px*n)/(r2px - content_w)/2)
+                    for(let i =0, pre= x_category[0];i<left_add;i++) {
+                        let temp = ''
+                        if(typeof pre == 'number' && (--pre)>=0)temp = pre
+                        // x_category.unshift(temp)
+                        x_category.unshift(' ')
+                    }
+                    refreshUnit()
                 }
-                refreshUnit()
-            }
-        })
+                if(right>content_w){ // 右侧超过
+                    let n = x_num
+                    let right_add = Math.ceil((content_w * n - (x_index - 0) * content_w - r2px*n) / (r2px - content_w)/2)
+                    // for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(++pre)
+                    for(let i =0, pre = x_category.slice(-1);i<right_add;i++) x_category.push(' ')
+                    refreshUnit()
+                }
+                if(top<0){ // 上侧超过
+                    let n = y_num
+                    let top_add = Math.ceil(
+                        (r2px*n - content_h*y_num + content_h * y_index) / (content_h - r2px)/2
+                    )
+                    // for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(++pre)
+                    for(let i =0, pre = y_category.slice(-1);i<top_add;i++) y_category.push(' ')
+                    refreshUnit()
+                    console.log('top_add:',top_add)
+                }
+                if(bottom>content_h){ // 下侧超过
+                    let n = y_num
+                    let bottom_add = Math.ceil(
+                        ((content_h*y_num - content_h*y_index)/(content_h-r2px) - n)/2
+                    )
+                    let last= x_category[0]
+                    for(let i =0, pre= y_category[0];i<bottom_add;i++) {
+                        let temp = ''
+                        if(typeof pre == 'number' && (--pre)>=0)temp = pre
+                        // y_category.unshift(temp)
+                        y_category.unshift(' ')
+                    }
+                    refreshUnit()
+                    console.log('bottom_add:',bottom_add)
+                }
+            })
+        }
+        countAxisRange()
+        countAxisRange() // 第二次计算，防止第一次因为动态计算导致的坐标系溢出问题
     }
     return {
         data,
@@ -256,8 +338,9 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
         let topOption = copy(optionTemp)
         topOption.label.formatter = getFormatter(node)
         topOption.center = node.center // 中心坐标
-        topOption.radius = `${node.mapRadius * (1 - grid.top - grid.bottom)*0.95}%`  // 半径
-
+        let perRadius = node.mapRadius * (1 - grid.top - grid.bottom) //*0.95
+        topOption.radius = `${perRadius}%`  // 半径
+        topOption.label.width = perRadius * content_h / 100 // 让数据换行
         getRich(node.mapEffect, topOption.label.rich)
         topOption.data = [node.wave/100]
 
@@ -267,7 +350,9 @@ export function getLiquidOptions(data,optionTemp,targetDom,grid){
 
         let baseOption = copy(topOption)
         baseOption.name = 'base'
-        baseOption.label = {show:false}
+        baseOption.label = {
+            show:false,
+        }
         baseOption.backgroundStyle.shadowOffsetX = 0
         baseOption.backgroundStyle.shadowOffsetY = 0
         baseOption.backgroundStyle.shadowBlur = getpx(1)
@@ -361,10 +446,11 @@ export function getPieOptions(data, {liquid,pie:pieColor,config}, pieOptionTemp,
         pieOption.itemStyle.color.x2 = -x/2+0.5
         pieOption.itemStyle.color.y2 = -y/2+0.5
 
+        const {h_add, s_add, l_add} = color
         // 外圈颜色
-        pieOption.itemStyle.color.colorStops[0].color = getHSL(color.color, color.alpha)
+        pieOption.itemStyle.color.colorStops[0].color = getHSL(color.color, color.alpha,{h_add,s_add,l_add})
         // 内圈颜色
-        pieOption.itemStyle.color.colorStops[1].color = getHSL(color.color, 30)
+        pieOption.itemStyle.color.colorStops[1].color = getHSL(color.color, 30,{h_add,s_add,l_add})
 
         options.push(pieOption)
     })
@@ -373,11 +459,11 @@ export function getPieOptions(data, {liquid,pie:pieColor,config}, pieOptionTemp,
 
 
 export function getFormatter(node){
-     return `{title|${node.radius}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}`
+     return `{title|${node.y}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}`
 }
 
 export function getPieFormatter(node){
-    return `{title|${node.radius}h}\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}\n{subtitle|${node.commander}}`
+    return `{title|${node.y}h}\n\n{subtitle|${[node.name,node.code][useLocalDataStore().visitMode]}}\n\n{subtitle|${node.preProjectRate}}{percent|%}{right|0}{subtitle|${node.wave}}{percent|%}\n\n{subtitle|${node.commander}}`
 }
 
 export function resetLabel(data,series){
@@ -409,9 +495,10 @@ function valueMap(value, [ min, max ],[map_min, map_max], mapType){
         mapValue = (map_max - map_min)*mapEffect + map_min
     }else if(mapType == 'pow'){ // 对数映射
         mapValue = (map_max-map_min) * Math.pow(mapEffect,2) + map_min
-    }else if(mapType == 'log'){ // y=x^(1/3)
+    }else if(mapType == 'log'){ // y=x^2
         let diff = map_max - map_min
-        mapValue = Math.pow(mapEffect, 1/3)*diff + map_min
+        // mapValue = Math.pow(mapEffect, 1/3)*diff + map_min
+        mapValue = Math.pow(mapEffect, 2)*diff + map_min
     }else{ // 二次映射
         let effect = mapType
         mapValue = effect * Math.pow(mapEffect,2) + (map_max - effect - map_min) * mapEffect + map_min

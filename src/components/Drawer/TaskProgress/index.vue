@@ -1,6 +1,6 @@
 <script setup>
-import {colorList} from "./mockData.js";
-import {onMounted, ref,nextTick} from "vue";
+import {colorList, colorMap} from "./mockData.js";
+import { ref,nextTick} from "vue";
 import request from '@/utils/request.js'
 
 const props = defineProps(['domId'])
@@ -12,7 +12,6 @@ import * as vis from "vis-timeline";
 import VisData from 'vis-data/dist/esm.js'
 import dayjs from "dayjs";
 import {filterHourListData} from "@/utils/dataFilter.js";
-import QueryBox from "@/components/QueryBox/index.vue";
 import WindowLoading from "@/components/Loading/WindowLoading.vue";
 import {getpx} from "@/utils/style.js";
 import Empty from "@/components/Loading/Empty.vue";
@@ -21,6 +20,7 @@ import {useLocalDataStore} from "@/storage/index.js";
 const store = useLocalDataStore()
 
 const domId = ref('progress-timeline')
+let contentHeight = 0 //动态计算高度
 
 const groupData = new VisData.DataSet()
 const itemData = new VisData.DataSet()
@@ -32,6 +32,8 @@ let renderedList = [] //已经渲染的列表
 let renderGroupIds = [] // 已经渲染的groupId
 let counter = 0
 let loading = ref(true)
+let isEmpty = ref(false)
+let filterDay = null // 接口筛选的时间
 
 // 清空所有数据
 function dispose(){
@@ -43,6 +45,10 @@ function dispose(){
   timeLineData = []
   renderGroupIds = []
   hourMap = {}
+  counter = 0 // id计数器
+  contentHeight = 0 // 容器高度需要重新计算
+  isEmpty.value = false // 是否为空重新计算
+  filterDay = null
 }
 
 const progressGroupClassName = 'progress-group' // 进度条分组标识
@@ -91,9 +97,9 @@ function createProgressItemData(groupId, params){
 }
 
 // 设置bar类型的样式
-function setBarStyle(){
+function setBarStyle(update=false){
   const groups = document.querySelectorAll(`.vis-foreground .vis-group.${barGroupClassName}:not(.expand)`)
-
+  debugger
   for(let i =0; i<groups.length;i++){
     let group = groups[i]
     group.classList.add('expand')
@@ -102,7 +108,7 @@ function setBarStyle(){
         .split('-')[1]
     group.style.setProperty('--bar-top-color',setOpacity(color,0.9))
     group.style.setProperty('--bar-bottom-color',setOpacity(color,0.1))
-
+    if(update) continue
     const nodes = group.querySelectorAll(`.${barItemClassName}`)
     if(!nodes.length) break; // 当前元素没渲染出来
     // let showNodeLength = 0  // 真正进行展示的元素数量
@@ -213,7 +219,7 @@ function getProgressDom(param){
 const selectTaskProgressStaffDetails = params => request.get('/erp/visualize/selectTaskProgressStaffDetails',{params})
 function getHourListByTaskId(id){
   if(hourMap[id]) return Promise.resolve(hourMap[id])
-  return selectTaskProgressStaffDetails({taskId:id,filterDay:store.timeRange}).then(res=>{
+  return selectTaskProgressStaffDetails({taskId:id,filterDay:filterDay}).then(res=>{
     if(window.debugModeEnable){
 
     }
@@ -228,7 +234,7 @@ function getHourListByTaskId(id){
   })
 }
 
-let barRowHeightRem = 1.5
+let barRowHeightRem = 2
 // 返回进度条被点击的回调函数
 function progressClick(data){
   return async (e)=>{
@@ -245,6 +251,8 @@ function progressClick(data){
         })
         setContentHeight(contentHeight - barHeight * hourData.length)
         timeline.setGroups(groupData)
+        // 重新刷新颜色
+        setBarStyle(true)
         removeProgressForeRow2(data.id)
         loading.value = false
         return
@@ -271,7 +279,7 @@ function progressClick(data){
       })
       timeline.setGroups(groupData)
       timeline.on('changed',hourListExpand)
-      refreshProgressStyle(data.id, hourData) // 更新进度条样式
+      refreshProgressStyle(data, hourData) // 更新进度条样式
       setContentHeight(contentHeight + barHeight * hourData.length)
     })
   }
@@ -307,17 +315,20 @@ function removeProgressForeRow2(id){
 }
 
 // 更新progress类型的样式
-function refreshProgressStyle(id, params){
+function refreshProgressStyle(data, params){
   // progress-item  task-1787287822901403649
-  let wrapper = document.querySelector(`.${progressItemClassName}.task-${id}`)
+  let wrapper = document.querySelector(`.${progressItemClassName}.task-${data.id}`)
   let foreRow2 = wrapper.querySelector('.fore-row-2') // 目标容器
+  console.log('被点击的progress数据：',data)
   params.forEach(person=>{
+      // erpTaskTotalHours
+      person.percent = person.totalHour / data.erpTaskTotalHours * 100
       let foreCell = getDiv('fore-cell')
       foreRow2.append(foreCell)
       foreCell.style.width = `${person.percent}%` // 工时占比
       foreCell.style.setProperty(
           '--fore-cell-bg',
-          setOpacity(person.color,0.9)
+          setOpacity(person.color,0.5)
       )
   })
 }
@@ -358,7 +369,6 @@ function progressLeave(e){
   toolTipData.value.show = false
 }
 
-let contentHeight = 0 //动态计算高度
 // 绑定事件
 function addEvent(){
   let content = document.querySelector('.vis-timeline')
@@ -373,10 +383,10 @@ function setContentHeight(height){
   contentHeight = height
   content.style.setProperty('--content-height',contentHeight + 'px')
 }
-
-let isEmpty = ref(false)
 // 初始化时间轴表格
-function init(src){
+function init(src,filterTime){
+  dispose()
+  filterDay = filterTime
   timeLineData = src
   if(src.length == 0){
     isEmpty.value = true
@@ -390,7 +400,9 @@ function init(src){
   let max = dayjs()  // 最晚时间
   timeLineData.forEach((task,taskIndex)=>{
     // 添加总进度条
-    const mainColor = colorList[taskIndex%colorList.length] // 领取颜色
+    // const mainColor = colorList[taskIndex%colorList.length] // 领取颜色
+    const mainColor = colorMap[task.type] // 领取颜色
+
     task.color = mainColor
     task.value = baseValue * taskIndex
 
@@ -410,17 +422,30 @@ function init(src){
     createProgressItemData(groupOption.id, task) // 创建任务进度条group
 
   })
-  max = max.add(3,'month') // 结尾增加一个月用于展示结尾label
   let start = min.clone(), end = max.clone()
   let axisUnit = 'month'
-  let diff = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 365.25)
+  let step = 1
   let diffMonth = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 30) // 如果时间范围比一个月还小，时间单位以天获取
+  let diff = Math.abs(min.diff(max))/ (1000 * 60 * 60 * 24 * 365.25)
   if(diff>1){ // 相差年限大于1年，显示最近1年
-    start = end.subtract(1,'year')
+    // start = end.subtract(1,'year')
+    max = max.add(3,'month') // 结尾增加三个月用于展示结尾label
+    step = 3
+  }else{
+    if(diffMonth>1){
+      max = max.add(1,'month') // 结尾增加半个月用于展示结尾label
+      if(diffMonth>6){
+        step = 2
+      }
+    }else{
+      axisUnit = 'day'
+      if(diffMonth>0.5){
+        step = 2
+      }
+      max = max.add(3,'day') // 结尾增加3天用于展示结尾label
+    }
   }
-  if(diffMonth<1){
-    axisUnit = 'day'
-  }
+
   if(window.debugModeEnable){
     console.log('相差年数：'+diff)
     console.log('最早和最晚时间：',min.format('YYYY-MM-DD'),max.format('YYYY-MM-DD'))
@@ -439,6 +464,7 @@ function init(src){
 
     timeAxis:{
       scale:axisUnit, // 固定缩放单位月
+      step:step
     },
     // zoomKey: "ctrlKey",
     zoomKey: "shiftKey",
@@ -568,7 +594,7 @@ $text-height:1.13rem;
 
 <style scoped lang="scss">
 @import '@/assets/styles/global.scss';
-$progress-group-height:4rem; // 进度条高度
+$progress-group-height:2.5rem; // 进度条高度
 $progress-item-height:1.31rem; // 进度条高度
 
 $majar-title-height:1.875rem;
@@ -747,6 +773,7 @@ $left-width:9.6625rem; // 左侧狼的宽度
             width: 100%;
             height:30%;
             display: flex;
+            filter:contrast(2);
 
             .fore-cell{
               --fore-cell-bg: #D82B39;

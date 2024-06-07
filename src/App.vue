@@ -10,6 +10,7 @@ import {defaultHotParams, useLocalDataStore} from "@/storage/index.js";
 import {onMounted,getCurrentInstance,ref} from 'vue'
 import request from '@/utils/request.js'
 import {filterMainData} from "@/utils/dataFilter.js";
+import {ElMessage} from "element-plus";
 const store = useLocalDataStore()
 const {proxy} = getCurrentInstance()
 let app_init = true
@@ -44,6 +45,13 @@ function getMainChartData(params=defaultHotParams, auto=false){
     // 数据分发到项目热度
     proxy.$refs.HotSortRef.dataReady(hotData)
     proxy.$refs.MainChartRef.dataReady(chartData, tableData, auto)
+  }).catch(err=>{
+    ElMessage({
+      type: 'error',
+      message: err.message
+    })
+    store.loading = false
+    proxy.$refs.HotSortRef.endLoading()
   })
 }
 
@@ -77,6 +85,8 @@ function init(){
     console.group('数据准备结束')
     app_init = false // 初始化结束
     store.loading = false // 数据准备结束
+
+
     setTimeout(()=>{ // 执行入场动画的效果
       proxy.$refs.DangerProjRef.ready() // 初始化项目占比
     },(total_time-0.2)*1000)
@@ -130,14 +140,17 @@ onMounted(()=>{
   background: #e9effa;
   width: 100%;
   height:67.5rem;
-  min-width: 1024px;
-  min-height:768px;
-  max-width: 3840px;
-  max-height:1838px;
+  //min-width: 1024px;
+  //min-height:768px;
+  //max-width: 3840px;
+  //max-height:1838px;
   display: flex;
   flex-direction: column;
   position:absolute;
   overflow-x: hidden;
+  &::-webkit-scrollbar{
+    width: 0px;
+  }
 }
 .head{
   background: #fff;
@@ -153,7 +166,6 @@ onMounted(()=>{
   .main-content{
     width:86.56rem;
     margin-right:0.75rem;
-    height:100%;
     height:$main-kanban-h;
   }
   // 侧边

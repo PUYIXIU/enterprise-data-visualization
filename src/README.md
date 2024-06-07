@@ -9,5 +9,6 @@
 # 详情接口
 
 ## /erp/visualize/selectProjectDetails 根据项目id获取参与人员工时详情
+## /erp/visualize/selectWaterBalloonDescription 根据项目id和时间获取某一任务的进度详情
 ## /erp/visualize/selectProjectBarChartDetails 获取项目详情柱状图
 ## /erp/visualize/selectProjectGanttChartDetails 获取项目干特殊详情

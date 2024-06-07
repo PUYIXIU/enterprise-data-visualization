@@ -23,7 +23,6 @@ let liquidOption = { // 水球option
 let center = [0,0] // 画布中心 平移用
 let rectCenter = [0,0]// 水球图中心 平移用
 let canvasSize = [0,0] // 画布尺寸 缩放用
-let targetRadius = 50 // 目标半径 缩放用
 function resize(){
   liquidChart && liquidChart.resize()
   pieChart && pieChart.resize()
@@ -47,6 +46,7 @@ function initChart(seriesList, rect){
   // 初始化饼图
   const pieChartDom = document.getElementById(props.pieDomId)
   pieChartDom && (pieChart = echarts.init(pieChartDom,'',{renderer:'svg'}))
+  getCanvasPieCenter()
   getLiquidOption()
   liquidChart.setOption(liquidOption)
   window.addEventListener('resize',resize)
@@ -55,11 +55,22 @@ function initChart(seriesList, rect){
   },0)
 }
 
+// 只更新饼图
+function updatePieChartOnly(){
+  getPieOption()
+  pieChart && pieChart.setOption(pieOption,{notMerge:false})
+}
+
+// 只更新水球图上的数据
+function updateLiquidChartOnly(){
+  getLiquidOption()
+  liquidChart && liquidChart.setOption(liquidOption,{notMerge:false})
+}
+
 // 更新饼图
 function updateChart(seriesList, rect){
   if(!liquidChart) return // 更新中心水球图目的：自适应内部文字
   boundRect = rect // 被点击水球的包围盒，用来平移位置
-  let keepCenter = liquidFillSeriesOption[0].center
   liquidFillSeriesOption = seriesList
   getLiquidOption()
   liquidChart.setOption(liquidOption,{notMerge:false})  // 中心水球图更新完毕
@@ -67,9 +78,6 @@ function updateChart(seriesList, rect){
   moveIn() // 更新水球中点
   getPieOption()
   pieChart.setOption(pieOption)
-  // 修改整个图表的中心位置
-
-
 }
 
 // 获取画布饼图展示的中心点 [30%, 50%]
@@ -84,11 +92,6 @@ function getCanvasPieCenter(){
   center[0] = halfWidth + boundBox.left + grid.left
   center[1] = halfHeight + boundBox.top + grid.top + window.scrollY
 }
-
-
-onMounted(()=>{ // 初始化时就获取画布中心点
-  getCanvasPieCenter()
-})
 
 // 获取偏移量
 function getRectCenter(){
@@ -107,6 +110,7 @@ function getRectCenter(){
 function moveIn(){
   // 求取整个画布的中心点 rectCenter
   const [dX, dY] = getRectCenter()
+
   gsap.set(`#${props.domId} svg`,{
     transformOrigin:'50% 30%',
   })
@@ -174,21 +178,23 @@ function moveOut(){
 function getLiquidOption(){
   // label字体变化 添加项目负责人字样
   let option = liquidFillSeriesOption[1]
+  let option2 = liquidFillSeriesOption[0]
   let {data} = props
-  console.log(liquidFillSeriesOption)
   option.label.formatter = getPieFormatter(data)
-
+  option.label.width = canvasSize[1]*0.2
+  option.label.overflow = 'break'
   // 此处是为了防止画布平移距离过大，导致的阴影出界
   option.backgroundStyle.shadowBlur = 10
   option.backgroundStyle.shadowOffsetY = 0
   option.backgroundStyle.shadowOffsetX = 0
-  liquidOption.series = liquidFillSeriesOption
+  liquidOption.series = liquidFillSeriesOption // 20
+
+  option.data = option2.data = [data.wave/100] // 更新进度
 }
 
 // 设置饼图的option
 function getPieOption(){
   pieOptionTemp.center = [canvasSize[0]*0.3+props.grid.left, canvasSize[1]*0.5 + getpx(0.625)]
-  console.log(props.color)
   pieOption.series = getPieOptions(
       props.data.peopleList,
       props.color,
@@ -201,7 +207,9 @@ function getPieOption(){
 defineExpose({
   initChart,
   updateChart,
-  moveOut
+  moveOut,
+  updatePieChartOnly, // 只更新饼图的数据
+  updateLiquidChartOnly, // 只更新水球图的数据
 })
 </script>
 

@@ -21,7 +21,7 @@ let option = {
     label:{show:false},
     labelLine:{show:false},
     itemStyle:{
-      opacity:0.4,
+      opacity:0.5,
     }
   }],
 }
@@ -75,9 +75,10 @@ onBeforeUnmount(()=>{
 </template>
 
 <style scoped lang="scss">
+@import '@/assets/styles/global.scss';
 .pie-wrapper{
-  width: 9.25rem;
-  height: 9.25rem;
+  width: $ring-pie-w;
+  height: $ring-pie-w;
   position:relative;
   .inner{
     width: 100%;

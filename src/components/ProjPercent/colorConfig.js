@@ -8,4 +8,6 @@ export const ringPieColorList = [
     '#50F8DA',
     '#DF5D8C',
     '#F87850',
+    '#fff732',
+    '#acff33',
 ]

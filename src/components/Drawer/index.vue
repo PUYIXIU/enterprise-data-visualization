@@ -8,10 +8,11 @@ import {ref, onMounted, getCurrentInstance, watch, onBeforeUnmount,nextTick} fro
 import request from '@/utils/request.js'
 import {mockData as taskHourBarMockData} from './TaskHourBar/mockData.js'
 import {mockData as taskGantMockData} from './TaskGant/mockData.js'
-import {MockProgressTimelineData as TaskProgressMockData} from './TaskProgress/mockData.js'
+import {colorMap, MockProgressTimelineData as TaskProgressMockData} from './TaskProgress/mockData.js'
 import {MockProgressTimelineData} from "@/components/Drawer/TaskProgress/mockData.js";
 import {useLocalDataStore} from "@/storage/index.js";
 import {filterBarData, filterGantData, filterTimelineData} from "@/utils/dataFilter.js";
+import {ElMessage} from "element-plus";
 const props = defineProps(['domId'])
 
 const store = useLocalDataStore()
@@ -29,11 +30,17 @@ watch(()=>store.selectProjId,(nv,ov)=>{
   })
 })
 
+// 监听当前详情选中的时间范围
+watch(()=>store.infoFilterDay,(nv,ov)=>{
+  if(store.selectProjId == undefined || nv == ov ) return // 没有选中id返回
+  initAll(store.selectProjId, true)
+})
+
 // 获取柱状图数据
 const selectProjectBarChartDetails = params => request.get('/erp/visualize/selectProjectBarChartDetails',{params})
-function getTaskHourBarData(projId){
+function getTaskHourBarData(projId, filterTime){
   // 获取柱状图数据，传项目id 和时间长度
-  return selectProjectBarChartDetails({erpProjectId:projId, filterDay:store.timeRange}).then(res=>{
+  return selectProjectBarChartDetails({erpProjectId:projId, filterDay:filterTime}).then(res=>{
     res.data = filterBarData(res.data)
     proxy.$refs.TaskHourBarRef.initChart(res.data)
     if(window.debugModeEnable){
@@ -61,8 +68,8 @@ function getTaskGantData(projId){
 // 获取任务进度数据
 const selectTaskProgress = params => request.get('/erp/visualize/selectTaskProgress',{params})
 
-function getTaskProgressData(projId){
-  return selectTaskProgress({erpProjectId:projId, filterDay:store.timeRange}).then(res=>{
+function getTaskProgressData(projId, filterTime){
+  return selectTaskProgress({erpProjectId:projId, filterDay:filterTime}).then(res=>{
     if(window.debugModeEnable){
       console.group('请求任务进度数据:',projId)
       console.log(res)
@@ -73,15 +80,22 @@ function getTaskProgressData(projId){
   })
 }
 
-// 初始化所有数据
-function initAll(projId){
+// 初始化所有数据 projId 项目id， isPartly 是否是局部时间过滤
+function initAll(projId, isPartly=false){
   store.loading = true
+  let filterTime = isPartly?store.infoFilterDay:store.timeRange
   Promise.all([
-    getTaskHourBarData(projId),
-    getTaskGantData(projId),
-    getTaskProgressData(projId),
+    getTaskHourBarData(projId, filterTime),
+    isPartly?Promise.resolve():getTaskGantData(projId), // 项目gant图数据，局部刷新时不请求
+    getTaskProgressData(projId, filterTime),
   ]).then(res=>{
-    proxy.$refs.TaskProgressRef.init(res[2])
+    proxy.$refs.TaskProgressRef.init(res[2],filterTime)
+    store.loading = false
+  }).catch(err=>{
+    ElMessage({
+      type: 'error',
+      message: err.message
+    })
     store.loading = false
   })
 }
@@ -95,7 +109,6 @@ function expand(projId){
 }
 
 function collapse(){
-  console.log('抽屉合上')
   visible.value = false
   store.currentProjectIndex = undefined
   store.selectProjId = undefined
@@ -109,15 +122,17 @@ function clickCheck(e){
   const target = document.getElementById(props.domId)
   const r = target.getBoundingClientRect() // 获取包围盒
   const x = e.x, y = e.y;
+  // 鼠标在抽屉内
   if(x >= r.left && x <= r.right){ // 鼠标在x范围内
     if(y>= r.top && y<= r.bottom){ // 鼠标在y范围内
       return
     }
   }
+  // 鼠标在版头内
+  const navHeadDom = document.getElementById("nav-head-dom")
+  if(navHeadDom.contains(e.target)) return
   collapse()
 }
-
-
 
 onMounted(()=>{
   // expand(123)
@@ -130,13 +145,24 @@ onMounted(()=>{
     <p class="tooltip-p">（可点击空白区域退出）</p>
     <div class="drawer-inner full">
       <h3>项目详情</h3>
-      <drawer-box title="项目甘特图" height="11.19rem">
+      <drawer-box class="gant-box" title="项目甘特图" height="9.5rem">
         <task-gant ref="TaskGantRef" dom-id="task-gant-id" />
       </drawer-box>
-      <drawer-box title="任务工时" height="15.69rem" :tooltip="{width:230, context:'鼠标拖动查看更多数据'}">
+      <drawer-box title="任务工时" height="15.69rem">
         <task-hour-bar ref="TaskHourBarRef" dom-id="task-hour-bar-id" />
       </drawer-box>
-      <drawer-box id="progress-wrapper-dom" title="任务进度" height="24.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
+      <drawer-box id="progress-wrapper-dom" title="任务进度" height="30.5rem"  :tooltip="{width:400, context:'按住Shift+滚轮缩放，左右拖动查看更多数据'}" style="background-color:rgba(255, 255, 255)">
+        <div class="progress-tooltip-box">
+          <p class="tool-tip-item"
+             v-for="([key,value]) in Object.entries(colorMap)"
+             :style="{
+               '--color':value.mainColor,
+               '--color1':value.mainColor+'77',
+             }">
+            <span class="tool-tip-icon"></span>
+            <span class="tool-tip-text">{{key}}</span>
+          </p>
+        </div>
         <task-progress ref="TaskProgressRef" dom-id="task-progress-id" />
       </drawer-box>
     </div>
@@ -144,6 +170,7 @@ onMounted(()=>{
 </template>
 
 <style scoped lang="scss">
+@import '@/assets/styles/global.scss';
 .drawer-wrapper{
   &.expand{
     transform: translateX(0%);
@@ -166,13 +193,13 @@ onMounted(()=>{
   transition-timing-function: ease-in-out;
   transform: translateX(100%);
   position:absolute;
-  z-index:999;
+  z-index:998;
   right:0.38rem;
   top:4.22rem;
   width: 60rem;
-  height: 58.44rem;
   width: 60rem;
-  height: 58.44rem;
+  //height: 58.44rem;
+  height: $main-kanban-h;
 }
 .drawer-inner{
   overflow: hidden;
@@ -198,7 +225,38 @@ h3{
   font-weight: 400;
   font-size: 1.4rem;
   font-family: SourceHanSansCN-Regular;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
   padding-left:0.75rem;
+}
+
+.gant-box{
+  padding-top:1rem !important;
+}
+
+$tip-size:0.75rem;
+.progress-tooltip-box{
+  position:absolute;
+  z-index:998;
+  display: flex;
+  transform:translateY(-100%);
+  right:1.5rem;
+  .tool-tip-item{
+    display: flex;
+    align-items: center;
+    font-size: $tip-size;
+    margin-left:2rem;
+    span{display: inline-block}
+    .tool-tip-icon{
+      background: linear-gradient(-45deg, var(--color), var(--color1));
+      width:$tip-size;
+      height:$tip-size;
+      margin-right:0.25rem;
+      border-radius: 30%;
+    }
+    .tool-tip-text{
+      color:var(--color);
+      font-family: SourceHanSansCN-Normal;
+    }
+  }
 }
 </style>

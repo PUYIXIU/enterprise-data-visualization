@@ -1,67 +1,128 @@
 {
   "msg": "操作成功",
-  "dateTime": "2024-05-22 17:19:02",
+  "dateTime": "2024-05-29 17:31:47",
   "code": 200,
   "data": [
     {
-      "id": "1792471309614776321",
-      "taskName": "大屏开发跟进",
-      "startTime": "2024-05-20",
-      "endTime": "2024-05-26",
-      "progress": "30",
-      "predictProgress": 42.87,
-      "participantCount": 1,
-      "erpTaskTotalHours": 1.23
-    },
-    {
-      "id": "1789168526811684866",
-      "taskName": "系统功能测试",
-      "startTime": "2024-05-11",
+      "id": "1794917644314030082",
+      "taskName": "对接硬件",
+      "startTime": "2024-05-27",
       "endTime": "2024-05-31",
-      "progress": "10",
-      "predictProgress": 57.12,
+      "progress": "8",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 60.00,
       "participantCount": 1,
-      "erpTaskTotalHours": 1.65
+      "erpTaskTotalHours": 7.00
     },
     {
-      "id": "1784034065329557506",
-      "taskName": "企业大屏开发后台",
-      "startTime": "2024-04-27",
-      "endTime": "2024-06-30",
-      "progress": "67",
-      "predictProgress": 40.04,
+      "id": "1793822124376010753",
+      "taskName": "对结构进行测试，和程序编写，屏幕数据抓取",
+      "startTime": "2024-05-24",
+      "endTime": "2024-05-31",
+      "progress": "22",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 75.00,
       "participantCount": 1,
-      "erpTaskTotalHours": 28.40
+      "erpTaskTotalHours": 20.05
     },
     {
-      "id": "1783783441664970754",
-      "taskName": "大屏项目跟进",
-      "startTime": "2024-04-26",
-      "endTime": "2024-05-17",
-      "progress": "30",
+      "id": "1793084199929581569",
+      "taskName": "编写和调试改造电路板程序",
+      "startTime": "2024-05-22",
+      "endTime": "2024-05-31",
+      "progress": "20",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 80.00,
+      "participantCount": 1,
+      "erpTaskTotalHours": 17.99
+    },
+    {
+      "id": "1792365078292135938",
+      "taskName": "后台接口对接",
+      "startTime": "2024-05-20",
+      "endTime": "2024-05-24",
+      "progress": "100",
+      "erpTaskStatus": "已完成",
       "predictProgress": 100,
       "participantCount": 1,
-      "erpTaskTotalHours": 9.76
+      "erpTaskTotalHours": 24.96
     },
     {
-      "id": "1783674436250636290",
-      "taskName": "企业大屏开发前端",
-      "startTime": "2024-04-26",
+      "id": "1790916627620651010",
+      "taskName": "管理后台基础功能对接",
+      "startTime": "2024-05-16",
       "endTime": "2024-05-31",
-      "progress": "48",
-      "predictProgress": 75.06,
-      "participantCount": 1,
-      "erpTaskTotalHours": 28.94
+      "progress": "33",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 87.50,
+      "participantCount": 3,
+      "erpTaskTotalHours": 34.89
     },
     {
-      "id": "1774246181954174978",
-      "taskName": "修复缺陷",
-      "startTime": "2024-03-31",
-      "endTime": "2024-12-31",
-      "progress": "43",
-      "predictProgress": 19.08,
+      "id": "1790909600458563585",
+      "taskName": "电路板设计",
+      "startTime": "2024-05-16",
+      "endTime": "2024-05-31",
+      "progress": "60",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 87.50,
       "participantCount": 1,
-      "erpTaskTotalHours": 7.01
+      "erpTaskTotalHours": 33.47
+    },
+    {
+      "id": "1789823344165130241",
+      "taskName": "硬件改造跟进",
+      "startTime": "2024-05-13",
+      "endTime": "2024-05-31",
+      "progress": "12",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 89.42,
+      "participantCount": 1,
+      "erpTaskTotalHours": 16.80
+    },
+    {
+      "id": "1787286880802004994",
+      "taskName": "智能语音水泵控制器，画三种电路板",
+      "startTime": "2024-05-06",
+      "endTime": "2024-05-31",
+      "progress": "100",
+      "erpTaskStatus": "已完成",
+      "predictProgress": 92.40,
+      "participantCount": 1,
+      "erpTaskTotalHours": 17.80
+    },
+    {
+      "id": "1785239924273537026",
+      "taskName": "图像识别数据采集标注",
+      "startTime": "2024-04-30",
+      "endTime": "2024-05-31",
+      "progress": "55",
+      "erpTaskStatus": "已逾期",
+      "predictProgress": 93.90,
+      "participantCount": 1,
+      "erpTaskTotalHours": 28.59
+    },
+    {
+      "id": "1780404309220630529",
+      "taskName": "研发过程需求输出",
+      "startTime": "2024-04-17",
+      "endTime": "2024-07-05",
+      "progress": "60",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 53.75,
+      "participantCount": 1,
+      "erpTaskTotalHours": 28.61
+    },
+    {
+      "id": "1770749421930864641",
+      "taskName": "资料收集、结构设计",
+      "startTime": "2024-03-22",
+      "endTime": "2024-05-31",
+      "progress": "37",
+      "erpTaskStatus": "进行中",
+      "predictProgress": 97.29,
+      "participantCount": 4,
+      "erpTaskTotalHours": 122.48
     }
   ]
 }
